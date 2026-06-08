@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Documentation/Vision.md",
+                "file": "Documentation/Progression.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Vision"
+              "title": "Progression"
             }
           }
         ]
@@ -165,13 +165,16 @@
       "daily-notes:Abrir la nota de hoy": false,
       "templates:Insertar plantilla": false,
       "command-palette:Abrir paleta de comandos": false,
-      "bases:Crear nueva base": false
+      "bases:Crear nueva base": false,
+      "obsidian-git:Open Git source control": false
     }
   },
   "active": "b208a2aba5d94346",
   "lastOpenFiles": [
-    "Sin título.md",
+    "Documentation/Combat.md",
+    "Documentation/Progression.md",
     "Documentation/Vision.md",
+    "Sin título.md",
     "Documentation"
   ]
 }

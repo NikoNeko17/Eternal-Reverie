@@ -17,6 +17,7 @@ Descender a través de capas cada vez más anómalas del mundo, descubrir equipa
 ## Pilares de Diseño
 
 **1. El equipamiento es la progresión**
+
 La fuerza del jugador proviene principalmente de sus armas, armaduras y configuraciones de combate.
 
 Los niveles de personaje no existen.
