@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Documentation/Armor.md",
+                "file": "Documentation/Enemies.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Armor"
+              "title": "Enemies"
             }
           }
         ],
@@ -212,19 +212,20 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "12d7db7ae10d2923",
+  "active": "13e4127ced6b8cb5",
   "lastOpenFiles": [
-    "Documentation/Weapons.md",
-    "Documentation/Armor.md",
-    "Documentation/Loot.md",
+    "Documentation/Equipment.md",
+    "Documentation/Enemies.md",
+    "Documentation/Combat.md",
     "Documentation/Affinities.md",
+    "Documentation/Weapons.md",
+    "Documentation/Loot.md",
     "Documentation/Remnants.md",
     "Documentation/Transmutation.md",
     "Documentation/Journal.md",
     "Documentation/Areas.md",
     "Documentation/Expedition.md",
     "Documentation/Progression.md",
-    "Documentation/Combat.md",
     "Documentation/Vision.md",
     "Documentation"
   ]
