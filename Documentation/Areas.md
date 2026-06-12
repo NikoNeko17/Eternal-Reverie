@@ -24,11 +24,16 @@ La progresión debe sentirse como un viaje hacia territorios cada vez más extra
 
 ---
 
-## Ruinas (Áreas 1-7)
+## Los Siete Distritos
 
 ### Descripción
 
-Las Ruinas representan los restos de una civilización desaparecida.
+Los Distritos representan manifestaciones físicas de deseos humanos
+llevados a su extremo.
+
+No son simples ruinas.
+
+Son recuerdos cristalizados de una humanidad que desapareció.
 
 Infraestructuras destruidas, edificios colapsados y espacios abandonados conforman la mayor parte de estas áreas.
 
@@ -57,7 +62,13 @@ El jugador aún comprende el entorno y puede anticipar muchos de sus peligros.
 
 ### Descripción
 
-La Interpolación Efímera marca la transición entre la realidad conocida y las anomalías que preceden al Paraíso Onírico.
+La Interpolación Efímera es una región donde los sueños
+incompletos continúan existiendo.
+
+Sus habitantes siguen vivos, pero ya no pertenecen
+completamente al mundo de los Distritos ni al Paraíso Onírico.
+
+Cada facción lucha por recursos, territorio y supervivencia.
 
 Los entornos comienzan a deformarse y la hostilidad del mundo se vuelve evidente.
 
@@ -107,9 +118,12 @@ El jugador debe sentir que ha alcanzado un lugar imposible.
 
 ### Identidad
 
-A diferencia de la Interpolación Efímera, el Paraíso Onírico no busca intimidar mediante oscuridad o decadencia.
+El Paraíso Onírico representa el destino que innumerables
+expedicionarios intentaron alcanzar.
 
-Su peligro proviene de la magnitud de los desafíos que contiene.
+Sus habitantes no son simples guardianes.
+
+Son aquellos que llegaron primero.
 
 ---
 
@@ -117,7 +131,18 @@ Su peligro proviene de la magnitud de los desafíos que contiene.
 
 ### Descripción
 
-Las profundidades del Paraíso Onírico presentan desafíos crecientes sin un límite definido.
+El Desafío no existe como un lugar físico.
+
+Representa la incapacidad de abandonar la ascensión.
+
+Incluso después de alcanzar el Paraíso,
+algunos individuos continúan avanzando.
+
+No por necesidad.
+
+No por supervivencia.
+
+Sino por obsesión.
 
 ### Objetivo de Diseño
 

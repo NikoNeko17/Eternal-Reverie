@@ -51,24 +51,38 @@ Existen dos tipos principales de Vestigios.
 
 #### Vestigios Eternos
 
-Los Vestigios Eternos permanecen vinculados al jugador.
+Los Vestigios Eternos contienen un Núcleo estable.
 
-No se destruyen al morir durante una expedición.
+El Núcleo les otorga identidad, permanencia y persistencia entre expediciones.
 
-Representan la base permanente de una configuración.
+No se destruyen al morir y constituyen la base permanente de una configuración.
 
 #### Vestigios Efímeros
 
-Los Vestigios Efímeros se destruyen al morir durante una expedición.
+Los Vestigios Efímeros carecen de Núcleo.
 
-Su función es permitir configuraciones temporales y experimentales sin afectar la progresión permanente del jugador.
+Son construcciones alimentadas únicamente por Metafluídos.
 
-La diferencia entre Vestigios Eternos y Efímeros es exclusivamente su persistencia.
+Se destruyen al morir durante una expedición y permiten configuraciones temporales y experimentales.
+
+La diferencia principal entre Vestigios Eternos y Efímeros reside en la presencia de un Núcleo.
 
 No existe una diferencia inherente de poder entre ambos.
 
 ---
+## Núcleos
 
+Los Núcleos representan la identidad de un Vestigio.
+
+Mientras que los Metafluídos constituyen la energía que alimenta un Vestigio, los Núcleos representan su esencia.
+
+Los Vestigios Efímeros no poseen Núcleo.
+
+Los Vestigios Eternos contienen un Núcleo compatible con su naturaleza.
+
+Los Núcleos son recursos extremadamente valiosos utilizados durante procesos avanzados de Transmutación.
+
+---
 ## Niveles
 
 Cada Vestigio posee una serie de niveles representados mediante números romanos.
@@ -89,15 +103,15 @@ Otros pueden alcanzar niveles superiores dependiendo de su diseño.
 
 ---
 
-## Mejora
+## Reciclaje
 
-Los Vestigios pueden mejorarse mediante el Athanor.
+Los Vestigios pueden reciclarse dentro del Athanor.
 
-La mejora consume Esencias obtenidas mediante reciclaje.
+Los Vestigios Efímeros producen Metafluídos al ser reciclados.
 
-Cada mejora incrementa la potencia del efecto manteniendo la identidad original del Vestigio.
+Los Vestigios Eternos pueden producir Metafluídos y, bajo condiciones específicas, permitir la recuperación de su Núcleo.
 
-Las mejoras nunca alteran completamente la función del Vestigio.
+Los duplicados siempre poseen valor mediante este sistema.
 
 ---
 
@@ -205,7 +219,9 @@ Los duplicados siempre poseen valor mediante este sistema.
 
 Los Vestigios reciclados proporcionan recursos utilizados por el sistema de Transmutación.
 
-La combinación de Esencias permite orientar la creación de nuevos Vestigios.
+La Transmutación utiliza Materiales, Metafluídos y, en procesos avanzados, Núcleos.
+
+Los resultados dependen de los componentes utilizados y de las afinidades involucradas durante el proceso.
 
 La Transmutación favorece la experimentación y el descubrimiento antes que las recetas completamente rígidas.
 
@@ -214,6 +230,8 @@ La Transmutación favorece la experimentación y el descubrimiento antes que las
 ## Filosofía de Diseño
 
 Los Vestigios deben incentivar la creatividad y la adaptación.
+
+Los Metafluídos representan la energía que alimenta un Vestigio, mientras que los Núcleos representan su identidad.
 
 Un Vestigio interesante es preferible a un Vestigio simplemente poderoso.
 

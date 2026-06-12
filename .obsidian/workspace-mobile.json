@@ -15,7 +15,7 @@
               "state": {
                 "file": "Documentation/Affinities.md",
                 "mode": "source",
-                "source": false
+                "source": true
               },
               "icon": "lucide-file",
               "title": "Affinities"
@@ -29,7 +29,7 @@
               "state": {
                 "file": "Documentation/Loot.md",
                 "mode": "source",
-                "source": false
+                "source": true
               },
               "icon": "lucide-file",
               "title": "Loot"
@@ -43,7 +43,7 @@
               "state": {
                 "file": "Documentation/Weapons.md",
                 "mode": "source",
-                "source": false
+                "source": true
               },
               "icon": "lucide-file",
               "title": "Weapons"
@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Documentation/Enemies.md",
+                "file": "Documentation/Areas.md",
                 "mode": "source",
-                "source": false
+                "source": true
               },
               "icon": "lucide-file",
-              "title": "Enemies"
+              "title": "Areas"
             }
           }
         ],
@@ -214,13 +214,14 @@
   },
   "active": "13e4127ced6b8cb5",
   "lastOpenFiles": [
-    "Documentation/Equipment.md",
-    "Documentation/Enemies.md",
-    "Documentation/Combat.md",
     "Documentation/Affinities.md",
-    "Documentation/Weapons.md",
+    "Documentation/Equipment.md",
     "Documentation/Loot.md",
     "Documentation/Remnants.md",
+    "Documentation/Materials.md",
+    "Documentation/Enemies.md",
+    "Documentation/Combat.md",
+    "Documentation/Weapons.md",
     "Documentation/Transmutation.md",
     "Documentation/Journal.md",
     "Documentation/Areas.md",

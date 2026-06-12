@@ -41,6 +41,45 @@ Tipos disponibles:
 - Hacha
 - Arco
 - Arma de Fuego
+### Familias de Armas
+
+Cada tipo de arma contiene múltiples familias.
+
+Las familias determinan la estética, estadísticas base, velocidad de ataque y posibles Afinidades de un arma.
+
+Dos armas del mismo tipo pueden comportarse de manera distinta dependiendo de su familia.
+
+Ejemplos:
+
+Espadas:
+- Espada Recta
+- Sable
+- Mandoble
+
+Lanzas:
+- Lanza Militar
+- Pica
+- Alabarda
+
+Guantes:
+- Nudilleras
+- Guanteletes
+- Garras
+
+Hachas:
+- Hacha de Mano
+- Hacha de Guerra
+- Hacha Bipenne
+
+Arcos:
+- Arco Corto
+- Arco Largo
+- Arco Compuesto
+
+Armas de Fuego:
+- Pistola
+- Escopeta
+- Fusil
 
 ---
 
@@ -198,6 +237,8 @@ Las armaduras potencian Afinidades defensivas.
 
 Las Afinidades se describen en detalle en Affinities.md.
 
+Los Vestigios pueden modificar indirectamente el comportamiento del equipamiento mediante efectos adicionales, sin alterar la identidad principal de cada arma o armadura.
+
 ---
 
 ## Resistencias
@@ -285,11 +326,15 @@ Todas las piezas poseen Durabilidad.
 
 La Durabilidad disminuye durante las expediciones.
 
-Cuando una pieza alcanza cero Durabilidad deja de proporcionar beneficios.
+Cuando una pieza alcanza cero Durabilidad queda inutilizada.
 
-Las piezas no pueden repararse.
+Las piezas inutilizadas dejan de proporcionar beneficios.
 
-El jugador debe reemplazarlas mediante exploración, fabricación o recompensas obtenidas durante futuras expediciones.
+Las piezas inutilizadas pueden reciclarse, transmutarse o utilizarse como material en otros sistemas.
+
+La recuperación de Durabilidad es extremadamente limitada y depende de sistemas específicos.
+
+La gestión de Durabilidad forma parte de la preparación estratégica de cada expedición.
 
 ---
 
