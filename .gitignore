@@ -1,0 +1,33 @@
+#Obsidian
+.obsidian/
+.trash/
+
+# IntelliJ
+.idea/
+
+# Gradle
+.gradle/
+
+# Build
+build/
+out/
+
+# Servidor
+run/
+
+plugins/
+
+logs/
+
+world/
+
+world_nether/
+
+world_the_end/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Kotlin
+*.kotlin_module
