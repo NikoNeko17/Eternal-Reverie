@@ -1,0 +1,1190 @@
+# Blueprints de fabricación (armas y armaduras)
+# id: identificador único (usado en Keys.BLUEPRINT_ID)
+# itemType: WEAPON o ARMOR
+# rarity: debe coincidir EXACTO con un valor de Rarity (items.Rarity)
+# material: Material de Bukkit usado como ítem visual (Smithing Templates vanilla, placeholder)
+#
+# --- Solo si itemType: WEAPON ---
+# family: debe coincidir EXACTO con un valor de WeaponFamily
+# baseDamage: daño base antes de multiplicadores de familia y materiales
+#
+# --- Solo si itemType: ARMOR ---
+# armorPiece: CASCO, PECHERA, GREBAS o BOTAS
+# baseDefense: defensa base antes de multiplicadores de materiales y pieza
+blueprints:
+  espada_recta_common:
+    itemType: WEAPON
+    family: ESPADA_RECTA
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  espada_recta_rare:
+    itemType: WEAPON
+    family: ESPADA_RECTA
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  espada_recta_epic:
+    itemType: WEAPON
+    family: ESPADA_RECTA
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  espada_recta_legendary:
+    itemType: WEAPON
+    family: ESPADA_RECTA
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  espada_recta_mythic:
+    itemType: WEAPON
+    family: ESPADA_RECTA
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  espada_recta_oniric:
+    itemType: WEAPON
+    family: ESPADA_RECTA
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  espada_recta_ascended:
+    itemType: WEAPON
+    family: ESPADA_RECTA
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  sable_common:
+    itemType: WEAPON
+    family: SABLE
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  sable_rare:
+    itemType: WEAPON
+    family: SABLE
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  sable_epic:
+    itemType: WEAPON
+    family: SABLE
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  sable_legendary:
+    itemType: WEAPON
+    family: SABLE
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  sable_mythic:
+    itemType: WEAPON
+    family: SABLE
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  sable_oniric:
+    itemType: WEAPON
+    family: SABLE
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  sable_ascended:
+    itemType: WEAPON
+    family: SABLE
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  mandoble_common:
+    itemType: WEAPON
+    family: MANDOBLE
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  mandoble_rare:
+    itemType: WEAPON
+    family: MANDOBLE
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  mandoble_epic:
+    itemType: WEAPON
+    family: MANDOBLE
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  mandoble_legendary:
+    itemType: WEAPON
+    family: MANDOBLE
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  mandoble_mythic:
+    itemType: WEAPON
+    family: MANDOBLE
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  mandoble_oniric:
+    itemType: WEAPON
+    family: MANDOBLE
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  mandoble_ascended:
+    itemType: WEAPON
+    family: MANDOBLE
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  lanza_militar_common:
+    itemType: WEAPON
+    family: LANZA_MILITAR
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  lanza_militar_rare:
+    itemType: WEAPON
+    family: LANZA_MILITAR
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  lanza_militar_epic:
+    itemType: WEAPON
+    family: LANZA_MILITAR
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  lanza_militar_legendary:
+    itemType: WEAPON
+    family: LANZA_MILITAR
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  lanza_militar_mythic:
+    itemType: WEAPON
+    family: LANZA_MILITAR
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  lanza_militar_oniric:
+    itemType: WEAPON
+    family: LANZA_MILITAR
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  lanza_militar_ascended:
+    itemType: WEAPON
+    family: LANZA_MILITAR
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  pica_common:
+    itemType: WEAPON
+    family: PICA
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  pica_rare:
+    itemType: WEAPON
+    family: PICA
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  pica_epic:
+    itemType: WEAPON
+    family: PICA
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  pica_legendary:
+    itemType: WEAPON
+    family: PICA
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  pica_mythic:
+    itemType: WEAPON
+    family: PICA
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  pica_oniric:
+    itemType: WEAPON
+    family: PICA
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  pica_ascended:
+    itemType: WEAPON
+    family: PICA
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  alabarda_common:
+    itemType: WEAPON
+    family: ALABARDA
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  alabarda_rare:
+    itemType: WEAPON
+    family: ALABARDA
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  alabarda_epic:
+    itemType: WEAPON
+    family: ALABARDA
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  alabarda_legendary:
+    itemType: WEAPON
+    family: ALABARDA
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  alabarda_mythic:
+    itemType: WEAPON
+    family: ALABARDA
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  alabarda_oniric:
+    itemType: WEAPON
+    family: ALABARDA
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  alabarda_ascended:
+    itemType: WEAPON
+    family: ALABARDA
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  nudilleras_common:
+    itemType: WEAPON
+    family: NUDILLERAS
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  nudilleras_rare:
+    itemType: WEAPON
+    family: NUDILLERAS
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  nudilleras_epic:
+    itemType: WEAPON
+    family: NUDILLERAS
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  nudilleras_legendary:
+    itemType: WEAPON
+    family: NUDILLERAS
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  nudilleras_mythic:
+    itemType: WEAPON
+    family: NUDILLERAS
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  nudilleras_oniric:
+    itemType: WEAPON
+    family: NUDILLERAS
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  nudilleras_ascended:
+    itemType: WEAPON
+    family: NUDILLERAS
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  guanteletes_common:
+    itemType: WEAPON
+    family: GUANTELETES
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  guanteletes_rare:
+    itemType: WEAPON
+    family: GUANTELETES
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  guanteletes_epic:
+    itemType: WEAPON
+    family: GUANTELETES
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  guanteletes_legendary:
+    itemType: WEAPON
+    family: GUANTELETES
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  guanteletes_mythic:
+    itemType: WEAPON
+    family: GUANTELETES
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  guanteletes_oniric:
+    itemType: WEAPON
+    family: GUANTELETES
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  guanteletes_ascended:
+    itemType: WEAPON
+    family: GUANTELETES
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  garras_common:
+    itemType: WEAPON
+    family: GARRAS
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  garras_rare:
+    itemType: WEAPON
+    family: GARRAS
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  garras_epic:
+    itemType: WEAPON
+    family: GARRAS
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  garras_legendary:
+    itemType: WEAPON
+    family: GARRAS
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  garras_mythic:
+    itemType: WEAPON
+    family: GARRAS
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  garras_oniric:
+    itemType: WEAPON
+    family: GARRAS
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  garras_ascended:
+    itemType: WEAPON
+    family: GARRAS
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  hacha_de_mano_common:
+    itemType: WEAPON
+    family: HACHA_DE_MANO
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  hacha_de_mano_rare:
+    itemType: WEAPON
+    family: HACHA_DE_MANO
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  hacha_de_mano_epic:
+    itemType: WEAPON
+    family: HACHA_DE_MANO
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  hacha_de_mano_legendary:
+    itemType: WEAPON
+    family: HACHA_DE_MANO
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  hacha_de_mano_mythic:
+    itemType: WEAPON
+    family: HACHA_DE_MANO
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  hacha_de_mano_oniric:
+    itemType: WEAPON
+    family: HACHA_DE_MANO
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  hacha_de_mano_ascended:
+    itemType: WEAPON
+    family: HACHA_DE_MANO
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  hacha_de_combate_common:
+    itemType: WEAPON
+    family: HACHA_DE_COMBATE
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  hacha_de_combate_rare:
+    itemType: WEAPON
+    family: HACHA_DE_COMBATE
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  hacha_de_combate_epic:
+    itemType: WEAPON
+    family: HACHA_DE_COMBATE
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  hacha_de_combate_legendary:
+    itemType: WEAPON
+    family: HACHA_DE_COMBATE
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  hacha_de_combate_mythic:
+    itemType: WEAPON
+    family: HACHA_DE_COMBATE
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  hacha_de_combate_oniric:
+    itemType: WEAPON
+    family: HACHA_DE_COMBATE
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  hacha_de_combate_ascended:
+    itemType: WEAPON
+    family: HACHA_DE_COMBATE
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  hacha_bipenne_common:
+    itemType: WEAPON
+    family: HACHA_BIPENNE
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  hacha_bipenne_rare:
+    itemType: WEAPON
+    family: HACHA_BIPENNE
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  hacha_bipenne_epic:
+    itemType: WEAPON
+    family: HACHA_BIPENNE
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  hacha_bipenne_legendary:
+    itemType: WEAPON
+    family: HACHA_BIPENNE
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  hacha_bipenne_mythic:
+    itemType: WEAPON
+    family: HACHA_BIPENNE
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  hacha_bipenne_oniric:
+    itemType: WEAPON
+    family: HACHA_BIPENNE
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  hacha_bipenne_ascended:
+    itemType: WEAPON
+    family: HACHA_BIPENNE
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  arco_corto_common:
+    itemType: WEAPON
+    family: ARCO_CORTO
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  arco_corto_rare:
+    itemType: WEAPON
+    family: ARCO_CORTO
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  arco_corto_epic:
+    itemType: WEAPON
+    family: ARCO_CORTO
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  arco_corto_legendary:
+    itemType: WEAPON
+    family: ARCO_CORTO
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  arco_corto_mythic:
+    itemType: WEAPON
+    family: ARCO_CORTO
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  arco_corto_oniric:
+    itemType: WEAPON
+    family: ARCO_CORTO
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  arco_corto_ascended:
+    itemType: WEAPON
+    family: ARCO_CORTO
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  arco_largo_common:
+    itemType: WEAPON
+    family: ARCO_LARGO
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  arco_largo_rare:
+    itemType: WEAPON
+    family: ARCO_LARGO
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  arco_largo_epic:
+    itemType: WEAPON
+    family: ARCO_LARGO
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  arco_largo_legendary:
+    itemType: WEAPON
+    family: ARCO_LARGO
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  arco_largo_mythic:
+    itemType: WEAPON
+    family: ARCO_LARGO
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  arco_largo_oniric:
+    itemType: WEAPON
+    family: ARCO_LARGO
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  arco_largo_ascended:
+    itemType: WEAPON
+    family: ARCO_LARGO
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  arco_compuesto_common:
+    itemType: WEAPON
+    family: ARCO_COMPUESTO
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  arco_compuesto_rare:
+    itemType: WEAPON
+    family: ARCO_COMPUESTO
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  arco_compuesto_epic:
+    itemType: WEAPON
+    family: ARCO_COMPUESTO
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  arco_compuesto_legendary:
+    itemType: WEAPON
+    family: ARCO_COMPUESTO
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  arco_compuesto_mythic:
+    itemType: WEAPON
+    family: ARCO_COMPUESTO
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  arco_compuesto_oniric:
+    itemType: WEAPON
+    family: ARCO_COMPUESTO
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  arco_compuesto_ascended:
+    itemType: WEAPON
+    family: ARCO_COMPUESTO
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  pistola_common:
+    itemType: WEAPON
+    family: PISTOLA
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  pistola_rare:
+    itemType: WEAPON
+    family: PISTOLA
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  pistola_epic:
+    itemType: WEAPON
+    family: PISTOLA
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  pistola_legendary:
+    itemType: WEAPON
+    family: PISTOLA
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  pistola_mythic:
+    itemType: WEAPON
+    family: PISTOLA
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  pistola_oniric:
+    itemType: WEAPON
+    family: PISTOLA
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  pistola_ascended:
+    itemType: WEAPON
+    family: PISTOLA
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  revolver_common:
+    itemType: WEAPON
+    family: REVOLVER
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  revolver_rare:
+    itemType: WEAPON
+    family: REVOLVER
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  revolver_epic:
+    itemType: WEAPON
+    family: REVOLVER
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  revolver_legendary:
+    itemType: WEAPON
+    family: REVOLVER
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  revolver_mythic:
+    itemType: WEAPON
+    family: REVOLVER
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  revolver_oniric:
+    itemType: WEAPON
+    family: REVOLVER
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  revolver_ascended:
+    itemType: WEAPON
+    family: REVOLVER
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  canon_de_mano_common:
+    itemType: WEAPON
+    family: CANON_DE_MANO
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  canon_de_mano_rare:
+    itemType: WEAPON
+    family: CANON_DE_MANO
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  canon_de_mano_epic:
+    itemType: WEAPON
+    family: CANON_DE_MANO
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  canon_de_mano_legendary:
+    itemType: WEAPON
+    family: CANON_DE_MANO
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  canon_de_mano_mythic:
+    itemType: WEAPON
+    family: CANON_DE_MANO
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  canon_de_mano_oniric:
+    itemType: WEAPON
+    family: CANON_DE_MANO
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  canon_de_mano_ascended:
+    itemType: WEAPON
+    family: CANON_DE_MANO
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  escopeta_de_corredera_common:
+    itemType: WEAPON
+    family: ESCOPETA_DE_CORREDERA
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  escopeta_de_corredera_rare:
+    itemType: WEAPON
+    family: ESCOPETA_DE_CORREDERA
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  escopeta_de_corredera_epic:
+    itemType: WEAPON
+    family: ESCOPETA_DE_CORREDERA
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  escopeta_de_corredera_legendary:
+    itemType: WEAPON
+    family: ESCOPETA_DE_CORREDERA
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  escopeta_de_corredera_mythic:
+    itemType: WEAPON
+    family: ESCOPETA_DE_CORREDERA
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  escopeta_de_corredera_oniric:
+    itemType: WEAPON
+    family: ESCOPETA_DE_CORREDERA
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  escopeta_de_corredera_ascended:
+    itemType: WEAPON
+    family: ESCOPETA_DE_CORREDERA
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  escopeta_automatica_common:
+    itemType: WEAPON
+    family: ESCOPETA_AUTOMATICA
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  escopeta_automatica_rare:
+    itemType: WEAPON
+    family: ESCOPETA_AUTOMATICA
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  escopeta_automatica_epic:
+    itemType: WEAPON
+    family: ESCOPETA_AUTOMATICA
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  escopeta_automatica_legendary:
+    itemType: WEAPON
+    family: ESCOPETA_AUTOMATICA
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  escopeta_automatica_mythic:
+    itemType: WEAPON
+    family: ESCOPETA_AUTOMATICA
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  escopeta_automatica_oniric:
+    itemType: WEAPON
+    family: ESCOPETA_AUTOMATICA
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  escopeta_automatica_ascended:
+    itemType: WEAPON
+    family: ESCOPETA_AUTOMATICA
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  escopeta_de_combate_common:
+    itemType: WEAPON
+    family: ESCOPETA_DE_COMBATE
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  escopeta_de_combate_rare:
+    itemType: WEAPON
+    family: ESCOPETA_DE_COMBATE
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  escopeta_de_combate_epic:
+    itemType: WEAPON
+    family: ESCOPETA_DE_COMBATE
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  escopeta_de_combate_legendary:
+    itemType: WEAPON
+    family: ESCOPETA_DE_COMBATE
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  escopeta_de_combate_mythic:
+    itemType: WEAPON
+    family: ESCOPETA_DE_COMBATE
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  escopeta_de_combate_oniric:
+    itemType: WEAPON
+    family: ESCOPETA_DE_COMBATE
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  escopeta_de_combate_ascended:
+    itemType: WEAPON
+    family: ESCOPETA_DE_COMBATE
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  rifle_de_combate_common:
+    itemType: WEAPON
+    family: RIFLE_DE_COMBATE
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  rifle_de_combate_rare:
+    itemType: WEAPON
+    family: RIFLE_DE_COMBATE
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  rifle_de_combate_epic:
+    itemType: WEAPON
+    family: RIFLE_DE_COMBATE
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  rifle_de_combate_legendary:
+    itemType: WEAPON
+    family: RIFLE_DE_COMBATE
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  rifle_de_combate_mythic:
+    itemType: WEAPON
+    family: RIFLE_DE_COMBATE
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  rifle_de_combate_oniric:
+    itemType: WEAPON
+    family: RIFLE_DE_COMBATE
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  rifle_de_combate_ascended:
+    itemType: WEAPON
+    family: RIFLE_DE_COMBATE
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  carabina_de_asalto_common:
+    itemType: WEAPON
+    family: CARABINA_DE_ASALTO
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  carabina_de_asalto_rare:
+    itemType: WEAPON
+    family: CARABINA_DE_ASALTO
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  carabina_de_asalto_epic:
+    itemType: WEAPON
+    family: CARABINA_DE_ASALTO
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  carabina_de_asalto_legendary:
+    itemType: WEAPON
+    family: CARABINA_DE_ASALTO
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  carabina_de_asalto_mythic:
+    itemType: WEAPON
+    family: CARABINA_DE_ASALTO
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  carabina_de_asalto_oniric:
+    itemType: WEAPON
+    family: CARABINA_DE_ASALTO
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  carabina_de_asalto_ascended:
+    itemType: WEAPON
+    family: CARABINA_DE_ASALTO
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  rifle_francotirador_common:
+    itemType: WEAPON
+    family: RIFLE_FRANCOTIRADOR
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 12.0
+  rifle_francotirador_rare:
+    itemType: WEAPON
+    family: RIFLE_FRANCOTIRADOR
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 26.0
+  rifle_francotirador_epic:
+    itemType: WEAPON
+    family: RIFLE_FRANCOTIRADOR
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 44.0
+  rifle_francotirador_legendary:
+    itemType: WEAPON
+    family: RIFLE_FRANCOTIRADOR
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 62.0
+  rifle_francotirador_mythic:
+    itemType: WEAPON
+    family: RIFLE_FRANCOTIRADOR
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 88.0
+  rifle_francotirador_oniric:
+    itemType: WEAPON
+    family: RIFLE_FRANCOTIRADOR
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 122.0
+  rifle_francotirador_ascended:
+    itemType: WEAPON
+    family: RIFLE_FRANCOTIRADOR
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDamage: 152.0
+  armadura_casco_common:
+    itemType: ARMOR
+    armorPiece: CASCO
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 20.0
+  armadura_casco_rare:
+    itemType: ARMOR
+    armorPiece: CASCO
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 40.0
+  armadura_casco_epic:
+    itemType: ARMOR
+    armorPiece: CASCO
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 70.0
+  armadura_casco_legendary:
+    itemType: ARMOR
+    armorPiece: CASCO
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 110.0
+  armadura_casco_mythic:
+    itemType: ARMOR
+    armorPiece: CASCO
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 160.0
+  armadura_casco_oniric:
+    itemType: ARMOR
+    armorPiece: CASCO
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 220.0
+  armadura_casco_ascended:
+    itemType: ARMOR
+    armorPiece: CASCO
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 300.0
+  armadura_pechera_common:
+    itemType: ARMOR
+    armorPiece: PECHERA
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 20.0
+  armadura_pechera_rare:
+    itemType: ARMOR
+    armorPiece: PECHERA
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 40.0
+  armadura_pechera_epic:
+    itemType: ARMOR
+    armorPiece: PECHERA
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 70.0
+  armadura_pechera_legendary:
+    itemType: ARMOR
+    armorPiece: PECHERA
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 110.0
+  armadura_pechera_mythic:
+    itemType: ARMOR
+    armorPiece: PECHERA
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 160.0
+  armadura_pechera_oniric:
+    itemType: ARMOR
+    armorPiece: PECHERA
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 220.0
+  armadura_pechera_ascended:
+    itemType: ARMOR
+    armorPiece: PECHERA
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 300.0
+  armadura_grebas_common:
+    itemType: ARMOR
+    armorPiece: GREBAS
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 20.0
+  armadura_grebas_rare:
+    itemType: ARMOR
+    armorPiece: GREBAS
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 40.0
+  armadura_grebas_epic:
+    itemType: ARMOR
+    armorPiece: GREBAS
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 70.0
+  armadura_grebas_legendary:
+    itemType: ARMOR
+    armorPiece: GREBAS
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 110.0
+  armadura_grebas_mythic:
+    itemType: ARMOR
+    armorPiece: GREBAS
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 160.0
+  armadura_grebas_oniric:
+    itemType: ARMOR
+    armorPiece: GREBAS
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 220.0
+  armadura_grebas_ascended:
+    itemType: ARMOR
+    armorPiece: GREBAS
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 300.0
+  armadura_botas_common:
+    itemType: ARMOR
+    armorPiece: BOTAS
+    rarity: COMMON
+    material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 20.0
+  armadura_botas_rare:
+    itemType: ARMOR
+    armorPiece: BOTAS
+    rarity: RARE
+    material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 40.0
+  armadura_botas_epic:
+    itemType: ARMOR
+    armorPiece: BOTAS
+    rarity: EPIC
+    material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 70.0
+  armadura_botas_legendary:
+    itemType: ARMOR
+    armorPiece: BOTAS
+    rarity: LEGENDARY
+    material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 110.0
+  armadura_botas_mythic:
+    itemType: ARMOR
+    armorPiece: BOTAS
+    rarity: MYTHIC
+    material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 160.0
+  armadura_botas_oniric:
+    itemType: ARMOR
+    armorPiece: BOTAS
+    rarity: ONIRIC
+    material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 220.0
+  armadura_botas_ascended:
+    itemType: ARMOR
+    armorPiece: BOTAS
+    rarity: ASCENDED
+    material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+    baseDefense: 300.0
