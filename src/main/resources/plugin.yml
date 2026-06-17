@@ -1,0 +1,13 @@
+name: EternalReverie
+version: '1.0'
+main: com.nikoneko.eternalReverie.EternalReverie
+api-version: '1.21'
+depend: [Citizens]
+commands:
+  material-item:
+    usage: "/material-item <id> [amount]"
+  blueprint-item:
+    usage: "/blueprint-item <id> [amount]"
+  craft:
+    description: Abre la mesa de fabricación de equipamiento.
+    usage: /craft
