@@ -11,7 +11,7 @@ import org.bukkit.persistence.PersistentDataType
 object ItemFactory {
 
     fun createMaterialItem(type: MaterialType, amount: Int = 1): ItemStack {
-        val item = ItemStack(Material.IRON_NUGGET, amount.coerceAtLeast(1)) // placeholder visual, ajustar con resource pack/CMD
+        val item = ItemStack(Material.IRON_NUGGET, amount.coerceIn(1, 64)) // placeholder visual, ajustar con resource pack/CMD
         val meta = item.itemMeta
 
         meta.displayName(
@@ -35,11 +35,11 @@ object ItemFactory {
     fun createBlueprintItem(blueprintId: String, amount: Int = 1): ItemStack? {
         val data = BlueprintRegistry.get(blueprintId) ?: return null
 
-        val item = ItemStack(data.material, amount.coerceAtLeast(1))
+        val item = ItemStack(data.material, amount.coerceIn(1, 64))
         val meta = item.itemMeta
 
         val subtitle = when (data.itemType) {
-            ItemType.WEAPON -> TextFormat.capitalizeEnumName(data.family!!.name)
+            ItemType.WEAPON -> data.family!!.displayName
             ItemType.ARMOR -> TextFormat.capitalizeEnumName(data.armorPiece!!.name)
         }
 
@@ -59,7 +59,7 @@ object ItemFactory {
     }
 
     fun createCatalystItem(type: CatalystType, amount: Int = 1): ItemStack {
-        val item = ItemStack(Material.NETHER_STAR, amount.coerceAtLeast(1)) // placeholder visual
+        val item = ItemStack(Material.NETHER_STAR, amount.coerceIn(1, 64)) // placeholder visual
         val meta = item.itemMeta
 
         meta.displayName(

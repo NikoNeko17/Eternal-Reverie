@@ -25,7 +25,7 @@ class ItemCommand(val plugin: EternalReverie) : CommandExecutor, TabCompleter {
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String?>? {
         return when (args?.size) {
-            1 -> MaterialType.entries.map { it.name }.filter { it.startsWith(args[0].uppercase()) }
+            1 -> MaterialType.entries.map { it.name }.filter { it.startsWith(args[0], true) }
             2 -> listOf("[amount]")
             else -> emptyList()
         }

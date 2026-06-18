@@ -61,10 +61,7 @@ object BlueprintRegistry {
         // así el usuario puede editarlo en el server sin recompilar.
         val file = File(plugin.dataFolder, "blueprints.yml")
         if (!file.exists()) {
-            plugin.dataFolder.mkdirs()
-            plugin.getResource("blueprints.yml")?.use { input ->
-                file.outputStream().use { output -> input.copyTo(output) }
-            }
+            generateDefaults(plugin)
         }
 
         val config = YamlConfiguration.loadConfiguration(
@@ -97,17 +94,11 @@ object BlueprintRegistry {
             }
 
             val data: BlueprintData? = when (itemType) {
-
                 ItemType.WEAPON -> {
                     val familyStr = entry.getString("family")
                     val family = familyStr?.let { runCatching { WeaponFamily.valueOf(it) }.getOrNull() }
 
-                    if (family == null) {
-                        plugin.logger.warning(
-                            "Blueprint de arma '$id' inválido (family=$familyStr). Se omite."
-                        )
-                        null
-                    } else {
+                    if (family != null) {
                         BlueprintData(
                             id = id,
                             rarity = rarity,
@@ -116,19 +107,14 @@ object BlueprintRegistry {
                             family = family,
                             baseDamage = rarity.damage
                         )
-                    }
+                    } else null
                 }
-
                 ItemType.ARMOR -> {
                     val pieceStr = entry.getString("armorPiece")
+
                     val piece = pieceStr?.let { runCatching { ArmorPiece.valueOf(it) }.getOrNull() }
 
-                    if (piece == null) {
-                        plugin.logger.warning(
-                            "Blueprint de armadura '$id' inválido (armorPiece=$pieceStr). Se omite."
-                        )
-                        null
-                    } else {
+                    if (piece != null) {
                         BlueprintData(
                             id = id,
                             rarity = rarity,
@@ -137,7 +123,7 @@ object BlueprintRegistry {
                             armorPiece = piece,
                             baseDefense = rarity.defense
                         )
-                    }
+                    } else null
                 }
             }
 
@@ -181,13 +167,23 @@ object BlueprintRegistry {
 
         WeaponFamily.entries.forEach { family ->
             Rarity.entries.forEach { rarity ->
-
                 val id = "${family.name.uppercase()}_${rarity.name.uppercase()}"
-
                 val section = root.createSection(id)
-
+                section["itemType"] = ItemType.WEAPON.name
                 section["family"] = family.name
                 section["rarity"] = rarity.name
+                section["material"] = rarity.template.name
+            }
+        }
+
+        ArmorPiece.entries.forEach { piece ->
+            Rarity.entries.forEach { rarity ->
+                val id = "ARMOR_${piece.name.uppercase()}_${rarity.name.uppercase()}"
+                val section = root.createSection(id)
+                section["itemType"] = ItemType.ARMOR.name
+                section["armorPiece"] = piece.name
+                section["rarity"] = rarity.name
+                section["material"] = rarity.template.name
             }
         }
 

@@ -61,7 +61,8 @@ enum class WeaponFamily(
     val attackSpeed: Double,
     val mobility: Double,
     val reach: Double,
-    val item: Material
+    val item: Material,
+    val displayName: String
 ) {
 
     ESPADA_RECTA(
@@ -70,7 +71,8 @@ enum class WeaponFamily(
         1.6,
         0.0,
         3.0,
-        Material.IRON_SWORD
+        Material.IRON_SWORD,
+        "Espada Recta"
     ),
 
     SABLE(
@@ -79,7 +81,8 @@ enum class WeaponFamily(
         1.6,
         0.0,
         2.8,
-        Material.GOLDEN_SWORD
+        Material.GOLDEN_SWORD,
+        "Sable"
     ),
 
     MANDOBLE(
@@ -88,7 +91,8 @@ enum class WeaponFamily(
         0.6,
         -0.40,
         4.8,
-        Material.STONE_SWORD
+        Material.STONE_SWORD,
+        "Mandoble"
     ),
     
     LANZA_MILITAR(
@@ -97,7 +101,8 @@ enum class WeaponFamily(
         2.0,
         0.0,
         4.0,
-        Material.GOLDEN_HOE
+        Material.GOLDEN_HOE,
+        "Lanza Militar"
     ),
     
     PICA(
@@ -106,7 +111,8 @@ enum class WeaponFamily(
         3.4,
         -0.10,
         3.0,
-        Material.GOLDEN_HOE
+        Material.GOLDEN_HOE,
+        "Pica"
     ),
     
     ALABARDA(
@@ -115,7 +121,8 @@ enum class WeaponFamily(
         0.8,
         -0.25,
         4.0,
-        Material.GOLDEN_AXE
+        Material.GOLDEN_AXE,
+        "Alabarda"
     ),
     
     NUDILLERAS(
@@ -124,7 +131,8 @@ enum class WeaponFamily(
         2.6,
         0.4,
         2.0,
-        Material.PLAYER_HEAD
+        Material.PLAYER_HEAD,
+        "Nudilleras"
     ),
     
     GUANTELETES(
@@ -133,7 +141,8 @@ enum class WeaponFamily(
         2.0,
         0.2,
         2.5,
-        Material.PLAYER_HEAD
+        Material.PLAYER_HEAD,
+        "Guanteletes"
     ),
     
     GARRAS(
@@ -142,7 +151,8 @@ enum class WeaponFamily(
         3.4,
         0.4,
         2.0,
-        Material.GHAST_TEAR
+        Material.GHAST_TEAR,
+        "Garras"
     ),
     
     HACHA_DE_MANO(
@@ -151,7 +161,8 @@ enum class WeaponFamily(
         0.6,
         0.0,
         2.8,
-        Material.STONE_AXE
+        Material.STONE_AXE,
+        "Hacha de Mano"
     ),
     
     HACHA_DE_GUERRA(
@@ -160,7 +171,8 @@ enum class WeaponFamily(
         0.8,
         -0.1,
         3.5,
-        Material.IRON_AXE
+        Material.IRON_AXE,
+        "Hacha de Guerra"
     ),
     
     HACHA_BIPENNE(
@@ -169,7 +181,8 @@ enum class WeaponFamily(
         0.6,
         -0.25,
         4.0,
-        Material.IRON_AXE
+        Material.IRON_AXE,
+        "Hacha Bipenne"
     ),
     
     ARCO_CORTO(
@@ -178,7 +191,8 @@ enum class WeaponFamily(
         2.6,
         0.1,
         2.5,
-        Material.BOW
+        Material.BOW,
+        "Arco Corto"
     ),
     
     ARCO_LARGO(
@@ -187,7 +201,8 @@ enum class WeaponFamily(
         1.2,
         -0.1,
         4.0,
-        Material.BOW
+        Material.BOW,
+        "Arco Largo"
     ),
     
     ARCO_COMPUESTO(
@@ -196,7 +211,8 @@ enum class WeaponFamily(
         1.6,
         -0.25,
         3.5,
-        Material.BOW
+        Material.BOW,
+        "Arco Compuesto"
     ),
 
     PISTOLA(
@@ -205,7 +221,8 @@ enum class WeaponFamily(
         2.0,
         0.1,
         2.5,
-        Material.IRON_HOE
+        Material.IRON_HOE,
+        "Pistola"
     ),
     
     REVOLVER(
@@ -214,7 +231,8 @@ enum class WeaponFamily(
         1.2,
         0.0,
         3.0,
-        Material.STONE_HOE
+        Material.STONE_HOE,
+        "Revolver"
     ),
     
     CANON_DE_MANO(
@@ -223,7 +241,8 @@ enum class WeaponFamily(
         0.8,
         -0.1,
         3.5,
-        Material.IRON_HORSE_ARMOR
+        Material.IRON_HORSE_ARMOR,
+        "Cañón de Mano"
     ),
     
     ESCOPETA_DE_CORREDERA(
@@ -232,7 +251,8 @@ enum class WeaponFamily(
         0.8,
         -0.1,
         3.5,
-        Material.IRON_HORSE_ARMOR
+        Material.IRON_HORSE_ARMOR,
+        "Escopeta de Corredera"
     ),
     
     ESCOPETA_AUTOMATICA(
@@ -241,7 +261,8 @@ enum class WeaponFamily(
         2.0,
         0.0,
         2.8,
-        Material.DIAMOND_HORSE_ARMOR
+        Material.DIAMOND_HORSE_ARMOR,
+        "Escopeta Automática"
     ),
     
     ESCOPETA_DE_COMBATE(
@@ -250,7 +271,8 @@ enum class WeaponFamily(
         1.6,
         -0.1,
         3.0,
-        Material.GOLDEN_HORSE_ARMOR
+        Material.GOLDEN_HORSE_ARMOR,
+        "Escopeta de Combate"
     ),
     
     RIFLE_DE_COMBATE(
@@ -259,7 +281,8 @@ enum class WeaponFamily(
         1.6,
         0.0,
         3.0,
-        Material.IRON_HORSE_ARMOR
+        Material.IRON_HORSE_ARMOR,
+        "Rifle de Combate"
     ),
     
     CARABINA_DE_ASALTO(
@@ -268,7 +291,8 @@ enum class WeaponFamily(
         2.0,
         -0.1,
         2.8,
-      Material.IRON_HORSE_ARMOR
+      Material.IRON_HORSE_ARMOR,
+        "Carabina de Asalto"
     ),
 
     RIFLE_FRANCOTIRADOR(
@@ -277,7 +301,8 @@ enum class WeaponFamily(
         0.6,
         -0.4,
         4.8,
-        Material.IRON_HORSE_ARMOR
+        Material.IRON_HORSE_ARMOR,
+        "Francotirador"
     )
 }
 

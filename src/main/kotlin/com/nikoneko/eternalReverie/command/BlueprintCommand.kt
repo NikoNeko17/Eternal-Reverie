@@ -16,7 +16,7 @@ class BlueprintCommand(val plugin: EternalReverie) : CommandExecutor, TabComplet
             args.isEmpty()
             ) return false
 
-        val id = args[0].lowercase()
+        val id = args[0].uppercase()
         val amount = args.getOrNull(1)?.toInt() ?: 1
         val item = ItemFactory.createBlueprintItem(id, amount) ?: return false
         sender.inventory.addItem(item)
@@ -25,7 +25,7 @@ class BlueprintCommand(val plugin: EternalReverie) : CommandExecutor, TabComplet
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String?>? {
         return when (args?.size) {
-            1 -> BlueprintRegistry.all().map { it.id }
+            1 -> BlueprintRegistry.all().map { it.id }.filter { it.startsWith(args[0], true) }
             2 -> listOf("[amount]")
             else -> emptyList()
         }
