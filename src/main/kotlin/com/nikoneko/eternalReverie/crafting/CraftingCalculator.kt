@@ -66,7 +66,7 @@ object CraftingCalculator {
         val maxDurability = computeDurability(materials, blueprint)
         val family = requireNotNull(blueprint.family)
 
-        val item = ItemStack(org.bukkit.Material.PAPER)
+        val item = ItemStack(family.item)
         val meta = item.itemMeta
         meta.displayName(
             noItalic(Component.text("Vista Previa", NamedTextColor.YELLOW, TextDecoration.BOLD))
@@ -79,8 +79,8 @@ object CraftingCalculator {
                     NamedTextColor.GRAY
                 )
             ),
-            noItalic(Component.text("★".repeat(blueprint.rarity.stars), NamedTextColor.GOLD)),
-            noItalic(Component.text(""))
+            noItalic(Component.text("★".repeat(blueprint.rarity.stars), NamedTextColor.GRAY)),
+            noItalic(Component.text(" "))
         )
         lore.addAll(buildWeaponStatsLore(stats, maxDurability, maxDurability))
         lore.add(noItalic(Component.text("")))
@@ -103,7 +103,7 @@ object CraftingCalculator {
         val weaponName = WeaponNameBank.random(blueprint.rarity)
 
         // TODO: reemplazar por el Material/modelo visual real según WeaponFamily
-        val item = ItemStack(org.bukkit.Material.IRON_SWORD)
+        val item = ItemStack(family.item)
         val meta = item.itemMeta
 
         meta.displayName(

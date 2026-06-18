@@ -7,63 +7,57 @@ val localFile = rootProject.file(
 )
 
 if (localFile.exists()) {
-
     localFile.inputStream().use {
-
         localProperties.load(it)
-
     }
-
 }
 
-val pluginsPath =
+val pluginsPath = localProperties.getProperty("SERVER_PLUGINS_PATH")!!
 
-    localProperties.getProperty(
-        "SERVER_PLUGINS_PATH"
-    )
-
-val autoDeploy =
-
-    localProperties.getProperty(
-        "AUTO_DEPLOY"
-    )?.toBoolean() ?: false
+val autoDeploy = localProperties.getProperty("AUTO_DEPLOY")?.toBoolean() ?: false
 
 plugins {
     kotlin("jvm") version "2.0.21"
     id("com.gradleup.shadow") version "8.3.0"
     id("xyz.jpenilla.run-paper") version "2.3.1"
-
-    //id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
 }
 
 group = "com.nikoneko"
+
 version = "1.0"
 
 repositories {
     mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/") {
+    maven(
+        "https://repo.papermc.io/repository/maven-public/"
+    ) {
         name = "papermc-repo"
     }
+
     maven {
         name = "citizens-repo"
-        url = uri("https://maven.citizensnpcs.co/repo")
+        url = uri(
+            "https://maven.citizensnpcs.co/repo"
+        )
     }
-
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
-    compileOnly(files("libs/Citizens-2.0.35-b3598.jar"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-}
+    compileOnly(
+        "io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT"
+    )
 
-tasks {
-  runServer {
-    // Configure the Minecraft version for our task.
-    // This is the only required configuration besides applying the plugin.
-    // Your plugin's jar (or shadowJar if present) will be used automatically.
-    minecraftVersion("1.21")
-  }
+    compileOnly(
+        files(
+            "libs/Citizens-2.0.35-b3598.jar"
+        )
+    )
+
+    implementation(
+        kotlin(
+            "stdlib"
+        )
+    )
 }
 
 java {
@@ -78,29 +72,61 @@ kotlin {
     jvmToolchain(21)
 }
 
-tasks.build {
-    dependsOn("shadowJar")
-}
+tasks {
+    runServer {
+        minecraftVersion(
+            "1.21"
+        )
 
-tasks.jar {
-    doLast {
-        if (
-            autoDeploy &&
-            pluginsPath != null
-        ) {
-            copy {
-                from(tasks.jar)
-                into(pluginsPath)
+    }
+
+    jar {
+        doLast {
+            if (
+                autoDeploy
+            ) {
+                copy {
+                    from(
+                        archiveFile.get().asFile
+                    )
+                    into(
+                        pluginsPath
+                    )
+                }
             }
         }
     }
+
+    shadowJar{
+        archiveClassifier.set("")
+    }
+
+    processResources {
+        val props = mapOf(
+            "version" to version
+        )
+        inputs.properties(props)
+        filteringCharset = "UTF-8"
+        filesMatching(
+            "plugin.yml"
+        ) {
+            expand(props)
+        }
+    }
+
+    build{
+        finalizedBy("deployPlugin")
+    }
 }
 
-tasks.processResources {
-    val props = mapOf("version" to version)
-    inputs.properties(props)
-    filteringCharset = "UTF-8"
-    filesMatching("plugin.yml") {
-        expand(props)
-    }
+tasks.register<Copy>("deployPlugin") {
+
+    dependsOn(tasks.shadowJar)
+    onlyIf { autoDeploy }
+    from(
+        tasks.shadowJar.flatMap {
+            it.archiveFile
+        }
+    )
+    into(pluginsPath)
 }

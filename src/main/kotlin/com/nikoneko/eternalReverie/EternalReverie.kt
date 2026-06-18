@@ -21,6 +21,7 @@ class EternalReverie : JavaPlugin() {
     lateinit var citizensListener: CitizensHookListener
     override fun onEnable() {
         Keys.init(this)
+        BlueprintRegistry.generateDefaults(this)
         BlueprintRegistry.load(this)
         playerListeners = PlayerListeners(this)
         citizensListener = CitizensHookListener()
