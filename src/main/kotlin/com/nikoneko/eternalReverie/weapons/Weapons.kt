@@ -95,8 +95,8 @@ enum class WeaponFamily(
         WeaponClass.LANZA,
         0.9,
         2.0,
-        0,
-        4,
+        0.0,
+        4.0,
         Material.GOLDEN_HOE
     ),
     
@@ -263,7 +263,7 @@ enum class WeaponFamily(
     ),
     
     CARABINA_DE_ASALTO(
-        WeaponClass.RIFLE
+        WeaponClass.RIFLE,
         0.9,
         2.0,
         -0.1,

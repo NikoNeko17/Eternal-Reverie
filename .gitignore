@@ -8,6 +8,8 @@
 # Gradle
 .gradle/
 .kotlin/
+gradle.properties
+local.properties
 
 # Build
 build/

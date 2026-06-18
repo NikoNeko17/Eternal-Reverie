@@ -1,3 +1,33 @@
+import java.util.Properties
+
+val localProperties = Properties()
+
+val localFile = rootProject.file(
+    "local.properties"
+)
+
+if (localFile.exists()) {
+
+    localFile.inputStream().use {
+
+        localProperties.load(it)
+
+    }
+
+}
+
+val pluginsPath =
+
+    localProperties.getProperty(
+        "SERVER_PLUGINS_PATH"
+    )
+
+val autoDeploy =
+
+    localProperties.getProperty(
+        "AUTO_DEPLOY"
+    )?.toBoolean() ?: false
+
 plugins {
     kotlin("jvm") version "2.0.21"
     id("com.gradleup.shadow") version "8.3.0"
@@ -36,9 +66,16 @@ tasks {
   }
 }
 
-val targetJavaVersion = 21
+java {
+    toolchain {
+        languageVersion.set(
+            JavaLanguageVersion.of(21)
+        )
+    }
+}
+
 kotlin {
-    jvmToolchain(targetJavaVersion)
+    jvmToolchain(21)
 }
 
 tasks.build {
@@ -46,14 +83,15 @@ tasks.build {
 }
 
 tasks.jar {
-    from(configurations.runtimeClasspath.get().map {
-        if (it.isDirectory) it else zipTree(it)
-    })
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     doLast {
-        copy {
-            from(archiveFile)
-            into("/home/niko/Escritorio/Eternal Reverie/plugins/")
+        if (
+            autoDeploy &&
+            pluginsPath != null
+        ) {
+            copy {
+                from(tasks.jar)
+                into(pluginsPath)
+            }
         }
     }
 }
