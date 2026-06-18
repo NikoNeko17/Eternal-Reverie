@@ -1,134 +1,200 @@
 # Materiales
-## Filosofía de Diseño 
 
-Los materiales representan la materia prima utilizada en los procesos de Transmutación.
+## Objetivo
 
-A diferencia de un sistema tradicional de fabricación, los materiales no crean equipamiento desde cero. Su propósito es modificar, reforzar, transformar o alimentar objetos existentes mediante sistemas como la Forja y la Transmutación.
+Los Materiales representan los recursos utilizados durante la fabricación de equipamiento.
 
-Los materiales constituyen el cuerpo de un objeto.
+Su función principal es permitir la personalización de armas mediante la modificación de sus estadísticas, afinidades y propiedades especiales.
 
----
-## Rarezas 
-
-Todos los materiales comunes utilizan el mismo sistema de rarezas que el equipamiento.
-
-
-| Rareza      | Estrellas |
-| ----------- | --------- |
-| Común       | ★         |
-| Refinado    | ★★        |
-| Superior    | ★★★       |
-| Excepcional | ★★★★      |
-| Magistral   | ★★★★★     |
-| Onírico     | ★★★★★★    |
- 
-
-La rareza determina la calidad de las transmutaciones posibles y la progresión natural del jugador.
+Los Materiales constituyen uno de los principales motores de exploración, extracción y progresión del juego.
 
 ---
-## Materiales Comunes 
 
-Los materiales comunes constituyen la base de la economía de fabricación.
+## Filosofía
 
-#### Chatarra 
+Los Materiales no deben existir únicamente como requisitos de fabricación.
 
-Restos metálicos recuperados de equipamiento, estructuras y alterados.
+Cada Material debe representar una decisión.
 
-Uso principal:
+El jugador debe evaluar constantemente:
 
-- Fabricación de armas.
-- Reparaciones.
-- Mejoras físicas.
+- Riesgo.
+- Coste.
+- Disponibilidad.
+- Sinergias.
+- Necesidades de su build.
 
-#### Mineral 
+No existen materiales universalmente superiores.
 
-Materia prima utilizada para reforzar equipamiento.
-
-Uso principal:
-
-- Armas.
-- Armaduras.
-- Componentes estructurales.
-
-#### Tela 
-
-Material flexible utilizado en armaduras ligeras y componentes especializados.
-
-Uso principal:
-
-- Armaduras.
-- Vestimentas.
-- Componentes auxiliares.
-
-#### Madera 
-
-Material orgánico utilizado en armas, herramientas y estructuras.
-
-Uso principal:
-
-Arcos.
-Mangos.
-Componentes ligeros.
-
-#### Polvo 
-
-Materia residual concentrada.
-
-Uso principal:
-
-Catalizador de transmutación.
-Procesos avanzados.
-Conversión de recursos.
+Incluso los materiales más raros presentan ventajas y desventajas.
 
 ---
-## Metafluídos 
 
-Los Metafluídos son la sangre del sistema de Vestigios.
+## Categorías
 
-Representan energía residual capaz de alimentar construcciones metafísicas.
+Los Materiales se dividen en tres grandes grupos:
 
-No poseen identidad propia.
+### Materiales Generales
 
-No poseen núcleo.
+Modifican las estadísticas principales de un arma.
 
-Por sí solos no pueden originar un Vestigio Eterno.
+Pueden alterar:
 
-#### Obtención
-- Desmantelamiento de Vestigios Efímeros.
-- Recompensas especiales.
-- Actividades avanzadas.
-- Interpolación Efímera.
-- Paraíso Onírico.
+- Daño.
+- Velocidad de Ataque.
+- Movilidad.
+- Durabilidad.
 
-#### Uso
-- Fabricación de Vestigios Efímeros.
-- Transmutación avanzada.
-- Alimentación de sistemas especiales.
-- Evolución de contenido endgame.
+Todo Material General posee ventajas y desventajas.
 
 ---
-## Materiales Especiales 
 
-Algunos sistemas pueden requerir materiales únicos.
+### Materiales de Afinidad
 
-Estos materiales no siguen necesariamente el sistema de rarezas tradicional.
+Determinan las afinidades finales del arma.
+
+Cada Material aporta un peso asociado a una Afinidad específica.
+
+La distribución final de afinidades depende de la suma de todos los pesos utilizados durante la fabricación.
+
+Ejemplo:
+
+- Cable Energizado = Electricidad +10
+- Hongo Tóxico = Veneno +5
+
+Resultado:
+
+- 67% Electricidad
+- 33% Veneno
+
+---
+
+### Catalizadores
+
+Objetos excepcionales utilizados durante la fabricación.
+
+No modifican estadísticas directamente.
+
+Alteran las reglas de fabricación.
 
 Ejemplos:
 
-- Materiales de Jefe.
-- Materiales de Intercesor.
-- Componentes de eventos.
-- Catalizadores únicos. 
+- Habilitar una segunda afinidad.
+- Aumentar la rareza máxima posible.
+- Modificar propiedades especiales del arma.
+- Añadir efectos únicos.
 
-Su función es desbloquear contenido específico y servir como requisitos de progresión.
+Los Catalizadores suelen obtenerse mediante exploración avanzada, Alterados o contenido especial.
 
 ---
-## Relación con la Transmutación 
 
-Los materiales no crean objetos.
+## Rareza de Materiales
 
-Los materiales transforman objetos.
+Los Materiales poseen su propia rareza.
 
-La Transmutación utiliza materiales para alterar las propiedades de un equipamiento, mejorar su calidad o servir como recipiente para sistemas más complejos.
+La rareza determina principalmente:
 
-Los resultados dependen de los materiales utilizados, la rareza involucrada y los sistemas especiales aplicados durante el proceso.
+- Frecuencia de aparición.
+- Valor económico.
+- Potencial de modificación.
+
+No garantiza superioridad absoluta.
+
+### ★
+
+Materiales frecuentes en los Distritos.
+
+### ★★
+
+Materiales menos frecuentes obtenidos mediante exploración.
+
+### ★★★
+
+Materiales valiosos encontrados en zonas avanzadas de los Distritos.
+
+### ★★★★
+
+Materiales característicos de la Interpolación Efímera.
+
+### ★★★★★
+
+Materiales excepcionales obtenidos en contenido avanzado.
+
+### ★★★★★★
+
+Materiales exclusivos del Paraíso Onírico.
+
+---
+
+## Fabricación
+
+Toda arma se construye mediante:
+
+- Una Plantilla.
+- Materiales Generales.
+- Materiales de Afinidad.
+- Catalizadores opcionales.
+- Chatarra.
+
+La Plantilla determina:
+
+- Familia.
+- Subtipo.
+- Rareza máxima.
+
+Los Materiales determinan:
+
+- Estadísticas finales.
+- Afinidades finales.
+
+Los Catalizadores modifican las posibilidades de fabricación.
+
+---
+
+## Estadísticas
+
+Las estadísticas base provienen de:
+
+- La Plantilla.
+- La Rareza Final.
+
+Los Materiales actúan como modificadores sobre dichas estadísticas.
+
+Las armas mantienen siempre la identidad de su subtipo original.
+
+Una Escopeta seguirá comportándose como una Escopeta.
+
+Una Lanza seguirá comportándose como una Lanza.
+
+Los Materiales personalizan el comportamiento sin eliminar la identidad del arma.
+
+---
+
+## Chatarra
+
+La Chatarra representa la moneda principal utilizada durante la fabricación.
+
+Toda receta posee un coste base.
+
+Los Materiales utilizados aumentan dicho coste según su valor interno.
+
+La Chatarra puede obtenerse mediante:
+
+- Expediciones.
+- Venta de objetos.
+- Reciclaje de materiales.
+- Recompensas especiales.
+
+---
+
+## Filosofía de Diseño
+
+La fabricación debe recompensar la planificación.
+
+Los jugadores deben experimentar con diferentes combinaciones de Materiales para crear equipamiento adaptado a su estilo de juego.
+
+La exploración debe convertirse en una fuente constante de nuevas posibilidades de fabricación.
+
+Los Materiales no representan simples recursos.
+
+Representan decisiones.

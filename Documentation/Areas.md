@@ -37,6 +37,8 @@ Son recuerdos cristalizados de una humanidad que desapareció.
 
 Infraestructuras destruidas, edificios colapsados y espacios abandonados conforman la mayor parte de estas áreas.
 
+Además de equipamiento y recursos tradicionales, los Distritos contienen materiales asociados a sus temáticas y facciones.
+
 ### Objetivo de Diseño
 
 Introducir las mecánicas fundamentales del juego:
@@ -71,6 +73,10 @@ completamente al mundo de los Distritos ni al Paraíso Onírico.
 Cada facción lucha por recursos, territorio y supervivencia.
 
 Los entornos comienzan a deformarse y la hostilidad del mundo se vuelve evidente.
+
+La Interpolación Efímera introduce materiales imposibles de encontrar en los Distritos.
+
+Muchos de estos recursos son necesarios para fabricar equipamiento de rareza elevada.
 
 ### Objetivo de Diseño
 
@@ -107,6 +113,10 @@ Su arquitectura, paisajes y estructuras desafían la lógica convencional.
 Presentar el contenido avanzado del juego.
 
 Los enemigos poseen configuraciones más complejas y las recompensas alcanzan un nuevo nivel de calidad.
+
+Los materiales del Paraíso Onírico representan la forma más refinada y estable de los recursos oníricos.
+
+Son utilizados para la fabricación del equipamiento más avanzado conocido.
 
 ### Sensación
 
@@ -173,6 +183,14 @@ Cada nueva Área incrementa progresivamente:
 - La calidad de las recompensas.
 
 La progresión debe recompensar tanto la mejora del equipamiento como el conocimiento adquirido por el jugador.
+
+---
+## Recursos
+Cada Área posee materiales característicos.
+
+Los materiales encontrados durante las expediciones constituyen la principal fuente de fabricación de equipamiento.
+
+Explorar nuevas Áreas permite acceder a materiales más especializados y de mayor calidad.
 
 ---
 

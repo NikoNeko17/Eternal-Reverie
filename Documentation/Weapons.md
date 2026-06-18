@@ -78,7 +78,9 @@ Dos armas de igual rareza pueden cumplir funciones completamente distintas.
 
 ## Afinidades
 
-Las armas pueden poseer una o dos afinidades.
+Las afinidades de una arma son determinadas principalmente por los materiales utilizados durante su fabricación.
+
+Dependiendo de la rareza y complejidad del arma, una construcción puede contener una o más afinidades simultáneamente.
 
 Ejemplos:
 
@@ -231,6 +233,8 @@ El arma deja de consumir munición durante un breve período.
 
 ## Presentación
 
+El nombre y la descripción de un arma pueden variar según los materiales utilizados durante su fabricación.
+
 Toda arma muestra:
 
 - Nombre.
@@ -243,22 +247,28 @@ Toda arma muestra:
 Ejemplo:
 
 Machete de Rescate
-
 ★★
 
 Daño: 22
-
 Durabilidad: 180 / 180
-
 Afinidades:
-
-100% Física
+• 100% Física
 
 Habilidad:
-
 Parry
 
 "Fue diseñada para abrir caminos entre los escombros. Hoy abre caminos entre cosas mucho peores."
+
+---
+## Fabricación
+Las armas pueden fabricarse utilizando:
+
+- Una plantilla
+- Materiales estructurales
+- Materiales de afinidad
+- Catalizadores especiales
+
+Los materiales utilizados determinan las estadísticas, afinidades y características finales del arma.
 
 ---
 
