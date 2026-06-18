@@ -92,111 +92,111 @@ enum class WeaponFamily(
     ),
     
     LANZA_MILITAR(
-      WeaponClass.LANZA,
-      0.9,
-      2.0,
-      0,
-      4,
-      Material.GOLDEN_HOE
+        WeaponClass.LANZA,
+        0.9,
+        2.0,
+        0,
+        4,
+        Material.GOLDEN_HOE
     ),
     
     PICA(
-      WeaponClass.LANZA,
-      0.8,
-      3.4,
-      -0.10,
-      3.0,
-      Material.GOLDEN_HOE
+        WeaponClass.LANZA,
+        0.8,
+        3.4,
+        -0.10,
+        3.0,
+        Material.GOLDEN_HOE
     ),
     
     ALABARDA(
-      WeaponClass.LANZA,
-      1.35,
-      0.8,
-      -0.25,
-      4.0,
-      Material.GOLDEN_AXE
+        WeaponClass.LANZA,
+        1.35,
+        0.8,
+        -0.25,
+        4.0,
+        Material.GOLDEN_AXE
     ),
     
     NUDILLERAS(
-      WeaponClass.GUANTES,
-      0.8,
-      2.6,
-      0.4,
-      2.0,
-      Material.PLAYER_HEAD
+        WeaponClass.GUANTES,
+        0.8,
+        2.6,
+        0.4,
+        2.0,
+        Material.PLAYER_HEAD
     ),
     
     GUANTELETES(
-      WeaponClass.GUANTES,
-      0.9,
-      2.0,
-      0.2,
-      2.5,
-      Material.PLAYER_HEAD
+        WeaponClass.GUANTES,
+        0.9,
+        2.0,
+        0.2,
+        2.5,
+        Material.PLAYER_HEAD
     ),
     
     GARRAS(
-      WeaponClass.GUANTES,
-      0.75,
-      3.4,
-      0.4,
-      2.0,
-      Material.GHAST_TEAR
+        WeaponClass.GUANTES,
+        0.75,
+        3.4,
+        0.4,
+        2.0,
+        Material.GHAST_TEAR
     ),
     
     HACHA_DE_MANO(
-      WeaponClass.HACHA,
-      1.15,
-      0.6,
-      0.0,
-      2.8,
-      Material.STONE_AXE
+        WeaponClass.HACHA,
+        1.15,
+        0.6,
+        0.0,
+        2.8,
+        Material.STONE_AXE
     ),
     
     HACHA_DE_GUERRA(
-      WeaponClass.HACHA,
-      1.35,
-      0.8,
-      -0.1,
-      3.5,
-      Material.IRON_AXE
+        WeaponClass.HACHA,
+        1.35,
+        0.8,
+        -0.1,
+        3.5,
+        Material.IRON_AXE
     ),
     
     HACHA_BIPENNE(
-      WeaponClass.HACHA,
-      1.6,
-      0.6,
-      -0.25,
-      4.0,
-      Material.IRON_AXE
+        WeaponClass.HACHA,
+        1.6,
+        0.6,
+        -0.25,
+        4.0,
+        Material.IRON_AXE
     ),
     
     ARCO_CORTO(
-      WeaponClass.ARCO,
-      0.9,
-      2.6,
-      0.1,
-      2.5,
-      Material.BOW
+        WeaponClass.ARCO,
+        0.9,
+        2.6,
+        0.1,
+        2.5,
+        Material.BOW
     ),
     
     ARCO_LARGO(
-      WeaponClass.ARCO,
-      1.0,
-      1.2,
-      -0.1,
-      4.0,
-      Material.BOW
+        WeaponClass.ARCO,
+        1.0,
+        1.2,
+        -0.1,
+        4.0,
+        Material.BOW
     ),
     
     ARCO_COMPUESTO(
-      WeaponClass.ARCO,
-      1.15,
-      1.6,
-      -0.25,
-      3.5,
-      Material.BOW
+        WeaponClass.ARCO,
+        1.15,
+        1.6,
+        -0.25,
+        3.5,
+        Material.BOW
     ),
 
     PISTOLA(
@@ -218,55 +218,56 @@ enum class WeaponFamily(
     ),
     
     CANON_DE_MANO(
-      WeaponClass.PISTOLA,
-      1.35,
-      0.8,
-      -0.1,
-      3.5,
-      Material.IRON_HORSE_ARMOR
+        WeaponClass.PISTOLA,
+        1.35,
+        0.8,
+        -0.1,
+        3.5,
+        Material.IRON_HORSE_ARMOR
     ),
     
     ESCOPETA_DE_CORREDERA(
-      WeaponClass.ESCOPETA,
-      1.35,
-      0.8,
-      -0.1,
-      3.5,
-      Material.IRON_HORSE_ARMOR
+        WeaponClass.ESCOPETA,
+        1.35,
+        0.8,
+        -0.1,
+        3.5,
+        Material.IRON_HORSE_ARMOR
     ),
     
     ESCOPETA_AUTOMATICA(
-      WeaponClass.ESCOPETA,
-      1.0,
-      2.0,
-      0.0,
-      2.8,
-      Material.DIAMOND_HORSE_ARMOR
+        WeaponClass.ESCOPETA,
+        1.0,
+        2.0,
+        0.0,
+        2.8,
+        Material.DIAMOND_HORSE_ARMOR
     ),
     
     ESCOPETA_DE_COMBATE(
-      WeaponClass.ESCOPETA,
-      1.15,
-      1.6,
-      -0.1,
-      3.0,
-      Material.GOLDEN_HORSE_ARMOR
+        WeaponClass.ESCOPETA,
+        1.15,
+        1.6,
+        -0.1,
+        3.0,
+        Material.GOLDEN_HORSE_ARMOR
     ),
     
     RIFLE_DE_COMBATE(
-      WeaponClass.RIFLE,
-      1.0,
-      1.6,
-      0.0,
-      3.0,
-      Material.IRON_HORSE_ARMOR
+        WeaponClass.RIFLE,
+        1.0,
+        1.6,
+        0.0,
+        3.0,
+        Material.IRON_HORSE_ARMOR
     ),
     
     CARABINA_DE_ASALTO(
-      0.9,
-      2.0,
-      -0.1,
-      2.8,
+        WeaponClass.RIFLE
+        0.9,
+        2.0,
+        -0.1,
+        2.8,
       Material.IRON_HORSE_ARMOR
     ),
 
