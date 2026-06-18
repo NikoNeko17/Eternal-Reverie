@@ -61,7 +61,7 @@ No se destruyen al morir y constituyen la base permanente de una configuración.
 
 Los Vestigios Efímeros carecen de Núcleo.
 
-Son construcciones alimentadas únicamente por Metafluídos.
+Son construcciones alimentadas únicamente por Esencia.
 
 Se destruyen al morir durante una expedición y permiten configuraciones temporales y experimentales.
 
@@ -74,13 +74,34 @@ No existe una diferencia inherente de poder entre ambos.
 
 Los Núcleos representan la identidad de un Vestigio.
 
-Mientras que los Metafluídos constituyen la energía que alimenta un Vestigio, los Núcleos representan su esencia.
+Mientras que la Esencia constituye la energía que alimenta un Vestigio, los Núcleos representan su esencia.
 
 Los Vestigios Efímeros no poseen Núcleo.
 
 Los Vestigios Eternos contienen un Núcleo compatible con su naturaleza.
 
 Los Núcleos son recursos extremadamente valiosos utilizados durante procesos avanzados de Transmutación.
+
+---
+
+## Esencia
+
+La Esencia representa la energía residual extraída del Paraíso Onírico.
+
+Constituye el recurso principal utilizado por los sistemas de Vestigios y Transmutación.
+
+La Esencia no posee identidad propia. Su función es alimentar procesos de síntesis, mejora y reconstrucción.
+
+Los Vestigios Efímeros existen únicamente gracias a la Esencia, mientras que los Vestigios Eternos utilizan la Esencia como combustible secundario para procesos de mejora y mantenimiento.
+
+La Esencia puede obtenerse mediante:
+
+- Reciclaje de Vestigios.
+- Alterados.
+- Alterados de Élite.
+- Intercesores.
+- Eventos especiales.
+- Recompensas de expedición.
 
 ---
 ## Niveles
@@ -107,9 +128,9 @@ Otros pueden alcanzar niveles superiores dependiendo de su diseño.
 
 Los Vestigios pueden reciclarse dentro del Athanor.
 
-Los Vestigios Efímeros producen Metafluídos al ser reciclados.
+Los Vestigios Efímeros producen Esencia al ser reciclados.
 
-Los Vestigios Eternos pueden producir Metafluídos y, bajo condiciones específicas, permitir la recuperación de su Núcleo.
+Los Vestigios Eternos pueden producir Esencia y, bajo condiciones específicas, permitir la recuperación de su Núcleo.
 
 Los duplicados siempre poseen valor mediante este sistema.
 
@@ -219,7 +240,7 @@ Los duplicados siempre poseen valor mediante este sistema.
 
 Los Vestigios reciclados proporcionan recursos utilizados por el sistema de Transmutación.
 
-La Transmutación utiliza Materiales, Metafluídos y, en procesos avanzados, Núcleos.
+La Transmutación utiliza Materiales, Esencia y, en procesos avanzados, Núcleos.
 
 Los resultados dependen de los componentes utilizados y de las afinidades involucradas durante el proceso.
 
@@ -227,11 +248,32 @@ La Transmutación favorece la experimentación y el descubrimiento antes que las
 
 ---
 
+## Sinergias
+
+Los Vestigios están diseñados para interactuar con múltiples sistemas de Eternal Reverie.
+
+Un mismo Vestigio puede modificar simultáneamente:
+
+- Armas.
+- Armaduras.
+- Afinidades.
+- Alterados.
+- Intercesores.
+- Expediciones.
+- Economía.
+- Sistemas de extracción.
+
+Las sinergias deben incentivar la construcción de configuraciones coherentes antes que la acumulación indiscriminada de bonificaciones.
+
+Las configuraciones más efectivas son aquellas que logran complementar varios sistemas al mismo tiempo.
+
+---
+
 ## Filosofía de Diseño
 
 Los Vestigios deben incentivar la creatividad y la adaptación.
 
-Los Metafluídos representan la energía que alimenta un Vestigio, mientras que los Núcleos representan su identidad.
+La Esencia representan la energía que alimenta un Vestigio, mientras que los Núcleos representan su identidad.
 
 Un Vestigio interesante es preferible a un Vestigio simplemente poderoso.
 

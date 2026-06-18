@@ -53,7 +53,7 @@ object CraftingCalculator {
         val attackSpeed = (1 + totalSpeedBonus) * family.attackSpeed
         val mobility = (1 + totalMobilityBonus) * family.mobility
 
-        val affinities = computeAffinities(materials)
+        val affinities = computeAffinities(materials, weaponAffinityLimit(blueprint.rarity))
 
         return ComputedWeaponStats(damage, attackSpeed, mobility, affinities)
     }
@@ -66,7 +66,7 @@ object CraftingCalculator {
         val maxDurability = computeDurability(materials, blueprint)
         val family = requireNotNull(blueprint.family)
 
-        val item = ItemStack(family.item)
+        val item = ItemStack(org.bukkit.Material.PAPER)
         val meta = item.itemMeta
         meta.displayName(
             noItalic(Component.text("Vista Previa", NamedTextColor.YELLOW, TextDecoration.BOLD))
@@ -79,8 +79,8 @@ object CraftingCalculator {
                     NamedTextColor.GRAY
                 )
             ),
-            noItalic(Component.text("★".repeat(blueprint.rarity.stars), NamedTextColor.GRAY)),
-            noItalic(Component.text(" "))
+            noItalic(Component.text("★".repeat(blueprint.rarity.stars), NamedTextColor.GOLD)),
+            noItalic(Component.text(""))
         )
         lore.addAll(buildWeaponStatsLore(stats, maxDurability, maxDurability))
         lore.add(noItalic(Component.text("")))
@@ -100,10 +100,10 @@ object CraftingCalculator {
         val stats = computeWeapon(blueprint, materials)
         val family = requireNotNull(blueprint.family)
         val maxDurability = computeDurability(materials, blueprint)
-        val weaponName = WeaponNameBank.random(blueprint.rarity)
+        val weaponName = WeaponNameBank.random(blueprint.rarity, stats.affinities.map { it.first })
 
         // TODO: reemplazar por el Material/modelo visual real según WeaponFamily
-        val item = ItemStack(family.item)
+        val item = ItemStack(org.bukkit.Material.IRON_SWORD)
         val meta = item.itemMeta
 
         meta.displayName(
@@ -208,7 +208,8 @@ object CraftingCalculator {
         val primaryAttributeValue: Double,
         val secondaryAttributeName: String,
         val secondaryAttributeValue: Double,
-        val mobilityBonus: Double = 0.0
+        val mobilityBonus: Double = 0.0,
+        val affinities: List<Pair<Affinity, Double>> = emptyList()
     )
 
     // Cada pieza solo "lee" 2 de los 6 atributos de MaterialData; el resto se ignora
@@ -224,6 +225,7 @@ object CraftingCalculator {
 
         val totalDefenseBonus = materials.sumOf { it.data.armorDefenseBonus }
         val defense = baseDefense * (1 + totalDefenseBonus) * piece.pieceMultiplier
+        val affinities = computeAffinities(materials, armorAffinityLimit(blueprint.rarity))
 
         return when (piece) {
             ArmorPiece.CASCO -> ComputedArmorStats(
@@ -231,7 +233,8 @@ object CraftingCalculator {
                 primaryAttributeName = "Precisión",
                 primaryAttributeValue = materials.sumOf { it.data.precision },
                 secondaryAttributeName = "Destreza",
-                secondaryAttributeValue = materials.sumOf { it.data.dexterity }
+                secondaryAttributeValue = materials.sumOf { it.data.dexterity },
+                affinities = affinities
             )
 
             ArmorPiece.PECHERA -> ComputedArmorStats(
@@ -239,7 +242,8 @@ object CraftingCalculator {
                 primaryAttributeName = "Vitalidad",
                 primaryAttributeValue = materials.sumOf { it.data.vitality },
                 secondaryAttributeName = "Fuerza",
-                secondaryAttributeValue = materials.sumOf { it.data.strength }
+                secondaryAttributeValue = materials.sumOf { it.data.strength },
+                affinities = affinities
             )
 
             ArmorPiece.GREBAS -> ComputedArmorStats(
@@ -247,7 +251,8 @@ object CraftingCalculator {
                 primaryAttributeName = "Resistencia",
                 primaryAttributeValue = materials.sumOf { it.data.resistance },
                 secondaryAttributeName = "Suerte",
-                secondaryAttributeValue = materials.sumOf { it.data.luck }
+                secondaryAttributeValue = materials.sumOf { it.data.luck },
+                affinities = affinities
             )
 
             ArmorPiece.BOTAS -> ComputedArmorStats(
@@ -256,7 +261,8 @@ object CraftingCalculator {
                 primaryAttributeValue = materials.sumOf { it.data.armorMobilityBonus } * 100.0,
                 secondaryAttributeName = "",
                 secondaryAttributeValue = 0.0,
-                mobilityBonus = materials.sumOf { it.data.armorMobilityBonus }
+                mobilityBonus = materials.sumOf { it.data.armorMobilityBonus },
+                affinities = affinities
             )
         }
     }
@@ -391,7 +397,21 @@ object CraftingCalculator {
                 )
             )
         }
-
+        
+        if (stats.affinities.isNotEmpty()) {
+            lines.add(noItalic(Component.text(" ")))
+            lines.add(noItalic(Component.text("Afinidades", NamedTextColor.WHITE)))
+            for ((affinity, pct) in stats.affinities) {
+                lines.add(
+                    noItalic(
+                        Component.text("• ", NamedTextColor.DARK_GRAY)
+                            .append(Component.text(affinityDisplayName(affinity), affinityColor(affinity)))
+                            .append(Component.text(" %.1f%%".format(pct), NamedTextColor.WHITE))
+                    )
+                )
+            }
+        }
+        
         return lines
     }
 
@@ -399,7 +419,10 @@ object CraftingCalculator {
     //  COMPARTIDO
     // ============================================================
 
-    private fun computeAffinities(materials: List<MaterialType>): List<Pair<Affinity, Double>> {
+    private fun computeAffinities(
+        materials: List<MaterialType>,
+        maxAffinities: Int
+    ): List<Pair<Affinity, Double>> {
         val weights = mutableMapOf<Affinity, Int>()
 
         for (material in materials) {
@@ -408,12 +431,35 @@ object CraftingCalculator {
             weights[affinity] = (weights[affinity] ?: 0) + weight
         }
 
-        val totalWeight = weights.values.sum()
+        if (weights.isEmpty()) return emptyList()
+
+        // Solo se quedan las N afinidades de mayor peso permitidas por la rareza;
+        // el resto se ignora (no se renormaliza con ellas, no cuentan para nada).
+        val topN = weights.entries
+            .sortedByDescending { it.value }
+            .take(maxAffinities)
+
+        val totalWeight = topN.sumOf { it.value }
         if (totalWeight <= 0) return emptyList()
 
-        return weights.entries
+        return topN
             .map { (affinity, w) -> affinity to (w.toDouble() / totalWeight) * 100.0 }
             .sortedByDescending { it.second }
+    }
+
+    // Máximo de afinidades distintas mostradas en un arma, según rareza del Blueprint.
+    private fun weaponAffinityLimit(rarity: Rarity): Int = when (rarity) {
+        Rarity.COMMON, Rarity.RARE -> 0
+        Rarity.EPIC, Rarity.LEGENDARY, Rarity.MYTHIC -> 1
+        Rarity.ONIRIC, Rarity.ASCENDED -> 2
+    }
+
+    // Máximo de afinidades distintas mostradas en una armadura, según rareza del Blueprint.
+    private fun armorAffinityLimit(rarity: Rarity): Int = when (rarity) {
+        Rarity.COMMON -> 0
+        Rarity.RARE, Rarity.EPIC -> 1
+        Rarity.LEGENDARY, Rarity.MYTHIC -> 2
+        Rarity.ONIRIC, Rarity.ASCENDED -> 3
     }
 
     private fun noItalic(c: Component) = c.decoration(TextDecoration.ITALIC, false)
