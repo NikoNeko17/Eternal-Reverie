@@ -9,15 +9,18 @@ import java.io.InputStreamReader
 
 enum class Rarity(
     val stars: Int,
-    val durability: Int
+    val durability: Int,
+    val defense: Double,
+    val damage: Double,
+    val template: Material
 ) {
-    COMMON(1, 50),
-    RARE(2, 75),
-    EPIC(3, 110),
-    LEGENDARY(4, 135),
-    MYTHIC(5, 160),
-    ONIRIC(6, 210),
-    ASCENDED(7, 260)
+    COMMON(1, 50, 20.0, 12.0, Material.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE),
+    RARE(2, 75, 40.0, 26.0, Material.COAST_ARMOR_TRIM_SMITHING_TEMPLATE),
+    EPIC(3, 110, 70.0, 44.0, Material.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE),
+    LEGENDARY(4, 135, 110.0, 62.0, Material.WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE),
+    MYTHIC(5, 160, 160.0, 88.0, Material.WARD_ARMOR_TRIM_SMITHING_TEMPLATE),
+    ONIRIC(6, 210, 220.0, 122.0, Material.EYE_ARMOR_TRIM_SMITHING_TEMPLATE),
+    ASCENDED(7, 260, 300.0, 152.0, Material.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE)
 }
 
 enum class ItemType {
@@ -97,44 +100,42 @@ object BlueprintRegistry {
 
                 ItemType.WEAPON -> {
                     val familyStr = entry.getString("family")
-                    val baseDamage = entry.getDouble("baseDamage", -1.0)
                     val family = familyStr?.let { runCatching { WeaponFamily.valueOf(it) }.getOrNull() }
 
-                    if (family == null || baseDamage < 0.0) {
+                    if (family == null) {
                         plugin.logger.warning(
-                            "Blueprint de arma '$id' inválido (family=$familyStr, baseDamage=$baseDamage). Se omite."
+                            "Blueprint de arma '$id' inválido (family=$familyStr). Se omite."
                         )
                         null
                     } else {
                         BlueprintData(
                             id = id,
                             rarity = rarity,
-                            material = material,
+                            material = rarity.template,
                             itemType = itemType,
                             family = family,
-                            baseDamage = baseDamage
+                            baseDamage = rarity.damage
                         )
                     }
                 }
 
                 ItemType.ARMOR -> {
                     val pieceStr = entry.getString("armorPiece")
-                    val baseDefense = entry.getDouble("baseDefense", -1.0)
                     val piece = pieceStr?.let { runCatching { ArmorPiece.valueOf(it) }.getOrNull() }
 
-                    if (piece == null || baseDefense < 0.0) {
+                    if (piece == null) {
                         plugin.logger.warning(
-                            "Blueprint de armadura '$id' inválido (armorPiece=$pieceStr, baseDefense=$baseDefense). Se omite."
+                            "Blueprint de armadura '$id' inválido (armorPiece=$pieceStr). Se omite."
                         )
                         null
                     } else {
                         BlueprintData(
                             id = id,
                             rarity = rarity,
-                            material = material,
+                            material = rarity.template,
                             itemType = itemType,
                             armorPiece = piece,
-                            baseDefense = baseDefense
+                            baseDefense = rarity.defense
                         )
                     }
                 }
@@ -151,6 +152,50 @@ object BlueprintRegistry {
     fun get(id: String): BlueprintData? = byId[id]
 
     fun all(): Collection<BlueprintData> = byId.values
+
+    fun generateDefaults(plugin: EternalReverie) {
+
+        val file = File(
+            plugin.dataFolder,
+            "blueprints.yml"
+        )
+
+        plugin.dataFolder.mkdirs()
+
+        // Backup
+
+        if (file.exists()) {
+            file.copyTo(
+                File(
+                    plugin.dataFolder,
+                    "blueprints.yml.bak"
+                ),
+                overwrite = true
+            )
+        }
+
+        val yaml = YamlConfiguration()
+        val root = yaml.createSection(
+            "blueprints"
+        )
+
+        WeaponFamily.entries.forEach { family ->
+            Rarity.entries.forEach { rarity ->
+
+                val id = "${family.name.uppercase()}_${rarity.name.uppercase()}"
+
+                val section = root.createSection(id)
+
+                section["family"] = family.name
+                section["rarity"] = rarity.name
+            }
+        }
+
+        yaml.save(file)
+        plugin.logger.info(
+            "blueprints.yml generado."
+        )
+    }
 
     fun findWeaponBy(family: WeaponFamily, rarity: Rarity): BlueprintData? =
         byId.values.firstOrNull { it.itemType == ItemType.WEAPON && it.family == family && it.rarity == rarity }
