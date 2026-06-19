@@ -79,7 +79,7 @@ class BulletProjectile(
     }
 
     override fun onHit(target: LivingEntity) {
-        target.damage(damage, shooter)
+        target.damage(0.0, shooter)
         destroy()
     }
 

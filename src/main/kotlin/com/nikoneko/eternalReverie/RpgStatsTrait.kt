@@ -1,5 +1,6 @@
 package com.nikoneko.eternalReverie
 
+import com.nikoneko.eternalReverie.listeners.PlayerStatsListener
 import net.citizensnpcs.api.persistence.Persist
 import net.citizensnpcs.api.trait.Trait
 import net.citizensnpcs.api.trait.TraitName

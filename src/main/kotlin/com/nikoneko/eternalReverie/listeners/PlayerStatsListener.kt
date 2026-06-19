@@ -1,6 +1,7 @@
 package com.nikoneko.eternalReverie.listeners
 
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent
+import com.nikoneko.eternalReverie.player.PlayerStats
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -21,7 +22,8 @@ class PlayerStatsListener : Listener {
             EquipmentSlot.HEAD, EquipmentSlot.CHEST,
             EquipmentSlot.LEGS, EquipmentSlot.FEET
         )
-        val touchesArmor = event.equipmentChanges.keys.any { it in relevantSlots }
+        val touchesArmor = event.equipmentChanges.keys.any {
+            it in relevantSlots }
         if (!touchesArmor) return
 
         PlayerStats.initializeIfAbsent(entity)

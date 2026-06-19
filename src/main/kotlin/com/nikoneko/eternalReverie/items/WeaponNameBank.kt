@@ -1,6 +1,6 @@
 package com.nikoneko.eternalReverie.items
 
-import com.nikoneko.eternalReverie.weapons.Weapons.Affinity
+import com.nikoneko.eternalReverie.weapons.Affinity
 import kotlin.random.Random
 
 enum class Gender {

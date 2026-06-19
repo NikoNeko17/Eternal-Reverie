@@ -1,8 +1,11 @@
 package com.nikoneko.eternalReverie.weapons.firearms.projectiles
 
+import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.isCustomItem
 import com.nikoneko.eternalReverie.items.Keys
+import com.nikoneko.eternalReverie.player.PlayerStats
 import com.nikoneko.eternalReverie.weapons.firearms.WeaponStateManager
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import java.util.UUID
@@ -12,45 +15,64 @@ object ActionBarManager {
         player: Player
     ) {
 
-        val itemMeta = player.inventory.itemInMainHand.itemMeta ?: return
-        val weaponUuid = UUID.fromString(itemMeta.persistentDataContainer.get(Keys.INSTANCE_UUID, PersistentDataType.STRING))
-        val attackSpeed = itemMeta.persistentDataContainer.get(Keys.ATTACK_SPEED, PersistentDataType.DOUBLE) ?: return
+        val item = player.inventory.itemInMainHand
+        val itemMeta = item.itemMeta
 
-        val progress = WeaponStateManager
-            .getCooldownProgress(
-                player,
-                weaponUuid,
-                attackSpeed
+
+        if (isCustomItem(item)) {
+            val weaponUuid = UUID.fromString(itemMeta.persistentDataContainer.get(Keys.INSTANCE_UUID, PersistentDataType.STRING))
+            val attackSpeed = itemMeta.persistentDataContainer.get(Keys.ATTACK_SPEED, PersistentDataType.DOUBLE) ?: return
+
+            val progress = WeaponStateManager
+                .getCooldownProgress(
+                    player,
+                    weaponUuid,
+                    attackSpeed
+                )
+
+            val filled =
+                (progress * 10)
+                    .toInt()
+
+            val empty =
+                10 - filled.coerceIn(0, 10)
+
+            val bar =
+
+                "█".repeat(filled) +
+
+                        "░".repeat(empty)
+
+            val message =
+
+                if (progress == 1.0)
+                    "$bar ✓"
+                else
+                    bar
+
+
+
+            if (progress > 1.0) {
+                WeaponStateManager.clearWeapon(player, weaponUuid)
+                return
+            }
+            player.sendActionBar(
+                Component.text(message)
             )
+        } else {
+            val health: Pair<Double, Double> =
+                Pair(player.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: 0.0,
+                player.persistentDataContainer.get(Keys.MAX_HP, PersistentDataType.DOUBLE) ?: 0.0)
 
-        val filled =
-            (progress * 10)
-                .toInt()
+            val stamina: Pair<Double, Double> =
+                Pair(player.persistentDataContainer.get(Keys.CURRENT_STAMINA, PersistentDataType.DOUBLE) ?: 0.0,
+                    player.persistentDataContainer.get(Keys.MAX_STAMINA, PersistentDataType.DOUBLE) ?: 0.0)
 
-        val empty =
-            10 - filled.coerceIn(0, 10)
-
-        val bar =
-
-            "█".repeat(filled) +
-
-                    "░".repeat(empty)
-
-        val message =
-
-            if (progress == 1.0)
-                "$bar ✓"
-            else
-                bar
-
-
-
-        if (progress > 1.0) {
-            WeaponStateManager.clearWeapon(player, weaponUuid)
-            return
+            player.sendActionBar(
+                Component.text("%.0f/%.0f ❦    ".format(health.first, health.second), NamedTextColor.RED)
+                    .append(Component.text("%.0f/%.0f ⚡".format(stamina.first, stamina.second), NamedTextColor.YELLOW))
+            )
         }
-        player.sendActionBar(
-            Component.text(message)
-        )
+
     }
 }

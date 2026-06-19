@@ -1,8 +1,6 @@
 package com.nikoneko.eternalReverie.crafting
 
 import com.nikoneko.eternalReverie.items.ItemFactory
-import com.nikoneko.eternalReverie.items.Keys
-import com.nikoneko.eternalReverie.materials.MaterialType
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player

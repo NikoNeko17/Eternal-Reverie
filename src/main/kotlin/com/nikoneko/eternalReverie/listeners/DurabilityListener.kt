@@ -17,6 +17,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
 import org.bukkit.persistence.PersistentDataType
 import com.nikoneko.eternalReverie.EternalReverie
+import org.bukkit.Sound
+import kotlin.properties.Delegates
 
 class DurabilityListener(private val plugin: EternalReverie) : Listener {
 
@@ -59,6 +61,7 @@ class DurabilityListener(private val plugin: EternalReverie) : Listener {
             val broke = decrementDurability(weapon)
             if (broke) {
                 attacker.inventory.setItemInMainHand(null)
+                attacker.playSound(attacker.location, Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f)
                 attacker.sendMessage(
                     Component.text("Tu arma se ha roto.", NamedTextColor.RED)
                         .decoration(TextDecoration.ITALIC, false)
@@ -94,6 +97,7 @@ class DurabilityListener(private val plugin: EternalReverie) : Listener {
                     2 -> defender.inventory.leggings = null
                     3 -> defender.inventory.boots = null
                 }
+                defender.playSound(defender.location, Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f)
                 defender.sendMessage(
                     Component.text("Una pieza de tu armadura se ha roto.", NamedTextColor.RED)
                         .decoration(TextDecoration.ITALIC, false)
@@ -121,14 +125,18 @@ class DurabilityListener(private val plugin: EternalReverie) : Listener {
          * Descuenta 1 de durabilidad custom y actualiza la barra vanilla.
          * Devuelve true si la durabilidad llegó a 0 (el ítem debe destruirse).
          */
-        fun decrementDurability(item: ItemStack): Boolean {
+        fun decrementDurability(item: ItemStack, amount: Int = 1, percentage: Double? = null): Boolean {
             val meta = item.itemMeta ?: return false
             val pdc = meta.persistentDataContainer
 
             val current = pdc.get(Keys.DURABILITY, PersistentDataType.INTEGER) ?: return false
             val max = pdc.get(Keys.MAX_DURABILITY, PersistentDataType.INTEGER) ?: return false
 
-            val newDurability = (current - 1).coerceAtLeast(0)
+            val newDurability : Int = if (percentage == null) {
+                (current - amount).coerceAtLeast(0)
+            } else {
+                (current - (max * percentage.coerceIn(0.0,1.0).toInt())).coerceAtLeast(0)
+            }
             pdc.set(Keys.DURABILITY, PersistentDataType.INTEGER, newDurability)
 
             // Actualizar barra vanilla: (actual/máximo) × maxVanilla del tipo de ítem

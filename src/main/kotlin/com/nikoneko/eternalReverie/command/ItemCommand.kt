@@ -1,7 +1,7 @@
 package com.nikoneko.eternalReverie.command
 
 import com.nikoneko.eternalReverie.EternalReverie
-import com.nikoneko.eternalReverie.materials.MaterialType
+import com.nikoneko.eternalReverie.items.MaterialType
 import com.nikoneko.eternalReverie.items.ItemFactory
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -23,9 +23,14 @@ class ItemCommand(val plugin: EternalReverie) : CommandExecutor, TabCompleter {
         return true
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String?>? {
-        return when (args?.size) {
-            1 -> MaterialType.entries.map { it.name }.filter { it.startsWith(args[0], true) }
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String> {
+        return when (args.size) {
+            1 -> MaterialType.entries.map { it.name }.filter { it.contains(args[0], true) }
             2 -> listOf("[amount]")
             else -> emptyList()
         }

@@ -44,14 +44,10 @@ repositories {
 
 dependencies {
     compileOnly(
-        "io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT"
+        "io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT"
     )
 
-    compileOnly(
-        files(
-            "libs/Citizens-2.0.35-b3598.jar"
-        )
-    )
+    compileOnly("net.citizensnpcs:citizens-main:2.0.42-SNAPSHOT") { isTransitive = false }
 
     implementation(
         kotlin(

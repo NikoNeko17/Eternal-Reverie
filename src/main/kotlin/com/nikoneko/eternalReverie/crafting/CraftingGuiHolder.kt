@@ -17,7 +17,7 @@ class CraftingGuiHolder(val player: Player) : InventoryHolder {
         val TITLE: Component = Component.text("Mesa de Fabricación", NamedTextColor.DARK_GRAY)
 
         const val SLOT_BLUEPRINT = 11
-        const val SLOT_CATALYST = 42
+        const val SLOT_CATALYST = 43
         const val SLOT_PREVIEW = 13
         const val SLOT_CRAFT_BUTTON = 15
 
@@ -76,10 +76,10 @@ class CraftingGuiHolder(val player: Player) : InventoryHolder {
         val meta = button.itemMeta
         meta.displayName(
             if (canCraft)
-                Component.text("Craftear", NamedTextColor.GREEN, TextDecoration.BOLD)
+                Component.text("Craftear", NamedTextColor.GREEN)
                     .decoration(TextDecoration.ITALIC, false)
             else
-                Component.text("Craftear (falta plano o materiales)", NamedTextColor.GRAY, TextDecoration.BOLD)
+                Component.text("Craftear (falta plano o materiales)", NamedTextColor.GRAY)
                     .decoration(TextDecoration.ITALIC, false)
         )
         button.itemMeta = meta

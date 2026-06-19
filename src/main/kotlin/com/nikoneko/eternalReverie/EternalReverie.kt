@@ -4,15 +4,20 @@ import com.nikoneko.eternalReverie.command.BlueprintCommand
 import com.nikoneko.eternalReverie.command.CraftingCommand
 import com.nikoneko.eternalReverie.command.ItemCommand
 import com.nikoneko.eternalReverie.crafting.CraftingGuiListener
+import com.nikoneko.eternalReverie.durability.DurabilityListener
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
+import com.nikoneko.eternalReverie.listeners.PlayerStatsListener
 import com.nikoneko.eternalReverie.player.PlayerListeners
+import com.nikoneko.eternalReverie.player.PlayerStats
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ActionBarManager
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ProjectileScheduler
 import net.citizensnpcs.api.CitizensAPI
+import net.citizensnpcs.api.ai.PathfinderType
 import net.citizensnpcs.api.trait.TraitInfo
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -34,9 +39,10 @@ class EternalReverie : JavaPlugin() {
         server.pluginManager.registerEvents(citizensListener, this)
         server.pluginManager.registerEvents(CraftingGuiListener(), this)
         server.pluginManager.registerEvents(DurabilityListener(this), this)
-        server.pluginManager.registerEvents(PlayerStatsListener(this), this)
+        server.pluginManager.registerEvents(PlayerStatsListener(), this)
 
         loadPlayerTicks()
+        loadPlayerRegen()
 
         // Registramos el Trait (Es obligatorio hacerlo en el onEnable antes de crear NPC)
         if (server.pluginManager.isPluginEnabled("Citizens")) {
@@ -76,7 +82,7 @@ class EternalReverie : JavaPlugin() {
 
         params.speedModifier(1.45f)      // Incrementa sustancialmente la velocidad base para simular carrera
         params.updatePathRate(10)        // Recalcula la ruta cada 10 ticks (0.5s) en lugar de cada tick, liberando la IA
-        params.useNewPathfinder(false)   // Desactiva correcciones lentas de Minecraft vanilla
+        params.pathfinderType(PathfinderType.CITIZENS)   // Desactiva correcciones lentas de Minecraft vanilla
 
         // Iniciamos nuestro bucle personalizado de IA y Daño Manual
         // Corre cada 1 tick para una precisión de combate milimétrica
@@ -86,8 +92,8 @@ class EternalReverie : JavaPlugin() {
         ).runTaskTimer(this, 0L, 1L)
     }
 
-    fun loadPlayerTicks(){
-        object : BukkitRunnable(){
+    fun loadPlayerTicks() {
+        object : BukkitRunnable() {
             override fun run() {
                 for (player in Bukkit.getOnlinePlayers()) {
                     ActionBarManager.render(
@@ -96,5 +102,16 @@ class EternalReverie : JavaPlugin() {
                 }
             }
         }.runTaskTimer(this, 0L, 1L)
+    }
+
+    fun loadPlayerRegen() {
+        object : BukkitRunnable() {
+            override fun run() {
+                for (player in Bukkit.getOnlinePlayers()) {
+                    val currentHealth = player.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: continue
+                    PlayerStats.setCurrentHp(player, currentHealth + 1)
+                }
+            }
+        }.runTaskTimer(this, 0L, 200L)
     }
 }

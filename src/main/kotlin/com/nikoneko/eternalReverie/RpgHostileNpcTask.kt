@@ -1,12 +1,15 @@
 package com.nikoneko.eternalReverie
 
+import net.citizensnpcs.api.ai.PathfinderType
 import net.citizensnpcs.api.npc.NPC
+import net.citizensnpcs.trait.LookClose
 import org.bukkit.GameMode
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
+import kotlin.jvm.java
 import kotlin.math.nextUp
 
 class RpgHostileNpcTask(
@@ -23,13 +26,15 @@ class RpgHostileNpcTask(
             return
         }
 
+        val lookTrait = npc.getOrAddTrait(LookClose::class.java)
+
         val npcEntity = npc.entity as? LivingEntity ?: return
 
-        npcEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)?.baseValue = 0.35
+        npcEntity.getAttribute(Attribute.MOVEMENT_SPEED)?.baseValue = 0.35
 
-        val attackRange = npcEntity.getAttribute(Attribute.PLAYER_ENTITY_INTERACTION_RANGE).
+        val attackRange = npcEntity.getAttribute(Attribute.ENTITY_INTERACTION_RANGE)?.value ?: 3.0
 
-        val attackCooldownTicks = npcEntity.getAttribute(Attribute.GENERIC_ATTACK_SPEED)?.value?.nextUp()?.toInt() ?: 4
+        val attackCooldownTicks = npcEntity.getAttribute(Attribute.ATTACK_SPEED)?.value?.nextUp()?.toInt() ?: 4
         // Reducir el cooldown del ataque de forma precisa en cada tick
         if (cooldownCounter > 0) {
             cooldownCounter--
@@ -51,11 +56,14 @@ class RpgHostileNpcTask(
                     npc.navigator.localParameters
                         .speedModifier(1.0f)
                         .range(scanRadius.toFloat() * 1.5f)
-                        .useNewPathfinder(true)
+                        .distanceMargin(attackRange)
+                    npc.navigator.setTarget(currentTarget, true)
                 }
+
 
                 // Ejecutar ataque manual con cooldown estricto
                 val distance = npcEntity.location.distance(target.location)
+
                 if (distance <= attackRange && cooldownCounter == 0) {
                     executeManualAttack(npcEntity, target)
                     cooldownCounter = attackCooldownTicks
@@ -76,7 +84,7 @@ class RpgHostileNpcTask(
             val closestPlayer = nearbyPlayers.minByOrNull { it.location.distanceSquared(npcEntity.location) }
             if (closestPlayer != null) {
                 currentTarget = closestPlayer
-                npc.navigator.setTarget(closestPlayer, false)
+                npc.navigator.setTarget(closestPlayer, true)
             }
         }
     }

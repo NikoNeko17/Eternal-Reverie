@@ -23,9 +23,14 @@ class BlueprintCommand(val plugin: EternalReverie) : CommandExecutor, TabComplet
         return true
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String?>? {
-        return when (args?.size) {
-            1 -> BlueprintRegistry.all().map { it.id }.filter { it.startsWith(args[0], true) }
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String> {
+        return when (args.size) {
+            1 -> BlueprintRegistry.all().map { it.id }.filter { it.contains(args[0], true) }
             2 -> listOf("[amount]")
             else -> emptyList()
         }
