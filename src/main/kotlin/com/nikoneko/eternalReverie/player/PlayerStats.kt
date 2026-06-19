@@ -3,11 +3,13 @@ package com.nikoneko.eternalReverie.player
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
-import com.nikoneko.eternalReverie.materials.MaterialType
+import com.nikoneko.eternalReverie.items.MaterialType
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import kotlin.math.pow
 
 /**
  * Stats totales calculadas en tiempo real para un LivingEntity (jugador o NPC
@@ -84,8 +86,8 @@ object PlayerStats {
         }
 
         val critChance = (totalPrecision * PRECISION_RATIO) + PRECISION_INTERNAL_BONUS
-        val critDamageMultiplier = 1.0 + (totalDexterity * DEXTERITY_RATIO) + DEXTERITY_INTERNAL_BONUS
-        val strengthMultiplier = 1.0 + (totalStrength * STRENGTH_RATIO)
+        val critDamageMultiplier = totalDexterity * DEXTERITY_RATIO + DEXTERITY_INTERNAL_BONUS
+        val strengthMultiplier = totalStrength * STRENGTH_RATIO
         val luckValue = totalLuck * LUCK_RATIO
 
         return EquipmentStats(
@@ -209,7 +211,7 @@ object PlayerStats {
         syncVanillaHealthBar(entity)
     }
 
-    /** Igual que recalculateMaxHp pero para Stamina (Resistencia). */
+    /** Igual que recalculateMaxHp, pero para Stamina (Resistencia). */
     fun recalculateMaxStamina(entity: LivingEntity) {
         val gearStats = computeEquipmentStats(entity)
         val newMax = BASE_MAX_STAMINA + gearStats.maxStaminaFromGear
@@ -239,7 +241,7 @@ object PlayerStats {
     // Sincroniza la barra de corazones vanilla con el % real de HP custom,
     // igual criterio que la barra de durabilidad: (current/max) × escalaVanilla.
     private fun syncVanillaHealthBar(entity: LivingEntity) {
-        val maxHealthAttr = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH) ?: return
+        val maxHealthAttr = entity.getAttribute(Attribute.MAX_HEALTH) ?: return
         val vanillaMax = maxHealthAttr.baseValue // normalmente 20.0
 
         val current = getCurrentHp(entity)
@@ -247,6 +249,7 @@ object PlayerStats {
         if (max <= 0) return
 
         val pct = (current / max).coerceIn(0.0, 1.0)
-        entity.health = (pct * vanillaMax).coerceIn(0.0, vanillaMax)
+        if (current > 0) entity.health = (pct * vanillaMax).coerceIn(0.0, vanillaMax)
+
     }
 }

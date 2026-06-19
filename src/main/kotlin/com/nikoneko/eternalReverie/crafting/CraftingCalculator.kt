@@ -9,7 +9,7 @@ import com.nikoneko.eternalReverie.items.Keys
 import com.nikoneko.eternalReverie.items.Rarity
 import com.nikoneko.eternalReverie.items.TextFormat
 import com.nikoneko.eternalReverie.items.WeaponNameBank
-import com.nikoneko.eternalReverie.materials.MaterialType
+import com.nikoneko.eternalReverie.items.MaterialType
 import com.nikoneko.eternalReverie.weapons.Affinity
 import com.nikoneko.eternalReverie.weapons.WeaponClass
 import net.kyori.adventure.text.Component
@@ -35,6 +35,11 @@ object CraftingCalculator {
         val mobility: Double,
         val affinities: List<Pair<Affinity, Double>>
     )
+
+    fun computeWeaponStatsPublic(
+        blueprint: BlueprintData,
+        materials: List<MaterialType>
+    ): ComputedWeaponStats = computeWeapon(blueprint, materials)
 
     private fun computeWeapon(
         blueprint: BlueprintData,
@@ -80,7 +85,7 @@ object CraftingCalculator {
                 )
             ),
             noItalic(Component.text("★".repeat(blueprint.rarity.stars), NamedTextColor.GOLD)),
-            noItalic(Component.text(""))
+            noItalic(Component.text(" "))
         )
         lore.addAll(buildWeaponStatsLore(stats, maxDurability, maxDurability))
         lore.add(noItalic(Component.text("")))
@@ -124,11 +129,11 @@ object CraftingCalculator {
 
         meta.lore(lore)
 
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, AttributeModifier(Keys.ATTACK_SPEED, stats.attackSpeed - 4.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.MAINHAND))
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, AttributeModifier(Keys.MOBILITY, stats.mobility, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.MAINHAND))
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, AttributeModifier(Keys.ATTACK_SPEED, stats.attackSpeed - 4.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.MAINHAND))
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, AttributeModifier(Keys.MOBILITY, stats.mobility, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.MAINHAND))
         val isFirearm = (listOf(WeaponClass.PISTOLA, WeaponClass.ESCOPETA, WeaponClass.RIFLE).contains(blueprint.family.weaponClass))
         if (!isFirearm) {
-            meta.addAttributeModifier(Attribute.PLAYER_ENTITY_INTERACTION_RANGE, AttributeModifier(Keys.REACH, blueprint.family.reach - 3.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.MAINHAND))
+            meta.addAttributeModifier(Attribute.ENTITY_INTERACTION_RANGE, AttributeModifier(Keys.REACH, blueprint.family.reach - 3.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.MAINHAND))
         } else {
             meta.persistentDataContainer.set(Keys.ATTACK_SPEED, PersistentDataType.DOUBLE, stats.attackSpeed)
             meta.persistentDataContainer.set(Keys.REACH, PersistentDataType.DOUBLE, blueprint.family.reach * 5)
@@ -353,7 +358,7 @@ object CraftingCalculator {
 
         meta.lore(lore)
 
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, AttributeModifier(Keys.ARMOR_MOBILITY, stats.mobilityBonus, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.FEET))
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, AttributeModifier(Keys.ARMOR_MOBILITY, stats.mobilityBonus, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.FEET))
 
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
 
@@ -388,14 +393,16 @@ object CraftingCalculator {
             )
         )
 
-        lines.add(
-            noItalic(
-                Component.text("${stats.primaryAttributeName}: ", NamedTextColor.GRAY)
-                    .append(Component.text("%.1f".format(stats.primaryAttributeValue), NamedTextColor.WHITE))
+        if (stats.primaryAttributeValue !in 0.0..0.09) {
+            lines.add(
+                noItalic(
+                    Component.text("${stats.primaryAttributeName}: ", NamedTextColor.GRAY)
+                        .append(Component.text("%.1f".format(stats.primaryAttributeValue), NamedTextColor.WHITE))
+                )
             )
-        )
+        }
 
-        if (stats.secondaryAttributeName.isNotEmpty()) {
+        if (stats.secondaryAttributeName.isNotEmpty() && stats.secondaryAttributeValue !in 0.0..0.09) {
             lines.add(
                 noItalic(
                     Component.text("${stats.secondaryAttributeName}: ", NamedTextColor.GRAY)

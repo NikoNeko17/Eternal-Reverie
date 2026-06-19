@@ -1,4 +1,4 @@
-package com.nikoneko.eternalReverie.materials
+package com.nikoneko.eternalReverie.items
 
 import com.nikoneko.eternalReverie.weapons.Affinity
 
