@@ -13,7 +13,6 @@ class RpgHostileNpcTask(
     private val plugin: JavaPlugin,
     private val npc: NPC,
     private val scanRadius: Double = 15.0,
-    private val attackRange: Double = 2.8,
 ) : BukkitRunnable() {
 
     private var currentTarget: Player? = null
@@ -27,6 +26,8 @@ class RpgHostileNpcTask(
         val npcEntity = npc.entity as? LivingEntity ?: return
 
         npcEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)?.baseValue = 0.35
+
+        val attackRange = npcEntity.getAttribute(Attribute.PLAYER_ENTITY_INTERACTION_RANGE).
 
         val attackCooldownTicks = npcEntity.getAttribute(Attribute.GENERIC_ATTACK_SPEED)?.value?.nextUp()?.toInt() ?: 4
         // Reducir el cooldown del ataque de forma precisa en cada tick

@@ -33,6 +33,8 @@ class EternalReverie : JavaPlugin() {
         server.pluginManager.registerEvents(playerListeners, this)
         server.pluginManager.registerEvents(citizensListener, this)
         server.pluginManager.registerEvents(CraftingGuiListener(), this)
+        server.pluginManager.registerEvents(DurabilityListener(this), this)
+        server.pluginManager.registerEvents(PlayerStatsListener(this), this)
 
         loadPlayerTicks()
 

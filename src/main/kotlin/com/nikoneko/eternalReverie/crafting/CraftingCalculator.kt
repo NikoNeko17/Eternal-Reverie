@@ -66,7 +66,7 @@ object CraftingCalculator {
         val maxDurability = computeDurability(materials, blueprint)
         val family = requireNotNull(blueprint.family)
 
-        val item = ItemStack(org.bukkit.Material.PAPER)
+        val item = ItemStack(family.item)
         val meta = item.itemMeta
         meta.displayName(
             noItalic(Component.text("Vista Previa", NamedTextColor.YELLOW, TextDecoration.BOLD))
@@ -103,7 +103,7 @@ object CraftingCalculator {
         val weaponName = WeaponNameBank.random(blueprint.rarity, stats.affinities.map { it.first })
 
         // TODO: reemplazar por el Material/modelo visual real según WeaponFamily
-        val item = ItemStack(org.bukkit.Material.IRON_SWORD)
+        val item = ItemStack(family.item)
         val meta = item.itemMeta
 
         meta.displayName(
@@ -140,6 +140,7 @@ object CraftingCalculator {
         pdc.set(Keys.WEAPON_FAMILY, PersistentDataType.STRING, family.name)
         pdc.set(Keys.BLUEPRINT_ID, PersistentDataType.STRING, blueprint.id)
         pdc.set(Keys.DURABILITY, PersistentDataType.INTEGER, maxDurability)
+        pdc.set(Keys.MAX_DURABILITY, PersistentDataType.INTEGER, maxDurability)
 
         val materialIds = materials.map { it.name }
         pdc.set(Keys.MATERIALS, PersistentDataType.LIST.strings(), materialIds)
@@ -214,6 +215,13 @@ object CraftingCalculator {
 
     // Cada pieza solo "lee" 2 de los 6 atributos de MaterialData; el resto se ignora
     // por completo aunque el material tenga valores ahí.
+    // Pública para que PlayerStats pueda recalcular stats de equipo en tiempo real
+    // sin duplicar la lógica de cómputo por pieza.
+    fun computeArmorStatsPublic(
+        blueprint: BlueprintData,
+        materials: List<MaterialType>
+    ): ComputedArmorStats = computeArmor(blueprint, materials)
+
     private fun computeArmor(
         blueprint: BlueprintData,
         materials: List<MaterialType>
@@ -275,7 +283,13 @@ object CraftingCalculator {
         val piece = requireNotNull(blueprint.armorPiece)
         val maxDurability = computeDurability(materials, blueprint)
 
-        val item = ItemStack(org.bukkit.Material.PAPER)
+        val visualMaterial = when (piece) {
+            ArmorPiece.CASCO -> org.bukkit.Material.IRON_HELMET
+            ArmorPiece.PECHERA -> org.bukkit.Material.IRON_CHESTPLATE
+            ArmorPiece.GREBAS -> org.bukkit.Material.IRON_LEGGINGS
+            ArmorPiece.BOTAS -> org.bukkit.Material.IRON_BOOTS
+        }
+        val item = ItemStack(visualMaterial)
         val meta = item.itemMeta
         meta.displayName(
             noItalic(Component.text("Vista Previa", NamedTextColor.YELLOW, TextDecoration.BOLD))
@@ -309,7 +323,7 @@ object CraftingCalculator {
         val stats = computeArmor(blueprint, materials)
         val piece = requireNotNull(blueprint.armorPiece)
         val maxDurability = computeDurability(materials, blueprint)
-        val armorName = WeaponNameBank.random(blueprint.rarity)
+        val armorName = WeaponNameBank.random(blueprint.rarity, stats.affinities.map { it.first })
 
         // TODO: reemplazar por el Material/modelo visual real según ArmorPiece
         val visualMaterial = when (piece) {
@@ -347,6 +361,7 @@ object CraftingCalculator {
         pdc.set(Keys.INSTANCE_UUID, PersistentDataType.STRING, instanceUuid.toString())
         pdc.set(Keys.BLUEPRINT_ID, PersistentDataType.STRING, blueprint.id)
         pdc.set(Keys.DURABILITY, PersistentDataType.INTEGER, maxDurability)
+        pdc.set(Keys.MAX_DURABILITY, PersistentDataType.INTEGER, maxDurability)
 
         val materialIds = materials.map { it.name }
         pdc.set(Keys.MATERIALS, PersistentDataType.LIST.strings(), materialIds)
@@ -397,7 +412,7 @@ object CraftingCalculator {
                 )
             )
         }
-        
+
         if (stats.affinities.isNotEmpty()) {
             lines.add(noItalic(Component.text(" ")))
             lines.add(noItalic(Component.text("Afinidades", NamedTextColor.WHITE)))
@@ -411,7 +426,7 @@ object CraftingCalculator {
                 )
             }
         }
-        
+
         return lines
     }
 
