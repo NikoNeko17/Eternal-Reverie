@@ -270,6 +270,5 @@ object PlayerStats {
 
         val pct = (current / max).coerceIn(0.0, 1.0)
         if (current > 0) entity.health = (pct * vanillaMax).coerceIn(0.0, vanillaMax)
-
     }
 }

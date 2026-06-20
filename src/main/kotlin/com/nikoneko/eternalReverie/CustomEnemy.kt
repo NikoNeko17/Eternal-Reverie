@@ -30,9 +30,12 @@ class CustomEnemy(
     private lateinit var customName: String
     private var nameDisplay: TextDisplay? = null
     private var lastAttackTime: Long = 0
+    private var navCheckCooldown = 0
+
 
     fun iniciar() {
         // 1. Spawneamos el NPC
+
         npc.spawn(spawnLocation)
         val entity = npc.entity as? LivingEntity ?: return
 
@@ -47,15 +50,15 @@ class CustomEnemy(
 
         npc.isProtected = false
 
-        // Hacemos que el display sea pasajero del NPC para que se mueva con él
-        entity.addPassenger(nameDisplay!!)
 
         val skinTrait = npc.getOrAddTrait(SkinTrait::class.java)
         customName = plugin.npcNameList.random()
         skinTrait.skinName = customName
 
 
+
         updateLabel(entity)
+        entity.addPassenger(nameDisplay!!)
 
         // 3. Iniciamos el bucle de IA de Combate
         iniciarBucleCombate()
@@ -71,38 +74,43 @@ class CustomEnemy(
                 }
 
                 val entity = npc.entity as LivingEntity
-
                 updateLabel(entity)
 
-                // Si no hay objetivo, buscamos al jugador más cercano en un radio de 15 bloques
-                // Si no hay objetivo, buscamos al jugador más cercano en un radio de 15 bloques
+                val attackSpeed = entity.getAttribute(Attribute.ATTACK_SPEED)?.value ?: 4.0
+                val attackReach = entity.getAttribute(Attribute.ENTITY_INTERACTION_RANGE)?.value ?: 3.0
+
+                // 1. Si no hay objetivo, buscamos al jugador real más cercano
                 if (currentTarget == null || !currentTarget!!.isOnline || currentTarget!!.isDead) {
                     val cercano = entity.location.world.getNearbyEntities(entity.location, 15.0, 15.0, 15.0)
                         .filterIsInstance<Player>()
-                        .firstOrNull { player -> player.uniqueId != entity.uniqueId && !player.hasMetadata("NPC") }
+                        .firstOrNull { jugador -> jugador.uniqueId != entity.uniqueId && !jugador.hasMetadata("NPC") }
 
                     if (cercano != null) {
                         currentTarget = cercano
-                        npc.navigator.localParameters.speedModifier(1.5f)
-                        npc.navigator.setTarget(cercano, true)
                     } else {
                         if (npc.navigator.isNavigating) npc.navigator.cancelNavigation()
                         return
                     }
                 }
 
-
                 val target = currentTarget!!
 
-                // LÓGICA DE ALCANCE Y VELOCIDAD DE ATAQUE
+                navCheckCooldown++
+                if (navCheckCooldown >= 10) {
+                    navCheckCooldown = 0
+                    if (!npc.navigator.isNavigating || npc.navigator.entityTarget != target) {
+                        npc.navigator.localParameters.speedModifier(1.5f)
+                        npc.navigator.setTarget(target, true)
+                    }
+                }
+
+
+
+                // 4. LÓGICA DE ALCANCE Y VELOCIDAD DE ATAQUE (Igual que antes)
                 val distancia = entity.location.distance(target.location)
-                val entityAttackRange = entity.getAttribute(Attribute.ENTITY_INTERACTION_RANGE)?.value ?: 3.0
-
-                val attackSpeedTicks = entity.getAttribute(Attribute.ATTACK_SPEED)?.value ?: 4.0
-
-                if (distancia <= entityAttackRange) {
+                if (distancia <= attackReach) {
                     val tiempoActual = System.currentTimeMillis()
-                    val ticksEnMilis = attackSpeedTicks * 50 // Convertimos ticks de Minecraft a milisegundos
+                    val ticksEnMilis = attackSpeed * 50
 
                     if (tiempoActual - lastAttackTime >= ticksEnMilis) {
                         triggerHit(entity, target)
@@ -111,13 +119,13 @@ class CustomEnemy(
                 }
             }
         }
-        combatTask!!.runTaskTimer(plugin, 0L, 1L) // Corre cada 1 tick para máxima precisión de mirada
+        combatTask!!.runTaskTimer(plugin, 0L, 1L) // Corre cada 1 tick
     }
+
 
     private fun triggerHit(attacker: LivingEntity, victim: Player) {
         // Ejecuta el movimiento de brazo visual del NPC
         attacker.swingMainHand()
-
         // Infligimos el daño a través del evento nativo para que tu DamageSystemListener lo procese
         // Al pasarle 'attacker' como damager, tu sistema podrá leer los blueprints/materiales del arma del NPC
         victim.damage(1.0, attacker)
@@ -127,7 +135,7 @@ class CustomEnemy(
         val display = nameDisplay ?: return
 
         val currentHealth = entity.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: return
-        val maxHealth = entity.persistentDataContainer.get(Keys.MAX_HP, PersistentDataType.DOUBLE)!!
+        val maxHealth = entity.persistentDataContainer.get(Keys.MAX_HP, PersistentDataType.DOUBLE) ?: return
 
         // Ajustamos la altura sutilmente hacia arriba de la cabeza
         display.transformation = Transformation(

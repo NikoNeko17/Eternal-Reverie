@@ -146,6 +146,7 @@ object CraftingCalculator {
         pdc.set(Keys.BLUEPRINT_ID, PersistentDataType.STRING, blueprint.id)
         pdc.set(Keys.DURABILITY, PersistentDataType.INTEGER, maxDurability)
         pdc.set(Keys.MAX_DURABILITY, PersistentDataType.INTEGER, maxDurability)
+        pdc.set(Keys.ATTACK_SPEED, PersistentDataType.DOUBLE, family.attackSpeed)
 
         val materialIds = materials.map { it.name }
         pdc.set(Keys.MATERIALS, PersistentDataType.LIST.strings(), materialIds)
