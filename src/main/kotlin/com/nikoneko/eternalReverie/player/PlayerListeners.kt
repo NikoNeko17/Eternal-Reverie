@@ -44,6 +44,16 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
     fun onEntityDamage(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as Player
         val victim = event.entity as Player
+
+        // Atadura: el jugador anclado no puede atacar mientras la Marca esté activa.
+        if (com.nikoneko.eternalReverie.affinities.AffinityMarkManager.hasMark(
+                attacker, com.nikoneko.eternalReverie.weapons.Affinity.ATADURA
+            )
+        ) {
+            event.isCancelled = true
+            return
+        }
+
         if (attacker.attackCooldown < 1f) {
             attacker.playSound(attacker, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.4f, 1.0f)
             event.isCancelled = true
@@ -87,6 +97,15 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
 
     @EventHandler
     fun onFireWeaponEvent(event: PlayerInteractEvent) {
+        // Atadura: el jugador anclado no puede usar ítems/disparar mientras la Marca esté activa.
+        if (com.nikoneko.eternalReverie.affinities.AffinityMarkManager.hasMark(
+                event.player, com.nikoneko.eternalReverie.weapons.Affinity.ATADURA
+            )
+        ) {
+            event.isCancelled = true
+            return
+        }
+
         if (listOf(
                 Material.DIRT,
                 Material.GRASS_BLOCK,

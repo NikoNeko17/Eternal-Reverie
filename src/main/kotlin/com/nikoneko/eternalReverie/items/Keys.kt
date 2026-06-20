@@ -24,6 +24,13 @@ object Keys {
     lateinit var CURRENT_HP: NamespacedKey
     lateinit var MAX_STAMINA: NamespacedKey
     lateinit var CURRENT_STAMINA: NamespacedKey
+    
+    // Debuff temporal de velocidad de ataque (Habilidad de Congelación, Affinity HIELO)
+    lateinit var ATTACK_SPEED_DEBUFF_MULTIPLIER: NamespacedKey
+    lateinit var ATTACK_SPEED_DEBUFF_EXPIRES_AT: NamespacedKey
+
+    // Valor original de Attribute.MOVEMENT_SPEED antes de aplicar debuff de Hielo/Veneno
+    lateinit var MOVEMENT_SPEED_ORIGINAL: NamespacedKey
 
     fun init(plugin: EternalReverie) {
 
@@ -43,5 +50,9 @@ object Keys {
         CURRENT_HP = NamespacedKey(plugin, "current_hp")
         MAX_STAMINA = NamespacedKey(plugin, "max_stamina")
         CURRENT_STAMINA = NamespacedKey(plugin, "current_stamina")
+        ATTACK_SPEED_DEBUFF_MULTIPLIER = NamespacedKey(plugin, "attack_speed_debuff_multiplier")
+        ATTACK_SPEED_DEBUFF_EXPIRES_AT = NamespacedKey(plugin, "attack_speed_debuff_expires_at")
+
+        MOVEMENT_SPEED_ORIGINAL = NamespacedKey(plugin, "movement_speed_original")
     }
 }

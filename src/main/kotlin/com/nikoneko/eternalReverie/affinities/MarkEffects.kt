@@ -2,62 +2,109 @@ package com.nikoneko.eternalReverie.affinities
 
 import com.nikoneko.eternalReverie.player.PlayerStats
 import com.nikoneko.eternalReverie.weapons.Affinity
+import com.nikoneko.eternalReverie.weapons.firearms.AttackSpeedDebuff
 import org.bukkit.entity.LivingEntity
 
 /**
  * Aplica el efecto periódico (1 vez por segundo, vía AffinityMarkManager.tickAll)
- * de cada Marca activa sobre una entidad. Solo Sangre (Hemorragia) y Fuego
- * (Incineración) están implementadas como prueba de concepto end-to-end;
- * las demás están registradas en MarkRegistry pero su rama del when no hace nada
- * todavía (placeholder explícito, no un error).
+ * de cada Marca activa. Sin stacks: cada Affinity tiene un único comportamiento
+ * fijo mientras la Marca esté activa, definido acá.
+ *
+ * `source` es quien aplicó la Marca (el atacante original), relevante para
+ * Sangre (Robo de Vida) y Electricidad (Drenaje), que benefician al atacante.
+ * Puede ser null si el atacante salió del rango de entidades trackeadas.
  */
 object MarkEffects {
 
-    fun applyTick(target: LivingEntity, mark: AffinityMark, config: MarkConfig) {
+    fun applyTick(target: LivingEntity, source: LivingEntity?, mark: AffinityMark, config: MarkConfig) {
         val mitigation = AffinityMarkManager.computeArmorAffinityMitigation(target, mark.affinity)
         val effectiveMultiplier = (1.0 - mitigation).coerceIn(0.0, 1.0)
 
         when (mark.affinity) {
-
-            Affinity.SANGRE -> applyBleed(target, mark, config, effectiveMultiplier)
-
-            Affinity.FUEGO -> applyBurn(target, mark, config, effectiveMultiplier)
-
-            // --- Placeholders: estructura lista, efecto a implementar después ---
-            Affinity.HIELO -> { /* TODO: Congelación, -%velocidad de movimiento por stack */ }
-            Affinity.ELECTRICIDAD -> { /* TODO: Sobrecarga, -stamina máxima temporal por stack */ }
-            Affinity.VENENO -> { /* TODO: Intoxicación, -%regeneración HP/Stamina por stack */ }
-            Affinity.ATADURA -> { /* TODO: Restricción, -%movilidad y +cooldown por stack */ }
-            Affinity.FRAGILIDAD -> { /* TODO: Exposición, +%daño recibido por stack (leído en PlayerListeners al calcular finalDamage) */ }
+            Affinity.SANGRE -> applyRoboDeVida(target, source, config, effectiveMultiplier)
+            Affinity.FUEGO -> applyIncineracionProporcional(target, mark, config, effectiveMultiplier)
+            Affinity.HIELO -> applyCongelacion(target, config, effectiveMultiplier)
+            Affinity.ELECTRICIDAD -> applyDrenaje(target, source, config, effectiveMultiplier)
+            Affinity.VENENO -> applyIntoxicacion(target, config, effectiveMultiplier)
+            Affinity.ATADURA -> applyAnclaje(target, config, effectiveMultiplier)
+            Affinity.FRAGILIDAD -> { /* Exposición: leída directamente en CombatResolver al calcular daño, no en el tick */ }
         }
     }
 
-    private fun applyBleed(
+    /** Llamar al expirar/remover una Marca, para revertir efectos persistentes (Hielo/Veneno/Atadura). */
+    fun onMarkExpire(target: LivingEntity, affinity: Affinity) {
+        when (affinity) {
+            Affinity.HIELO, Affinity.VENENO, Affinity.ATADURA -> MovementSpeedModifier.restore(target, affinity)
+            else -> {}
+        }
+    }
+
+    // --- Sangre: Robo de Vida. El ATACANTE se cura un % del daño infligido mientras
+    // la Marca esté activa en la víctima. No hace daño extra por sí misma; el robo
+    // ocurre en CombatResolver al momento del golpe (ver nota abajo), acá solo
+    // mantenemos viva la referencia por si se necesita un tick visual a futuro. ---
+    private fun applyRoboDeVida(target: LivingEntity, source: LivingEntity?, config: MarkConfig, mult: Double) {
+        // El robo real se resuelve en CombatResolver (lee hasMark(target, SANGRE) y
+        // cura al atacante un % del daño de ESE golpe). Acá no hay tick periódico real.
+    }
+
+    // --- Fuego: DoT proporcional al daño del golpe que generó/refrescó la Marca ---
+    private fun applyIncineracionProporcional(
         target: LivingEntity,
         mark: AffinityMark,
         config: MarkConfig,
-        effectiveMultiplier: Double
+        mult: Double
     ) {
-        val maxHp = PlayerStats.getMaxHp(target)
-        val pctPerStack = config.effectPerStack // 0.02 = 2% del HP máximo, por stack
-        val rawDamage = maxHp * pctPerStack * mark.stacks
-        val mitigatedDamage = rawDamage * effectiveMultiplier
+        val rawDamage = mark.sourceHitDamage * config.effectValue
+        val mitigatedDamage = rawDamage * mult
 
         val currentHp = PlayerStats.getCurrentHp(target)
         PlayerStats.setCurrentHp(target, (currentHp - mitigatedDamage).coerceAtLeast(0.0))
     }
 
-    private fun applyBurn(
-        target: LivingEntity,
-        mark: AffinityMark,
-        config: MarkConfig,
-        effectiveMultiplier: Double
-    ) {
-        val flatPerStack = config.effectPerStack // 1.5 daño plano, por stack
-        val rawDamage = flatPerStack * mark.stacks
-        val mitigatedDamage = rawDamage * effectiveMultiplier
+    // --- Hielo: frenazo fuerte y corto, movimiento + velocidad de ataque ---
+    private fun applyCongelacion(target: LivingEntity, config: MarkConfig, mult: Double) {
+        val movementReduction = config.effectValue * mult         // -40% base
+        val attackSpeedReduction = (config.effectValue * 0.75) * mult // -30% base (3/4 del valor de movimiento)
 
-        val currentHp = PlayerStats.getCurrentHp(target)
-        PlayerStats.setCurrentHp(target, (currentHp - mitigatedDamage).coerceAtLeast(0.0))
+        MovementSpeedModifier.applyReduction(target, Affinity.HIELO, movementReduction)
+        AttackSpeedDebuff.apply(target, 1.0 - attackSpeedReduction, durationMillis = 1200L) // se refresca cada tick mientras la Marca viva
+    }
+
+    // --- Electricidad: Drenaje. Roba % de la regen. de Stamina del enemigo hacia el atacante ---
+    private fun applyDrenaje(target: LivingEntity, source: LivingEntity?, config: MarkConfig, mult: Double) {
+        if (source == null) return
+
+        // "Robar regeneración" = el objetivo no regenera Stamina este tick (penalización
+        // completa de regen, no solo reducción), y el atacante recibe ese % como Stamina extra.
+        val targetMaxStamina = PlayerStats.getMaxStamina(target)
+        val stolenAmount = targetMaxStamina * config.effectValue * mult
+
+        val targetCurrent = PlayerStats.getCurrentStamina(target)
+        PlayerStats.setCurrentStamina(target, (targetCurrent - stolenAmount).coerceAtLeast(0.0))
+
+        val sourceCurrent = PlayerStats.getCurrentStamina(source)
+        PlayerStats.setCurrentStamina(source, sourceCurrent + stolenAmount)
+    }
+
+    // --- Veneno: progresivo y prolongado, movimiento leve + regen. HP/Stamina golpeada ---
+    private fun applyIntoxicacion(target: LivingEntity, config: MarkConfig, mult: Double) {
+        val movementReduction = config.effectValue * mult // -15% base
+
+        MovementSpeedModifier.applyReduction(target, Affinity.VENENO, movementReduction)
+
+        // -25% de regen.: implementado como un pequeño drenaje directo de Stamina,
+        // ya que no existe (todavía) un sistema de regeneración pasiva que debuffear.
+        val regenPenalty = config.effectValue * 1.67 * mult // ~25% base (0.15 * 1.67 ≈ 0.25)
+        val targetMaxStamina = PlayerStats.getMaxStamina(target)
+        val targetCurrent = PlayerStats.getCurrentStamina(target)
+        PlayerStats.setCurrentStamina(target, (targetCurrent - targetMaxStamina * regenPenalty * 0.05).coerceAtLeast(0.0))
+    }
+
+    // --- Atadura: Anclaje. Inmoviliza por completo (Movilidad a 0). ---
+    // El bloqueo de uso de ítems/habilidades se maneja del lado del usuario
+    // (return temprano en PlayerListener al detectar AffinityMarkManager.hasMark(player, ATADURA)).
+    private fun applyAnclaje(target: LivingEntity, config: MarkConfig, mult: Double) {
+        MovementSpeedModifier.applyReduction(target, Affinity.ATADURA, 1.0) // inmovilizado total, binario
     }
 }

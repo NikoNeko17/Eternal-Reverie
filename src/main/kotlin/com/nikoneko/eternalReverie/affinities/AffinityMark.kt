@@ -4,66 +4,68 @@ import com.nikoneko.eternalReverie.weapons.Affinity
 
 /**
  * Una instancia activa de Marca sobre una entidad (jugador o NPC).
- * `stacks` no tiene tope (el doc descarta el límite de niveles); lo que limita
- * la Marca es exclusivamente `durationTicks`, que se resetea a 0 cuando expira.
+ * Sin stacks: la Marca está activa o no, su efecto es fijo mientras dure.
+ * `durationTicks` es lo único que varía (se extiende con cada reaplicación,
+ * capeado en MAX_DURATION_TICKS).
  */
 data class AffinityMark(
     val affinity: Affinity,
-    var stacks: Int,
-    var durationTicks: Int
+    var durationTicks: Int,
+    // Para Fuego: el daño del golpe que generó/refrescó la Marca, usado por su DoT
+    // proporcional. Para las demás afinidades no se usa.
+    var sourceHitDamage: Double = 0.0
 ) {
     companion object {
-        const val MAX_DURATION_TICKS = 30 * 20    // 30s tope
-        const val REAPPLY_BONUS_TICKS = 3 * 20     // +3s por cada aplicación nueva
+        const val MAX_DURATION_TICKS = 15 * 20   // 15s tope (bajado de 30s)
+        const val REAPPLY_BONUS_TICKS = 3 * 20    // +3s por cada reaplicación
     }
 }
 
-/** Configuración base de cada Marca: duración inicial y efecto por stack. */
+/** Configuración base de cada Marca: duración inicial y parámetros de su efecto. */
 data class MarkConfig(
     val affinity: Affinity,
     val baseDurationTicks: Int,
-    val effectPerStack: Double, // significado depende de la Marca (ver MarkEffects)
-    val tickIntervalTicks: Int = 20 // cada cuánto se aplica el efecto periódico (1s por defecto)
+    val effectValue: Double,         // significado depende de la Marca (ver MarkEffects)
+    val tickIntervalTicks: Int = 20  // cada cuánto se aplica el efecto periódico (1s por defecto)
 )
 
 object MarkRegistry {
 
-    // Valores de partida; ajustables sin tocar el resto del sistema.
     val configs: Map<Affinity, MarkConfig> = mapOf(
         Affinity.SANGRE to MarkConfig(
             affinity = Affinity.SANGRE,
             baseDurationTicks = 8 * 20,
-            effectPerStack = 0.02 // 2% del HP máximo por stack, por tick de aplicación
+            effectValue = 0.15 // 15% del daño infligido por el portador se cura, mientras esté activa
         ),
         Affinity.FUEGO to MarkConfig(
             affinity = Affinity.FUEGO,
-            baseDurationTicks = 8 * 20,
-            effectPerStack = 1.5 // daño plano por stack, por tick de aplicación
+            baseDurationTicks = 6 * 20,
+            effectValue = 0.10 // 10% del daño del golpe que generó la Marca, por segundo (DoT)
         ),
         Affinity.HIELO to MarkConfig(
             affinity = Affinity.HIELO,
-            baseDurationTicks = 10 * 20,
-            effectPerStack = 0.08 // -8% velocidad de movimiento por stack
+            baseDurationTicks = 3 * 20, // corta y fuerte
+            effectValue = 0.40 // -40% velocidad de movimiento Y -30% velocidad de ataque (ver MarkEffects)
         ),
         Affinity.ELECTRICIDAD to MarkConfig(
             affinity = Affinity.ELECTRICIDAD,
-            baseDurationTicks = 10 * 20,
-            effectPerStack = 5.0 // -5 stamina máxima temporal por stack
+            baseDurationTicks = 5 * 20,
+            effectValue = 0.10 // 10% de la regeneración de Stamina del enemigo es robada hacia el atacante
         ),
         Affinity.VENENO to MarkConfig(
             affinity = Affinity.VENENO,
-            baseDurationTicks = 12 * 20,
-            effectPerStack = 0.10 // -10% regeneración HP/Stamina por stack
+            baseDurationTicks = 10 * 20, // progresiva y prolongada
+            effectValue = 0.15 // -15% velocidad mov. + -25% regen. HP/Stamina (ver MarkEffects)
         ),
         Affinity.ATADURA to MarkConfig(
             affinity = Affinity.ATADURA,
-            baseDurationTicks = 8 * 20,
-            effectPerStack = 0.10 // -10% movilidad por stack
+            baseDurationTicks = 2 * 20,
+            effectValue = 1.0 // inmoviliza + deshabilita habilidades/ítems (binario, sin escala)
         ),
         Affinity.FRAGILIDAD to MarkConfig(
             affinity = Affinity.FRAGILIDAD,
-            baseDurationTicks = 10 * 20,
-            effectPerStack = 0.03 // +3% daño recibido por stack
+            baseDurationTicks = 6 * 20,
+            effectValue = 0.25 // +25% daño final recibido por el portador de la Marca
         )
     )
 }

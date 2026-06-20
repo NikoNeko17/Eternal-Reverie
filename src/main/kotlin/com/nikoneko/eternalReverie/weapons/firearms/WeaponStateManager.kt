@@ -39,11 +39,17 @@ object WeaponStateManager {
 
     }
 
+    // El debuff de Hielo (Congelación) reduce attackSpeed efectivo, alargando
+    // el cooldown real sin tocar el attackSpeed base del arma en sí.
     private fun getCooldownMillis(
+        player: Player,
         attackSpeed: Double
     ): Double {
 
-        return 1000.0 / attackSpeed
+        val debuffMultiplier = AttackSpeedDebuff.getActiveMultiplier(player)
+        val effectiveAttackSpeed = (attackSpeed * debuffMultiplier).coerceAtLeast(0.05)
+
+        return 1000.0 / effectiveAttackSpeed
 
     }
 
@@ -78,6 +84,7 @@ object WeaponStateManager {
         val elapsed = System.currentTimeMillis() - state.lastShot
         return elapsed >=
             getCooldownMillis(
+                player,
                 attackSpeed
             )
     }
@@ -99,7 +106,7 @@ object WeaponStateManager {
 
         val elapsed = System.currentTimeMillis() - state.lastShot
 
-        return ( elapsed / getCooldownMillis(attackSpeed)).coerceAtLeast(0.0)
+        return ( elapsed / getCooldownMillis(player, attackSpeed)).coerceAtLeast(0.0)
 
     }
 

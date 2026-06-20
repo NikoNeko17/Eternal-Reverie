@@ -47,6 +47,12 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
         if (!event.action.isRightClick) return
 
         val player = event.player
+
+        // Atadura: el jugador anclado no puede disparar mientras la Marca esté activa.
+        if (com.nikoneko.eternalReverie.affinities.AffinityMarkManager.hasMark(player, Affinity.ATADURA)) {
+            return
+        }
+
         val item = event.item ?: return
         val itemMeta = item.itemMeta ?: return
         val pdc = itemMeta.persistentDataContainer
@@ -80,6 +86,13 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
     @EventHandler
     fun onChargedBowShoot(event: EntityShootBowEvent) {
         val player = event.entity as? Player ?: return
+
+        // Atadura: el jugador anclado no puede disparar mientras la Marca esté activa.
+        if (com.nikoneko.eternalReverie.affinities.AffinityMarkManager.hasMark(player, Affinity.ATADURA)) {
+            event.isCancelled = true
+            return
+        }
+
         val bow = event.bow ?: return
         val pdc = bow.itemMeta?.persistentDataContainer ?: return
 
