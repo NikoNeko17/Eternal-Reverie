@@ -162,6 +162,26 @@ object PlayerStats {
         )
     }
 
+    // Lee el blueprint + materiales del PDC de la pieza y devuelve sus afinidades
+    // normalizadas (0-100%), tal cual se calcularon al craftear. Usado por
+    // AffinityMarkManager para calcular la mitigación de Marcas vía afinidad de set.
+    fun readArmorPieceAffinities(item: ItemStack?): List<Pair<com.nikoneko.eternalReverie.weapons.Affinity, Double>>? {
+        if (item == null) return null
+        val meta = item.itemMeta ?: return null
+        val pdc = meta.persistentDataContainer
+
+        val blueprintId = pdc.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING) ?: return null
+        val blueprint = BlueprintRegistry.get(blueprintId) ?: return null
+        if (blueprint.armorPiece == null) return null
+
+        val materialIds = pdc.get(Keys.MATERIALS, PersistentDataType.LIST.strings()) ?: emptyList()
+        val materials: List<MaterialType> = materialIds.mapNotNull {
+            runCatching { MaterialType.valueOf(it) }.getOrNull()
+        }
+
+        return CraftingCalculator.computeArmorStatsPublic(blueprint, materials).affinities
+    }
+
     // ============================================================
     //  VITALIDAD / STAMINA (custom, persistido en PDC de la entidad)
     // ============================================================

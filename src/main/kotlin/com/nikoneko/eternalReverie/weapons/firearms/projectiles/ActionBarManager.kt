@@ -18,9 +18,15 @@ object ActionBarManager {
         val item = player.inventory.itemInMainHand
         val itemMeta = item.itemMeta
 
+        val showCooldownBar = isCustomItem(item) && run {
+            val weaponUuidStr = itemMeta?.persistentDataContainer?.get(Keys.INSTANCE_UUID, PersistentDataType.STRING)
+            val attackSpeed = itemMeta?.persistentDataContainer?.get(Keys.ATTACK_SPEED, PersistentDataType.DOUBLE)
+            weaponUuidStr != null && attackSpeed != null &&
+                WeaponStateManager.getCooldownProgress(player, UUID.fromString(weaponUuidStr), attackSpeed) < 1.0
+        }
 
-        if (isCustomItem(item)) {
-            val weaponUuid = UUID.fromString(itemMeta.persistentDataContainer.get(Keys.INSTANCE_UUID, PersistentDataType.STRING))
+        if (showCooldownBar) {
+            val weaponUuid = UUID.fromString(itemMeta!!.persistentDataContainer.get(Keys.INSTANCE_UUID, PersistentDataType.STRING))
             val attackSpeed = itemMeta.persistentDataContainer.get(Keys.ATTACK_SPEED, PersistentDataType.DOUBLE) ?: return
 
             val progress = WeaponStateManager

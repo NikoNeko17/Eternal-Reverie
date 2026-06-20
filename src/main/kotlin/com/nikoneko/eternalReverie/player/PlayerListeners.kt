@@ -50,8 +50,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
         }
         if (event.cause == DamageCause.ENTITY_SWEEP_ATTACK) event.isCancelled = true
         victim.maximumNoDamageTicks = 0
-        val victimDefense = PlayerStats.computeEquipmentStats(victim).defense
-        val victimHealth = victim.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: return
+
         val attackerWeaponBlueprint : String? = attacker.inventory.itemInMainHand.itemMeta?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
         val attackerWeaponMaterials = attacker.inventory.itemInMainHand.itemMeta?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
         lateinit var attackerStats : Pair<CraftingCalculator.ComputedWeaponStats, PlayerStats.EquipmentStats>
@@ -74,12 +73,14 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
                 PlayerStats.computeEquipmentStats(attacker))
         }
 
-        val damageMitigation = 100 / (100 + victimDefense)
-        val isCrit = if (attackerStats.second.critChance <= Random.nextDouble()) 1 else 0
-        val finalDamage = (attackerStats.first.damage
-                * (1 + attackerStats.second.strengthMultiplier)
-                * ((1 + attackerStats.second.critDamageMultiplier) * isCrit)) * damageMitigation
-        PlayerStats.setCurrentHp(victim, victimHealth - finalDamage)
+        val finalDamage = CombatResolver.resolveHit(
+            attacker = attacker,
+            victim = victim,
+            rawDamage = attackerStats.first.damage,
+            attackerEquipment = attackerStats.second,
+            weaponAffinities = attackerStats.first.affinities
+        )
+
         event.damage = if (PlayerStats.getCurrentHp(victim) <= 0.0
         ) (victim.getAttribute(Attribute.MAX_HEALTH)?.value ?: 20.0) else 0.0
     }
@@ -122,13 +123,35 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
         ) return
 
         if (event.action.isRightClick && listOf(WeaponClass.PISTOLA, WeaponClass.ESCOPETA, WeaponClass.RIFLE).contains(weaponType)){
+            val firedItem = player.inventory.itemInMainHand
+            val firedMeta = firedItem.itemMeta
+            val firedBlueprintId = firedMeta?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
+            val firedMaterialIds = firedMeta?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
+
+            val firedStats: CraftingCalculator.ComputedWeaponStats =
+                if (firedBlueprintId != null && firedMaterialIds != null) {
+                    val parsedBlueprint = runCatching { BlueprintRegistry.get(firedBlueprintId) }.getOrNull()
+                    val parsedMaterials = firedMaterialIds.mapNotNull {
+                        runCatching { MaterialType.valueOf(it) }.getOrNull()
+                    }
+                    if (parsedBlueprint != null) {
+                        CraftingCalculator.computeWeaponStatsPublic(parsedBlueprint, parsedMaterials)
+                    } else {
+                        CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList())
+                    }
+                } else {
+                    CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList())
+                }
+
             val projectile = BulletProjectile(
                 shooter = player,
                 origin = player.eyeLocation,
                 direction = player.eyeLocation.direction,
-                damage = 10.0,
+                damage = firedStats.damage,
                 speed = 1.0,
-                maxDistance = event.item?.persistentDataContainer?.get(Keys.REACH, PersistentDataType.DOUBLE) ?: return
+                maxDistance = event.item?.persistentDataContainer?.get(Keys.REACH, PersistentDataType.DOUBLE) ?: return,
+                weaponAffinities = firedStats.affinities,
+                shooterEquipment = PlayerStats.computeEquipmentStats(player)
             )
 
             WeaponStateManager.trigger(player, UUID.fromString(player.inventory.itemInMainHand.itemMeta?.persistentDataContainer?.get(Keys.INSTANCE_UUID, PersistentDataType.STRING)) ?: return)

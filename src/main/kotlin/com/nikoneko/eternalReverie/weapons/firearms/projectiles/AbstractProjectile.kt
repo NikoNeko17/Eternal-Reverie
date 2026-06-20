@@ -1,5 +1,7 @@
 package com.nikoneko.eternalReverie.weapons.firearms.projectiles
 
+import com.nikoneko.eternalReverie.player.PlayerStats
+import com.nikoneko.eternalReverie.weapons.Affinity
 import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
 import org.bukkit.util.Vector
@@ -12,7 +14,9 @@ abstract class AbstractProjectile(
     direction: Vector,
     val damage: Double,
     val speed: Double,
-    val maxDistance: Double
+    val maxDistance: Double,
+    val weaponAffinities: List<Pair<Affinity, Double>> = emptyList(),
+    val shooterEquipment: PlayerStats.EquipmentStats = PlayerStats.computeEquipmentStats(shooter)
 ) {
 
     var currentPosition = origin.clone()
