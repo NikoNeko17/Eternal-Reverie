@@ -33,6 +33,12 @@ repositories {
     ) {
         name = "papermc-repo"
     }
+    
+    maven(
+        "https://repo.infernalsuite.com/repository/maven-snapshots/"
+    ) {
+        name = "asp-repo"
+    }
 
     maven {
         name = "citizens-repo"
@@ -44,6 +50,9 @@ repositories {
 
 dependencies {
     compileOnly(
+        "com.infernalsuite.asp:api:4.+"
+    )
+    compileOnly(
         "io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT"
     )
 
@@ -54,6 +63,7 @@ dependencies {
             "stdlib"
         )
     )
+    library("com.google.code.gson", "gson", "2.10.1")
 }
 
 java {

@@ -68,11 +68,41 @@ class CraftingGuiHolder(val player: Player) : InventoryHolder {
         val hasBlueprint = getBlueprintItem() != null
         val hasAnyMaterial = getMaterialItems().any { it != null }
 
-        val canCraft = hasBlueprint && hasAnyMaterial
+        val totalCost = materials.sumOf { it.data.fabricationCost }
+        val canAfford = com.nikoneko.eternalReverie.economy.CurrencyManager.hasEnough(player, totalCost)
+
+        val canCraft = hasBlueprint && hasAnyMaterial && canAfford
 
         val button = ItemStack(
             if (canCraft) Material.LIME_DYE else Material.GRAY_DYE
         )
+        val meta = button.itemMeta
+
+        val title = when {
+            !hasBlueprint || !hasAnyMaterial -> Component.text(
+                "Craftear (falta plano o materiales)", NamedTextColor.GRAY, TextDecoration.BOLD
+            )
+            !canAfford -> Component.text(
+                "Craftear (Chatarra insuficiente)", NamedTextColor.RED, TextDecoration.BOLD
+            )
+            else -> Component.text("Craftear", NamedTextColor.GREEN, TextDecoration.BOLD)
+        }
+        meta.displayName(title.decoration(TextDecoration.ITALIC, false))
+
+        if (hasAnyMaterial) {
+            val balance = com.nikoneko.eternalReverie.economy.CurrencyManager.getBalance(player)
+            meta.lore(
+                listOf(
+                    Component.text("Costo: ", NamedTextColor.GRAY)
+                        .append(Component.text(totalCost.toString(), NamedTextColor.GOLD))
+                        .decoration(TextDecoration.ITALIC, false),
+                    Component.text("Tu Chatarra: ", NamedTextColor.GRAY)
+                        .append(Component.text(balance.toString(), NamedTextColor.GOLD))
+                        .decoration(TextDecoration.ITALIC, false)
+                )
+            )
+        }
+        
         val meta = button.itemMeta
         meta.displayName(
             if (canCraft)

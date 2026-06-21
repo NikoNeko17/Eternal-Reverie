@@ -32,7 +32,7 @@ Los Alterados constituyen la principal fuente de combate y recursos básicos.
 
 Los Alterados de Élite son antiguos expedicionarios que han perdido su humanidad.
 
-Conservan fragmentos de experiencia y equipamiento de combate.
+Conservan equipamiento de combate.
 
 Utilizan las mismas herramientas disponibles para los jugadores.
 

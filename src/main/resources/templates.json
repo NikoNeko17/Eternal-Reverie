@@ -1,0 +1,49 @@
+{
+  "zone_1": [
+    "zone_1_template_1"
+  ],
+  "zone_2": [
+    "zone_2_template_1"
+  ],
+  "zone_3": [
+    "zone_3_template_1"
+  ],
+  "zone_4": [
+    "zone_4_template_1"
+  ],
+  "zone_5": [
+    "zone_5_template_1"
+  ],
+  "zone_6": [
+    "zone_6_template_1"
+  ],
+  "zone_7": [
+    "zone_7_template_1"
+  ],
+  "zone_8": [
+    "zone_8_template_1",
+    "zone_8_template_2",
+    "zone_8_template_3"
+  ],
+  "zone_9": [
+    "zone_9_template_1",
+    "zone_9_template_2",
+    "zone_9_template_3"
+  ],
+  "zone_10": [
+    "zone_10_template_1",
+    "zone_10_template_2",
+    "zone_10_template_3"
+  ],
+  "zone_11": [
+    "zone_11_template_1"
+  ],
+  "zone_12": [
+    "zone_12_template_1"
+  ],
+  "zone_13": [
+    "zone_13_template_1",
+    "zone_13_template_2",
+    "zone_13_template_3"
+  ]
+}

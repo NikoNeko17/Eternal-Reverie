@@ -1,6 +1,4 @@
-package com.nikoneko.eternalReverie.items
-
-import com.nikoneko.eternalReverie.weapons.Affinity
+package com.nikoneko.eternalReverie.materials
 
 enum class MaterialRarity(
     val stars: Int
@@ -51,7 +49,7 @@ enum class MaterialType(
     CHATARRA_REFORZADA(
         MaterialData(
             id = "chatarra_reforzada",
-            name = "Chatarra Reforzada",
+            name = "Fragmento Metálico",
             rarity = MaterialRarity.COMMON,
             weaponDamageBonus = 0.010,
             weaponAttackSpeedBonus = 0.000,

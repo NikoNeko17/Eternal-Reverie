@@ -26,7 +26,7 @@ import org.bukkit.scheduler.BukkitRunnable
 class EternalReverie : JavaPlugin() {
     val npcNameList = listOf("NikoNeko17")
     private val enemigosTemporales = mutableListOf<CustomEnemy>()
-
+    lateinit var instanceManager : InstanceManager
     override fun onEnable() {
         Keys.init(this)
         RealArrowKeys.init(this)
@@ -34,16 +34,26 @@ class EternalReverie : JavaPlugin() {
         BlueprintRegistry.load(this)
         ProjectileScheduler(this).start()
         AffinityTickScheduler(this).start()
+        StaminaRegenScheduler(this).start()
+        AreaLootRegistry.load(this)
+        AreaLootGenerator.generateIfMissing()
+        ChestLootListener.init(this)
+        instanceManager = InstanceManager(this)
+        InstanceTemplateRegistry.load(this)
+        
 
         getCommand("material-item")?.setExecutor(ItemCommand(this))
         getCommand("blueprint-item")?.setExecutor(BlueprintCommand(this))
         getCommand("craft")?.setExecutor(CraftingCommand())
+        getCommand("capture-template")?.setExecutor(InstanceTemplateCommand(this, instanceManager))
         server.pluginManager.registerEvents(PlayerListeners(this), this)
         server.pluginManager.registerEvents(CitizensHookListener(), this)
         server.pluginManager.registerEvents(CraftingGuiListener(), this)
         server.pluginManager.registerEvents(DurabilityListener(this), this)
         server.pluginManager.registerEvents(PlayerStatsListener(), this)
         server.pluginManager.registerEvents(BowListeners(this), this)
+        server.pluginManager.registerEvents(SprintStaminaListener(this), this)
+        server.pluginManager.registerEvents(CurrencyListener(), this)
         loadPlayerTicks()
 
         // Registramos el Trait (Es obligatorio hacerlo en el onEnable antes de crear NPC)
@@ -91,7 +101,7 @@ class EternalReverie : JavaPlugin() {
             logger.warning("¡No se pudo encontrar el mundo 'world' para spawnear el NPC de prueba!")
             return
         }
-
+        
         // 2. Definimos las coordenadas exactas de spawn (X, Y, Z) en el centro del mapa
         val coordenadaSpawn = Location(mundo, 0.0, 100.0, 0.0)
 

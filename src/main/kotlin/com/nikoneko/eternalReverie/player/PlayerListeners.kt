@@ -54,6 +54,12 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             return
         }
 
+        // Exhausto: sin stamina suficiente, no puede atacar.
+        if (StaminaManager.isExhausted(attacker)) {
+            event.isCancelled = true
+            return
+        }
+
         if (attacker.attackCooldown < 1f) {
             attacker.playSound(attacker, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.4f, 1.0f)
             event.isCancelled = true
@@ -64,6 +70,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
         val attackerWeaponBlueprint : String? = attacker.inventory.itemInMainHand.itemMeta?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
         val attackerWeaponMaterials = attacker.inventory.itemInMainHand.itemMeta?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
         lateinit var attackerStats : Pair<CraftingCalculator.ComputedWeaponStats, PlayerStats.EquipmentStats>
+        var attackerWeaponFamily: WeaponFamily? = null
         if (attackerWeaponBlueprint != null && attackerWeaponMaterials != null) {
             val parsedWeaponBlueprint : BlueprintData? = runCatching {
                 BlueprintRegistry.get(attackerWeaponBlueprint)
@@ -71,6 +78,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             val parsedWeaponMaterials: List<MaterialType> = attackerWeaponMaterials.mapNotNull { materialStr ->
                 runCatching { MaterialType.valueOf(materialStr) }.getOrNull()
             }
+            attackerWeaponFamily = parsedWeaponBlueprint?.family
             attackerStats = if (parsedWeaponBlueprint != null) {
                 Pair(CraftingCalculator.computeWeaponStatsPublic(parsedWeaponBlueprint, parsedWeaponMaterials),
                     PlayerStats.computeEquipmentStats(attacker))
@@ -82,6 +90,8 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             attackerStats = Pair(CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList()),
                 PlayerStats.computeEquipmentStats(attacker))
         }
+
+        StaminaManager.tryConsumeForAttack(attacker, attackerWeaponFamily)
 
         val finalDamage = CombatResolver.resolveHit(
             attacker = attacker,
@@ -102,6 +112,12 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
                 event.player, com.nikoneko.eternalReverie.weapons.Affinity.ATADURA
             )
         ) {
+            event.isCancelled = true
+            return
+        }
+
+        // Exhausto: sin stamina suficiente, no puede disparar.
+        if (StaminaManager.isExhausted(event.player)) {
             event.isCancelled = true
             return
         }
@@ -147,12 +163,14 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             val firedBlueprintId = firedMeta?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
             val firedMaterialIds = firedMeta?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
 
+            var firedWeaponFamily: WeaponFamily? = null
             val firedStats: CraftingCalculator.ComputedWeaponStats =
                 if (firedBlueprintId != null && firedMaterialIds != null) {
                     val parsedBlueprint = runCatching { BlueprintRegistry.get(firedBlueprintId) }.getOrNull()
                     val parsedMaterials = firedMaterialIds.mapNotNull {
                         runCatching { MaterialType.valueOf(it) }.getOrNull()
                     }
+                    firedWeaponFamily = parsedBlueprint?.family
                     if (parsedBlueprint != null) {
                         CraftingCalculator.computeWeaponStatsPublic(parsedBlueprint, parsedMaterials)
                     } else {
@@ -161,6 +179,8 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
                 } else {
                     CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList())
                 }
+
+            StaminaManager.tryConsumeForAttack(player, firedWeaponFamily)
 
             val projectile = BulletProjectile(
                 shooter = player,

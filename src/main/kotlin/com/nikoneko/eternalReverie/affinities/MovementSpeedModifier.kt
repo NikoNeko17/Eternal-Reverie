@@ -24,6 +24,7 @@ import org.bukkit.entity.LivingEntity
 object MovementSpeedModifier {
 
     private lateinit var keysByAffinity: Map<Affinity, NamespacedKey>
+    private lateinit var exhaustionKey: NamespacedKey
 
     fun init(plugin: EternalReverie) {
         keysByAffinity = mapOf(
@@ -31,36 +32,51 @@ object MovementSpeedModifier {
             Affinity.VENENO to NamespacedKey(plugin, "movement_mod_veneno"),
             Affinity.ATADURA to NamespacedKey(plugin, "movement_mod_atadura")
         )
+        exhaustionKey = NamespacedKey(plugin, "movement_mod_exhaustion")
     }
 
     /** @param reductionPct 0.0-1.0, ej. 0.40 = -40% de velocidad de movimiento. */
     fun applyReduction(entity: LivingEntity, affinity: Affinity, reductionPct: Double) {
         val attr = entity.getAttribute(Attribute.MOVEMENT_SPEED) ?: return
         val key = keysByAffinity[affinity] ?: return
-
-        // Remover el modificador anterior de ESTA afinidad si ya existía (reaplicación),
-        // así no se acumulan duplicados con el mismo key.
-        attr.modifiers.firstOrNull { it.key == key }?.let { attr.removeModifier(it) }
-
-        val modifier = AttributeModifier(
-            key,
-            -reductionPct,
-            AttributeModifier.Operation.MULTIPLY_SCALAR_1
-        )
-        attr.addModifier(modifier)
+        applyWithKey(attr, key, reductionPct)
     }
 
     fun restore(entity: LivingEntity, affinity: Affinity) {
         val attr = entity.getAttribute(Attribute.MOVEMENT_SPEED) ?: return
         val key = keysByAffinity[affinity] ?: return
+        removeKey(attr, key)
+    }
 
+    // Exhaustion (StaminaManager) usa su PROPIA key, separada de Atadura, para que
+    // ambos estados puedan coexistir y expirar de forma independiente sin pisarse
+    // (si Atadura expira primero mientras sigue Exhausto, el jugador debe seguir
+    // inmovilizado por Exhaustion hasta que esa, por separado, se resuelva).
+    fun applyExhaustion(entity: LivingEntity) {
+        val attr = entity.getAttribute(Attribute.MOVEMENT_SPEED) ?: return
+        applyWithKey(attr, exhaustionKey, 1.0)
+    }
+
+    fun restoreExhaustion(entity: LivingEntity) {
+        val attr = entity.getAttribute(Attribute.MOVEMENT_SPEED) ?: return
+        removeKey(attr, exhaustionKey)
+    }
+
+    private fun applyWithKey(attr: org.bukkit.attribute.AttributeInstance, key: NamespacedKey, reductionPct: Double) {
+        attr.modifiers.firstOrNull { it.key == key }?.let { attr.removeModifier(it) }
+        val modifier = AttributeModifier(key, -reductionPct.coerceAtMost(1.0), AttributeModifier.Operation.MULTIPLY_SCALAR_1)
+        attr.addModifier(modifier)
+    }
+
+    private fun removeKey(attr: org.bukkit.attribute.AttributeInstance, key: NamespacedKey) {
         attr.modifiers.firstOrNull { it.key == key }?.let { attr.removeModifier(it) }
     }
 
-    /** Limpia los 3 modificadores posibles, por si hace falta un reset total (ej. al morir). */
+    /** Limpia todos los modificadores posibles (incluido Exhaustion), por si hace falta un reset total. */
     fun restoreAll(entity: LivingEntity) {
         for (affinity in keysByAffinity.keys) {
             restore(entity, affinity)
         }
+        restoreExhaustion(entity)
     }
 }

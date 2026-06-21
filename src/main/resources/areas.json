@@ -1,0 +1,314 @@
+{
+  "zone_1": {
+    "displayName": "Distrito de la Pereza",
+    "level": 1,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "COMMON",
+      "minAmount": 3,
+      "maxAmount": 5,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "COMMON",
+      "maxRarity": "COMMON",
+      "chance": 0.17
+    },
+    "catalysts": {
+      "chance": 0.01
+    },
+    "currency": {
+      "minAmount": 3,
+      "maxAmount": 7,
+      "chance": 1.0
+    }
+  },
+  "zone_2": {
+    "displayName": "Distrito de la Gula",
+    "level": 2,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "COMMON",
+      "minAmount": 3,
+      "maxAmount": 5,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "COMMON",
+      "maxRarity": "COMMON",
+      "chance": 0.18
+    },
+    "catalysts": {
+      "chance": 0.01
+    },
+    "currency": {
+      "minAmount": 4,
+      "maxAmount": 9,
+      "chance": 1.0
+    }
+  },
+  "zone_3": {
+    "displayName": "Distrito de la Avaricia",
+    "level": 3,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "RARE",
+      "minAmount": 3,
+      "maxAmount": 5,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "COMMON",
+      "maxRarity": "RARE",
+      "chance": 0.19
+    },
+    "catalysts": {
+      "chance": 0.01
+    },
+    "currency": {
+      "minAmount": 5,
+      "maxAmount": 11,
+      "chance": 1.0
+    }
+  },
+  "zone_4": {
+    "displayName": "Distrito de la Ira",
+    "level": 4,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "RARE",
+      "minAmount": 3,
+      "maxAmount": 5,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "COMMON",
+      "maxRarity": "RARE",
+      "chance": 0.2
+    },
+    "catalysts": {
+      "chance": 0.01
+    },
+    "currency": {
+      "minAmount": 6,
+      "maxAmount": 13,
+      "chance": 1.0
+    }
+  },
+  "zone_5": {
+    "displayName": "Distrito de la Envidia",
+    "level": 5,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "EPIC",
+      "minAmount": 3,
+      "maxAmount": 6,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "COMMON",
+      "maxRarity": "EPIC",
+      "chance": 0.21
+    },
+    "catalysts": {
+      "chance": 0.01
+    },
+    "currency": {
+      "minAmount": 7,
+      "maxAmount": 15,
+      "chance": 1.0
+    }
+  },
+  "zone_6": {
+    "displayName": "Distrito de la Lujuria",
+    "level": 6,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "EPIC",
+      "minAmount": 4,
+      "maxAmount": 6,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "COMMON",
+      "maxRarity": "EPIC",
+      "chance": 0.22
+    },
+    "catalysts": {
+      "chance": 0.01
+    },
+    "currency": {
+      "minAmount": 8,
+      "maxAmount": 17,
+      "chance": 1.0
+    }
+  },
+  "zone_7": {
+    "displayName": "Distrito de la Soberbia",
+    "level": 7,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "EPIC",
+      "minAmount": 4,
+      "maxAmount": 6,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "COMMON",
+      "maxRarity": "EPIC",
+      "chance": 0.23
+    },
+    "catalysts": {
+      "chance": 0.01
+    },
+    "currency": {
+      "minAmount": 9,
+      "maxAmount": 19,
+      "chance": 1.0
+    }
+  },
+  "zone_8": {
+    "displayName": "Interpolación Efímera I",
+    "level": 8,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "LEGENDARY",
+      "minAmount": 4,
+      "maxAmount": 6,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "EPIC",
+      "maxRarity": "LEGENDARY",
+      "chance": 0.24
+    },
+    "catalysts": {
+      "chance": 0.02
+    },
+    "currency": {
+      "minAmount": 10,
+      "maxAmount": 21,
+      "chance": 1.0
+    }
+  },
+  "zone_9": {
+    "displayName": "Interpolación Efímera II",
+    "level": 9,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "MYTHIC",
+      "minAmount": 4,
+      "maxAmount": 7,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "EPIC",
+      "maxRarity": "MYTHIC",
+      "chance": 0.25
+    },
+    "catalysts": {
+      "chance": 0.03
+    },
+    "currency": {
+      "minAmount": 11,
+      "maxAmount": 23,
+      "chance": 1.0
+    }
+  },
+  "zone_10": {
+    "displayName": "Interpolación Efímera III",
+    "level": 10,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "MYTHIC",
+      "minAmount": 4,
+      "maxAmount": 7,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "EPIC",
+      "maxRarity": "MYTHIC",
+      "chance": 0.26
+    },
+    "catalysts": {
+      "chance": 0.04
+    },
+    "currency": {
+      "minAmount": 12,
+      "maxAmount": 25,
+      "chance": 1.0
+    }
+  },
+  "zone_11": {
+    "displayName": "Paraíso Onírico I",
+    "level": 11,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "MYTHIC",
+      "minAmount": 5,
+      "maxAmount": 7,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "LEGENDARY",
+      "maxRarity": "MYTHIC",
+      "chance": 0.27
+    },
+    "catalysts": {
+      "chance": 0.05
+    },
+    "currency": {
+      "minAmount": 13,
+      "maxAmount": 27,
+      "chance": 1.0
+    }
+  },
+  "zone_12": {
+    "displayName": "Paraíso Onírico II",
+    "level": 12,
+    "materials": {
+      "minRarity": "COMMON",
+      "maxRarity": "ONIRIC",
+      "minAmount": 5,
+      "maxAmount": 7,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "MYTHIC",
+      "maxRarity": "ONIRIC",
+      "chance": 0.28
+    },
+    "catalysts": {
+      "chance": 0.06
+    },
+    "currency": {
+      "minAmount": 14,
+      "maxAmount": 29,
+      "chance": 1.0
+    }
+  },
+  "zone_13": {
+    "displayName": "Paraíso Onírico: Desafío",
+    "level": 13,
+    "materials": {
+      "minRarity": "LEGENDARY",
+      "maxRarity": "ONIRIC",
+      "minAmount": 5,
+      "maxAmount": 8,
+      "chance": 1.0
+    },
+    "blueprints": {
+      "minRarity": "LEGENDARY",
+      "maxRarity": "ONIRIC",
+      "chance": 0.29
+    },
+    "catalysts": {
+      "chance": 0.07
+    },
+    "currency": {
+      "minAmount": 15,
+      "maxAmount": 31,
+      "chance": 1.0
+    }
+  }
+}

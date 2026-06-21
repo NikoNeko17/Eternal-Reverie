@@ -316,6 +316,14 @@ class CraftingGuiListener : Listener {
             player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
             return
         }
+        
+        val totalCost = materials.sumOf { it.data.fabricationCost }
+        if (!com.nikoneko.eternalReverie.economy.CurrencyManager.tryRemoveBalance(player, totalCost)) {
+            val balance = com.nikoneko.eternalReverie.economy.CurrencyManager.getBalance(player)
+            player.sendMessage("§cNo tenés suficiente Chatarra (necesitás $totalCost, tenés $balance).")
+            player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
+            return
+        }
 
         val catalystType = ItemFactory.readCatalystType(holder.getCatalystItem())
 

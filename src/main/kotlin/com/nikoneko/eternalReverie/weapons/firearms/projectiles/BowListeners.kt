@@ -11,7 +11,6 @@ import com.nikoneko.eternalReverie.weapons.Affinity
 import com.nikoneko.eternalReverie.weapons.WeaponFamily
 import com.nikoneko.eternalReverie.weapons.firearms.WeaponStateManager
 import org.bukkit.attribute.Attribute
-import org.bukkit.entity.AbstractArrow
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -45,13 +44,17 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
     // --- Arco Corto: disparo inmediato, sin mecánica de carga ---
     @EventHandler
     fun onShortBowFire(event: PlayerInteractEvent) {
-
         if (!event.action.isRightClick) return
 
         val player = event.player
 
         // Atadura: el jugador anclado no puede disparar mientras la Marca esté activa.
         if (com.nikoneko.eternalReverie.affinities.AffinityMarkManager.hasMark(player, Affinity.ATADURA)) {
+            return
+        }
+
+        // Exhausto: sin stamina suficiente, no puede disparar.
+        if (com.nikoneko.eternalReverie.player.StaminaManager.isExhausted(player)) {
             return
         }
 
@@ -68,6 +71,9 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
         val weaponUuid = UUID.fromString(weaponUuidStr)
 
         if (!WeaponStateManager.canShoot(player, weaponUuid, attackSpeed)) return
+
+        com.nikoneko.eternalReverie.player.StaminaManager.tryConsumeForAttack(player, family)
+
         val (computedStats, _) = computeFiredWeaponStats(player)
         val maxDistance = effectiveMaxDistance(player, pdc.get(Keys.REACH, PersistentDataType.DOUBLE))
 
@@ -94,12 +100,20 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
             return
         }
 
+        // Exhausto: sin stamina suficiente, no puede disparar.
+        if (com.nikoneko.eternalReverie.player.StaminaManager.isExhausted(player)) {
+            event.isCancelled = true
+            return
+        }
+
         val bow = event.bow ?: return
         val pdc = bow.itemMeta?.persistentDataContainer ?: return
 
         val familyStr = pdc.get(Keys.WEAPON_FAMILY, PersistentDataType.STRING) ?: return
         val family = runCatching { WeaponFamily.valueOf(familyStr) }.getOrNull() ?: return
         if (family != WeaponFamily.ARCO_LARGO && family != WeaponFamily.ARCO_COMPUESTO) return
+
+        com.nikoneko.eternalReverie.player.StaminaManager.tryConsumeForAttack(player, family)
 
         val projectile = event.projectile as? Arrow ?: return
         val maxDistance = effectiveMaxDistance(player, pdc.get(Keys.REACH, PersistentDataType.DOUBLE))
@@ -240,7 +254,7 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
         pdc.set(RealArrowKeys.ARROW_AFFINITIES, PersistentDataType.STRING, serializeAffinities(affinities))
         pdc.set(RealArrowKeys.ARROW_MAX_DISTANCE, PersistentDataType.DOUBLE, maxDistance)
         arrow.isCritical = false // el crítico ya lo maneja CombatResolver, no vanilla
-        arrow.pickupStatus = AbstractArrow.PickupStatus.DISALLOWED // no se puede recoger del piso (loot custom es otra cosa)
+        arrow.pickupStatus = Arrow.PickupStatus.DISALLOWED // no se puede recoger del piso (loot custom es otra cosa)
     }
 
     private fun computeFiredWeaponStats(

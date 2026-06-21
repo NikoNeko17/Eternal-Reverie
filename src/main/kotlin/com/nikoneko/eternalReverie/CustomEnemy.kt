@@ -1,6 +1,9 @@
 package com.nikoneko.eternalReverie
 
+import com.nikoneko.eternalReverie.crafting.CraftingCalculator
+import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
+import com.nikoneko.eternalReverie.materials.MaterialType
 import com.nikoneko.eternalReverie.player.PlayerStats.initializeIfAbsent
 import net.citizensnpcs.api.npc.NPC
 import net.citizensnpcs.trait.SkinTrait
@@ -23,7 +26,8 @@ import kotlin.random.Random
 class CustomEnemy(
     val npc: NPC,
     val spawnLocation: Location,
-    val plugin: EternalReverie
+    val plugin: EternalReverie,
+    val rarity: com.nikoneko.eternalReverie.items.Rarity = com.nikoneko.eternalReverie.items.Rarity.COMMON
 ) {
     var currentTarget: Player? = null
     private var combatTask: BukkitRunnable? = null
@@ -32,14 +36,27 @@ class CustomEnemy(
     private var lastAttackTime: Long = 0
     private var navCheckCooldown = 0
 
+    // Stats sin arma equipada (combate a puño limpio): attackSpeed vanilla = 4.0
+    companion object {
+        private const val UNARMED_ATTACK_SPEED = 4.0
+        private const val UNARMED_DAMAGE = 8.0
+    }
+
 
     fun iniciar() {
-        // 1. Spawneamos el NPC
+        // 1. Asignamos la skin ANTES de spawnear: SkinTrait.setSkinName() fuerza un
+        // respawn si el NPC ya está spawneado, lo cual destruye la entidad y con ella
+        // cualquier passenger montado (el TextDisplay de vida). Asignándola antes,
+        // el primer spawn ya sale con la skin correcta, sin respawn intermedio.
+        val skinTrait = npc.getOrAddTrait(SkinTrait::class.java)
+        customName = plugin.npcNameList.random()
+        skinTrait.skinName = customName
 
+        // 2. Spawneamos el NPC (ya con la skin asignada)
         npc.spawn(spawnLocation)
         val entity = npc.entity as? LivingEntity ?: return
 
-        // 2. Creamos la barra de vida flotante moderna (TextDisplay)
+        // 3. Creamos la barra de vida flotante moderna (TextDisplay)
         nameDisplay = spawnLocation.world.spawn(spawnLocation, TextDisplay::class.java) { display ->
             display.billboard = Display.Billboard.VERTICAL // Siempre mira al jugador
             display.isShadowed = true
@@ -50,18 +67,35 @@ class CustomEnemy(
 
         npc.isProtected = false
 
-
-        val skinTrait = npc.getOrAddTrait(SkinTrait::class.java)
-        customName = plugin.npcNameList.random()
-        skinTrait.skinName = customName
-
-
-
         updateLabel(entity)
         entity.addPassenger(nameDisplay!!)
 
-        // 3. Iniciamos el bucle de IA de Combate
+        // 4. Iniciamos el bucle de IA de Combate
         iniciarBucleCombate()
+    }
+
+    // Lee attackSpeed/daño desde el arma equipada en mano principal (mismo PDC
+    // que usan los jugadores: Keys.BLUEPRINT_ID + Keys.MATERIALS), o usa stats
+    // fijas de combate a puño limpio si el NPC no tiene nada equipado.
+    private fun computeEnemyCombatStats(entity: LivingEntity): Pair<Double, Double> {
+        val weaponItem = entity.equipment?.itemInMainHand
+        val pdc = weaponItem?.itemMeta?.persistentDataContainer
+
+        val blueprintId = pdc?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
+        val materialIds = pdc?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
+
+        if (blueprintId != null && materialIds != null) {
+            val blueprint = runCatching { BlueprintRegistry.get(blueprintId) }.getOrNull()
+            if (blueprint != null) {
+                val materials = materialIds.mapNotNull {
+                    runCatching { MaterialType.valueOf(it) }.getOrNull()
+                }
+                val stats = CraftingCalculator.computeWeaponStatsPublic(blueprint, materials)
+                return stats.attackSpeed to stats.damage
+            }
+        }
+
+        return UNARMED_ATTACK_SPEED to UNARMED_DAMAGE
     }
 
     private fun iniciarBucleCombate() {
@@ -76,7 +110,7 @@ class CustomEnemy(
                 val entity = npc.entity as LivingEntity
                 updateLabel(entity)
 
-                val attackSpeed = entity.getAttribute(Attribute.ATTACK_SPEED)?.value ?: 4.0
+                val (attackSpeed, attackDamage) = computeEnemyCombatStats(entity)
                 val attackReach = entity.getAttribute(Attribute.ENTITY_INTERACTION_RANGE)?.value ?: 3.0
 
                 // 1. Si no hay objetivo, buscamos al jugador real más cercano
@@ -104,16 +138,19 @@ class CustomEnemy(
                     }
                 }
 
+                // Mirar siempre al objetivo: el navigator solo orienta la cabeza hacia
+                // donde se MUEVE, así que dentro del rango de ataque (parado, sin
+                // moverse) nunca giraba hacia el jugador sin esto.
+                npc.faceLocation(target.location)
 
-
-                // 4. LÓGICA DE ALCANCE Y VELOCIDAD DE ATAQUE (Igual que antes)
+                // 4. LÓGICA DE ALCANCE Y VELOCIDAD DE ATAQUE
                 val distancia = entity.location.distance(target.location)
                 if (distancia <= attackReach) {
                     val tiempoActual = System.currentTimeMillis()
-                    val ticksEnMilis = attackSpeed * 50
+                    val ticksEnMilis = 1000.0 / attackSpeed
 
                     if (tiempoActual - lastAttackTime >= ticksEnMilis) {
-                        triggerHit(entity, target)
+                        triggerHit(entity, target, attackDamage)
                         lastAttackTime = tiempoActual
                     }
                 }
@@ -123,12 +160,15 @@ class CustomEnemy(
     }
 
 
-    private fun triggerHit(attacker: LivingEntity, victim: Player) {
+    private fun triggerHit(attacker: LivingEntity, victim: Player, damage: Double) {
         // Ejecuta el movimiento de brazo visual del NPC
         attacker.swingMainHand()
-        // Infligimos el daño a través del evento nativo para que tu DamageSystemListener lo procese
-        // Al pasarle 'attacker' como damager, tu sistema podrá leer los blueprints/materiales del arma del NPC
-        victim.damage(1.0, attacker)
+        // Infligimos el daño a través del evento nativo para que tu DamageSystemListener lo procese.
+        // Al pasarle 'attacker' como damager, tu sistema podrá leer los blueprints/materiales del
+        // arma del NPC si tiene una equipada (vía computeEnemyCombatStats), o usar el fallback
+        // sin arma; el valor pasado acá a damage() es solo el trigger del evento, el daño REAL
+        // final lo recalcula CombatResolver leyendo el arma del attacker en PlayerListeners.
+        victim.damage(damage, attacker)
     }
 
     private fun updateLabel(entity: LivingEntity) {
@@ -159,9 +199,41 @@ class CustomEnemy(
     }
 
     fun eliminar() {
+        // Genera el loot ANTES de despawnear, usando la última ubicación conocida
+        // de la entidad para dropear los ítems ahí mismo.
+        val deathLocation = (npc.entity as? LivingEntity)?.location ?: spawnLocation
+        dropLoot(deathLocation)
+
         combatTask?.cancel()
         nameDisplay?.remove()
         if (npc.isSpawned) npc.despawn()
         net.citizensnpcs.api.CitizensAPI.getNPCRegistry().deregister(npc)
+    }
+
+    private fun dropLoot(location: Location) {
+        val world = location.world ?: return
+
+        // Chatarra: drop garantizado en cada muerte, independiente de lo demás.
+        val currencyAmount = com.nikoneko.eternalReverie.loot.LootGenerator.rollCurrency(rarity)
+        if (currencyAmount > 0) {
+            world.dropItemNaturally(
+                location,
+                com.nikoneko.eternalReverie.economy.CurrencyItem.create(currencyAmount)
+            )
+        }
+
+        when (val result = com.nikoneko.eternalReverie.loot.LootGenerator.rollLoot(rarity)) {
+            is com.nikoneko.eternalReverie.loot.LootGenerator.LootResult.Nothing -> {
+                // Sin drop, no se hace nada.
+            }
+            is com.nikoneko.eternalReverie.loot.LootGenerator.LootResult.Materials -> {
+                for (item in result.items) {
+                    world.dropItemNaturally(location, item)
+                }
+            }
+            is com.nikoneko.eternalReverie.loot.LootGenerator.LootResult.CraftedItem -> {
+                world.dropItemNaturally(location, result.item)
+            }
+        }
     }
 }
