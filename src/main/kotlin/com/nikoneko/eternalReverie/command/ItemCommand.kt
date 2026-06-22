@@ -1,7 +1,7 @@
 package com.nikoneko.eternalReverie.command
 
 import com.nikoneko.eternalReverie.EternalReverie
-import com.nikoneko.eternalReverie.items.MaterialType
+import com.nikoneko.eternalReverie.crafting.MaterialType
 import com.nikoneko.eternalReverie.items.ItemFactory
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

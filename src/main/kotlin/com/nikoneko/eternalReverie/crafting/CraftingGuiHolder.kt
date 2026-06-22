@@ -33,10 +33,9 @@ class CraftingGuiHolder(val player: Player) : InventoryHolder {
         }
     }
 
-    private lateinit var inventory: Inventory
+    private var inventory: Inventory = Bukkit.createInventory(this, SIZE, TITLE)
 
     init {
-        inventory = Bukkit.createInventory(this, SIZE, TITLE)
         setupDecorativeSlots()
         updateCraftButton()
         updatePreview(null)
@@ -66,7 +65,9 @@ class CraftingGuiHolder(val player: Player) : InventoryHolder {
 
     fun updateCraftButton() {
         val hasBlueprint = getBlueprintItem() != null
-        val hasAnyMaterial = getMaterialItems().any { it != null }
+        val materials = getMaterialItems()
+            .mapNotNull { it?.let { item -> com.nikoneko.eternalReverie.items.ItemFactory.readMaterialType(item) } }
+        val hasAnyMaterial = materials.isNotEmpty()
 
         val totalCost = materials.sumOf { it.data.fabricationCost }
         val canAfford = com.nikoneko.eternalReverie.economy.CurrencyManager.hasEnough(player, totalCost)
@@ -102,20 +103,12 @@ class CraftingGuiHolder(val player: Player) : InventoryHolder {
                 )
             )
         }
-        
-        val meta = button.itemMeta
-        meta.displayName(
-            if (canCraft)
-                Component.text("Craftear", NamedTextColor.GREEN)
-                    .decoration(TextDecoration.ITALIC, false)
-            else
-                Component.text("Craftear (falta plano o materiales)", NamedTextColor.GRAY)
-                    .decoration(TextDecoration.ITALIC, false)
-        )
+
         button.itemMeta = meta
 
         inventory.setItem(SLOT_CRAFT_BUTTON, button)
     }
+
 
     fun updatePreview(previewItem: ItemStack?) {
         inventory.setItem(

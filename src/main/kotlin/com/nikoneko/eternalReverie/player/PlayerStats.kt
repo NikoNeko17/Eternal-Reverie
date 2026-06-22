@@ -3,13 +3,11 @@ package com.nikoneko.eternalReverie.player
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
-import com.nikoneko.eternalReverie.items.MaterialType
+import com.nikoneko.eternalReverie.crafting.MaterialType
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
-import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
-import kotlin.math.pow
 
 /**
  * Stats totales calculadas en tiempo real para un LivingEntity (jugador o NPC

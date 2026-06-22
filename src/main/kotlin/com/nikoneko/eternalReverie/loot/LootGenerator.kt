@@ -7,7 +7,8 @@ import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.ItemFactory
 import com.nikoneko.eternalReverie.items.ItemType
 import com.nikoneko.eternalReverie.items.Rarity
-import com.nikoneko.eternalReverie.materials.MaterialType
+import com.nikoneko.eternalReverie.crafting.MaterialType
+import com.nikoneko.eternalReverie.crafting.MaterialRarity
 import org.bukkit.inventory.ItemStack
 import java.util.UUID
 import kotlin.random.Random
@@ -80,14 +81,14 @@ object LootGenerator {
 
     // MaterialRarity solo llega hasta ONIRIC (6 niveles); ASCENDED (7★, vía catalizador)
     // no tiene materiales propios, así que cualquier roll en ASCENDED cae a ONIRIC.
-    private fun mapToMaterialRarity(rarity: Rarity): com.nikoneko.eternalReverie.materials.MaterialRarity? {
+    private fun mapToMaterialRarity(rarity: Rarity): MaterialRarity? {
         return when (rarity) {
-            Rarity.COMMON -> com.nikoneko.eternalReverie.materials.MaterialRarity.COMMON
-            Rarity.RARE -> com.nikoneko.eternalReverie.materials.MaterialRarity.RARE
-            Rarity.EPIC -> com.nikoneko.eternalReverie.materials.MaterialRarity.EPIC
-            Rarity.LEGENDARY -> com.nikoneko.eternalReverie.materials.MaterialRarity.LEGENDARY
-            Rarity.MYTHIC -> com.nikoneko.eternalReverie.materials.MaterialRarity.MYTHIC
-            Rarity.ONIRIC, Rarity.ASCENDED -> com.nikoneko.eternalReverie.materials.MaterialRarity.ONIRIC
+            Rarity.COMMON -> MaterialRarity.COMMON
+            Rarity.RARE -> MaterialRarity.RARE
+            Rarity.EPIC -> MaterialRarity.EPIC
+            Rarity.LEGENDARY -> MaterialRarity.LEGENDARY
+            Rarity.MYTHIC -> MaterialRarity.MYTHIC
+            Rarity.ONIRIC, Rarity.ASCENDED -> MaterialRarity.ONIRIC
         }
     }
 
@@ -127,7 +128,7 @@ object LootGenerator {
     // teórico de 8 slots perfectos (eso queda reservado para crafteo manual del jugador).
     private fun rollRandomMaterialsForCraft(blueprint: BlueprintData): List<MaterialType> {
         val maxMaterialRarity = mapToMaterialRarity(blueprint.rarity) ?: return emptyList()
-        val allowedRarities = com.nikoneko.eternalReverie.materials.MaterialRarity.entries
+        val allowedRarities = MaterialRarity.entries
             .filter { it.stars <= maxMaterialRarity.stars }
 
         val pool = MaterialType.entries.filter { it.data.rarity in allowedRarities }

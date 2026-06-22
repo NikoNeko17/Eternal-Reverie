@@ -2,15 +2,14 @@ package com.nikoneko.eternalReverie.player
 
 import com.nikoneko.eternalReverie.EternalReverie
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
+import com.nikoneko.eternalReverie.crafting.MaterialType
 import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.decrementDurability
 import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.isCustomItem
 import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.refreshLore
 import com.nikoneko.eternalReverie.items.BlueprintData
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
-import com.nikoneko.eternalReverie.items.MaterialType
 import com.nikoneko.eternalReverie.weapons.WeaponClass
-import com.nikoneko.eternalReverie.weapons.WeaponData
 import com.nikoneko.eternalReverie.weapons.WeaponFamily
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.BulletProjectile
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ProjectileManager
@@ -21,7 +20,6 @@ import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -32,7 +30,6 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.persistence.PersistentDataType
 import java.util.UUID
-import kotlin.random.Random
 
 class PlayerListeners(val plugin: EternalReverie) : Listener {
     @EventHandler

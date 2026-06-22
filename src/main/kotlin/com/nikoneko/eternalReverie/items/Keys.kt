@@ -21,6 +21,10 @@ object Keys {
     lateinit var CURRENT_HP: NamespacedKey
     lateinit var MAX_STAMINA: NamespacedKey
     lateinit var CURRENT_STAMINA: NamespacedKey
+    lateinit var ATTACK_SPEED: NamespacedKey
+    lateinit var REACH: NamespacedKey
+    lateinit var MOBILITY: NamespacedKey
+    lateinit var ARMOR_MOBILITY: NamespacedKey
 
     // Debuff temporal de velocidad de ataque (Habilidad de Congelación, Affinity HIELO)
     lateinit var ATTACK_SPEED_DEBUFF_MULTIPLIER: NamespacedKey
@@ -52,6 +56,10 @@ object Keys {
         CURRENT_HP = NamespacedKey(plugin, "current_hp")
         MAX_STAMINA = NamespacedKey(plugin, "max_stamina")
         CURRENT_STAMINA = NamespacedKey(plugin, "current_stamina")
+        ATTACK_SPEED = NamespacedKey(plugin, "attack_speed")
+        REACH = NamespacedKey(plugin, "reach")
+        MOBILITY = NamespacedKey(plugin, "mobility")
+        ARMOR_MOBILITY = NamespacedKey(plugin, "armor_mobility")
 
         ATTACK_SPEED_DEBUFF_MULTIPLIER = NamespacedKey(plugin, "attack_speed_debuff_multiplier")
         ATTACK_SPEED_DEBUFF_EXPIRES_AT = NamespacedKey(plugin, "attack_speed_debuff_expires_at")

@@ -1,5 +1,7 @@
 package com.nikoneko.eternalReverie.loot
 
+import kotlin.math.roundToInt
+
 /**
  * Genera/regenera las 13 entradas zone_1..zone_13 en AreaLootRegistry desde
  * código (no un JSON escrito a mano), siguiendo el mapeo de Areas.md:
@@ -102,5 +104,5 @@ object AreaLootGenerator {
         )
     }
 
-    private fun roundTo2(value: Double): Double = Math.round(value * 100.0) / 100.0
+    private fun roundTo2(value: Double): Double = (value * 100.0).roundToInt() / 100.0
 }

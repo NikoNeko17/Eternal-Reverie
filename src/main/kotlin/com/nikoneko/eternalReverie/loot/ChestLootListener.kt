@@ -1,5 +1,6 @@
 package com.nikoneko.eternalReverie.loot
 
+import com.nikoneko.eternalReverie.EternalReverie
 import org.bukkit.Material
 import org.bukkit.block.Chest
 import org.bukkit.entity.Player
@@ -41,13 +42,13 @@ class ChestLootListener : Listener {
         if (event.block.type != Material.CHEST) return
 
         val rawName = event.itemInHand.itemMeta?.let {
-            if (it.hasDisplayName()) it.displayName else null
+            if (it.hasDisplayName()) it.displayName() else null
         } ?: return
 
         // displayName() (Adventure) devuelve Component; para comparar contra la key
         // raw del JSON usamos el texto plano, sin colores/formato.
-        val plainName = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-            .plainText().serialize(event.itemInHand.itemMeta.displayName())
+        val plainName = event.itemInHand.itemMeta.displayName().toString()
+
 
         if (AreaLootRegistry.get(plainName) == null) return
 

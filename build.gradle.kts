@@ -12,7 +12,7 @@ if (localFile.exists()) {
     }
 }
 
-val pluginsPath = localProperties.getProperty("SERVER_PLUGINS_PATH")!!
+val pluginsPath = localProperties.getProperty("SERVER_PLUGINS_PATH") ?: ""
 
 val autoDeploy = localProperties.getProperty("AUTO_DEPLOY")?.toBoolean() ?: false
 
@@ -50,7 +50,7 @@ repositories {
 
 dependencies {
     compileOnly(
-        "com.infernalsuite.asp:api:4.+"
+        "com.infernalsuite.asp:api:4.0.0-SNAPSHOT"
     )
     compileOnly(
         "io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT"
@@ -64,6 +64,7 @@ dependencies {
         )
     )
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.infernalsuite.asp:file-loader:4.0.0-SNAPSHOT")
 }
 
 java {

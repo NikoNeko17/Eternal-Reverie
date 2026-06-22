@@ -2,15 +2,16 @@ package com.nikoneko.eternalReverie.weapons.firearms.projectiles
 
 import com.nikoneko.eternalReverie.EternalReverie
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
+import com.nikoneko.eternalReverie.crafting.MaterialType
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
-import com.nikoneko.eternalReverie.items.MaterialType
 import com.nikoneko.eternalReverie.player.CombatResolver
 import com.nikoneko.eternalReverie.player.PlayerStats
 import com.nikoneko.eternalReverie.weapons.Affinity
 import com.nikoneko.eternalReverie.weapons.WeaponFamily
 import com.nikoneko.eternalReverie.weapons.firearms.WeaponStateManager
 import org.bukkit.attribute.Attribute
+import org.bukkit.entity.AbstractArrow
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -254,7 +255,7 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
         pdc.set(RealArrowKeys.ARROW_AFFINITIES, PersistentDataType.STRING, serializeAffinities(affinities))
         pdc.set(RealArrowKeys.ARROW_MAX_DISTANCE, PersistentDataType.DOUBLE, maxDistance)
         arrow.isCritical = false // el crítico ya lo maneja CombatResolver, no vanilla
-        arrow.pickupStatus = Arrow.PickupStatus.DISALLOWED // no se puede recoger del piso (loot custom es otra cosa)
+        arrow.pickupStatus = AbstractArrow.PickupStatus.DISALLOWED // no se puede recoger del piso (loot custom es otra cosa)
     }
 
     private fun computeFiredWeaponStats(

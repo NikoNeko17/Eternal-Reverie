@@ -24,7 +24,7 @@ class CurrencyListener : Listener {
 
         event.isCancelled = true // evita interactuar con bloques/aire de paso
 
-        depositOne(player, item)
+        if (player.isSneaking) depositAll(player, item) else depositOne(player, item)
     }
 
     private fun depositOne(player: Player, item: org.bukkit.inventory.ItemStack) {
@@ -43,5 +43,19 @@ class CurrencyListener : Listener {
             )
         )
         player.playSound(player.location, org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f)
+    }
+
+    private fun depositAll(player: Player, item: org.bukkit.inventory.ItemStack) {
+        CurrencyManager.addBalance(player, CurrencyItem.VALUE_PER_UNIT * item.amount)
+
+        player.inventory.setItemInMainHand(null)
+
+        player.sendActionBar(
+            net.kyori.adventure.text.Component.text(
+                "+${CurrencyItem.VALUE_PER_UNIT * item.amount} Chatarra (Balance: ${CurrencyManager.getBalance(player)})",
+                net.kyori.adventure.text.format.NamedTextColor.GOLD
+            )
+        )
+        player.playSound(player.location, org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0.4f)
     }
 }

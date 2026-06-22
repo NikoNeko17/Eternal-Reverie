@@ -9,7 +9,6 @@ import com.nikoneko.eternalReverie.items.Keys
 import com.nikoneko.eternalReverie.items.Rarity
 import com.nikoneko.eternalReverie.items.TextFormat
 import com.nikoneko.eternalReverie.items.WeaponNameBank
-import com.nikoneko.eternalReverie.items.MaterialType
 import com.nikoneko.eternalReverie.weapons.Affinity
 import com.nikoneko.eternalReverie.weapons.WeaponClass
 import net.kyori.adventure.text.Component

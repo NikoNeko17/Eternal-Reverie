@@ -21,12 +21,12 @@ object MarkEffects {
         val effectiveMultiplier = (1.0 - mitigation).coerceIn(0.0, 1.0)
 
         when (mark.affinity) {
-            Affinity.SANGRE -> applyRoboDeVida(target, source, config, effectiveMultiplier)
-            Affinity.FUEGO -> applyIncineracionProporcional(target, mark, config, effectiveMultiplier)
-            Affinity.HIELO -> applyCongelacion(target, config, effectiveMultiplier)
-            Affinity.ELECTRICIDAD -> applyDrenaje(target, source, config, effectiveMultiplier)
-            Affinity.VENENO -> applyIntoxicacion(target, config, effectiveMultiplier)
-            Affinity.ATADURA -> applyAnclaje(target, config, effectiveMultiplier)
+            Affinity.SANGRE -> applyBleed(target, source, config, effectiveMultiplier)
+            Affinity.FUEGO -> applyBurn(target, mark, config, effectiveMultiplier)
+            Affinity.HIELO -> applyFreeze(target, config, effectiveMultiplier)
+            Affinity.ELECTRICIDAD -> applyDrain(target, source, config, effectiveMultiplier)
+            Affinity.VENENO -> applyPoison(target, config, effectiveMultiplier)
+            Affinity.ATADURA -> applyAnchor(target, config, effectiveMultiplier)
             Affinity.FRAGILIDAD -> { /* Exposición: leída directamente en CombatResolver al calcular daño, no en el tick */ }
         }
     }
@@ -43,13 +43,13 @@ object MarkEffects {
     // la Marca esté activa en la víctima. No hace daño extra por sí misma; el robo
     // ocurre en CombatResolver al momento del golpe (ver nota abajo), acá solo
     // mantenemos viva la referencia por si se necesita un tick visual a futuro. ---
-    private fun applyRoboDeVida(target: LivingEntity, source: LivingEntity?, config: MarkConfig, mult: Double) {
+    private fun applyBleed(target: LivingEntity, source: LivingEntity?, config: MarkConfig, mult: Double) {
         // El robo real se resuelve en CombatResolver (lee hasMark(target, SANGRE) y
         // cura al atacante un % del daño de ESE golpe). Acá no hay tick periódico real.
     }
 
     // --- Fuego: DoT proporcional al daño del golpe que generó/refrescó la Marca ---
-    private fun applyIncineracionProporcional(
+    private fun applyBurn(
         target: LivingEntity,
         mark: AffinityMark,
         config: MarkConfig,
@@ -63,7 +63,7 @@ object MarkEffects {
     }
 
     // --- Hielo: frenazo fuerte y corto, movimiento + velocidad de ataque ---
-    private fun applyCongelacion(target: LivingEntity, config: MarkConfig, mult: Double) {
+    private fun applyFreeze(target: LivingEntity, config: MarkConfig, mult: Double) {
         val movementReduction = config.effectValue * mult         // -40% base
         val attackSpeedReduction = (config.effectValue * 0.75) * mult // -30% base (3/4 del valor de movimiento)
 
@@ -71,8 +71,8 @@ object MarkEffects {
         AttackSpeedDebuff.apply(target, 1.0 - attackSpeedReduction, durationMillis = 1200L) // se refresca cada tick mientras la Marca viva
     }
 
-    // --- Electricidad: Drenaje. Roba % de la regen. de Stamina del enemigo hacia el atacante ---
-    private fun applyDrenaje(target: LivingEntity, source: LivingEntity?, config: MarkConfig, mult: Double) {
+    // --- Electricidad: Drenaje. Roba % de la regen. De Stamina del enemigo hacia el atacante ---
+    private fun applyDrain(target: LivingEntity, source: LivingEntity?, config: MarkConfig, mult: Double) {
         if (source == null) return
 
         // "Robar regeneración" = el objetivo no regenera Stamina este tick (penalización
@@ -88,7 +88,7 @@ object MarkEffects {
     }
 
     // --- Veneno: progresivo y prolongado, movimiento leve + regen. HP/Stamina golpeada ---
-    private fun applyIntoxicacion(target: LivingEntity, config: MarkConfig, mult: Double) {
+    private fun applyPoison(target: LivingEntity, config: MarkConfig, mult: Double) {
         val movementReduction = config.effectValue * mult // -15% base
 
         MovementSpeedModifier.applyReduction(target, Affinity.VENENO, movementReduction)
@@ -104,7 +104,7 @@ object MarkEffects {
     // --- Atadura: Anclaje. Inmoviliza por completo (Movilidad a 0). ---
     // El bloqueo de uso de ítems/habilidades se maneja del lado del usuario
     // (return temprano en PlayerListener al detectar AffinityMarkManager.hasMark(player, ATADURA)).
-    private fun applyAnclaje(target: LivingEntity, config: MarkConfig, mult: Double) {
+    private fun applyAnchor(target: LivingEntity, config: MarkConfig, mult: Double) {
         MovementSpeedModifier.applyReduction(target, Affinity.ATADURA, 1.0) // inmovilizado total, binario
     }
 }

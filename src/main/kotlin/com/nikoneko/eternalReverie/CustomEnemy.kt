@@ -3,7 +3,7 @@ package com.nikoneko.eternalReverie
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
-import com.nikoneko.eternalReverie.materials.MaterialType
+import com.nikoneko.eternalReverie.crafting.MaterialType
 import com.nikoneko.eternalReverie.player.PlayerStats.initializeIfAbsent
 import net.citizensnpcs.api.npc.NPC
 import net.citizensnpcs.trait.SkinTrait

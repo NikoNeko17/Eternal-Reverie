@@ -1,12 +1,12 @@
 package com.nikoneko.eternalReverie.loot
 
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
+import com.nikoneko.eternalReverie.crafting.MaterialRarity
+import com.nikoneko.eternalReverie.crafting.MaterialType
 import com.nikoneko.eternalReverie.economy.CurrencyItem
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.ItemFactory
 import com.nikoneko.eternalReverie.items.Rarity
-import com.nikoneko.eternalReverie.materials.MaterialRarity
-import com.nikoneko.eternalReverie.materials.MaterialType
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 

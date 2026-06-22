@@ -36,7 +36,7 @@ object StaminaManager {
 
     /** @return true si el gasto se pudo realizar (había stamina suficiente). */
     fun tryConsumeForAttack(entity: LivingEntity, weaponFamily: WeaponFamily?): Boolean {
-        val speedMultiplier = weaponFamily?.speedMultiplier?.takeIf { it > 0.0 } ?: 1.0
+        val speedMultiplier = weaponFamily?.mobility?.takeIf { it > 0.0 } ?: 1.0
         val costPct = ATTACK_BASE_COST_PCT * (1.0 / speedMultiplier)
         return tryConsume(entity, costPct)
     }

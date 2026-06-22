@@ -1,5 +1,6 @@
 package com.nikoneko.eternalReverie.items
 
+import com.nikoneko.eternalReverie.crafting.MaterialType
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
