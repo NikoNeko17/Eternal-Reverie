@@ -1,11 +1,16 @@
 package com.nikoneko.eternalReverie.player
 
+import com.nikoneko.eternalReverie.EnemyObject
+import com.nikoneko.eternalReverie.EnemyStatsTrait
+import com.nikoneko.eternalReverie.EternalReverie
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
 import com.nikoneko.eternalReverie.crafting.MaterialType
+import net.citizensnpcs.api.npc.NPC
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
@@ -217,6 +222,7 @@ object PlayerStats {
     fun recalculateMaxHp(entity: LivingEntity) {
         val gearStats = computeEquipmentStats(entity)
         val newMax = BASE_MAX_HP + gearStats.maxHpFromGear
+
 
         val pdc = entity.persistentDataContainer
         pdc.set(Keys.MAX_HP, PersistentDataType.DOUBLE, newMax)

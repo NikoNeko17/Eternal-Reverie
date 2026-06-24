@@ -1,11 +1,13 @@
 package com.nikoneko.eternalReverie
 
 import com.nikoneko.eternalReverie.affinities.AffinityTickScheduler
+import com.nikoneko.eternalReverie.affinities.MovementSpeedModifier
 import com.nikoneko.eternalReverie.command.BlueprintCommand
 import com.nikoneko.eternalReverie.command.CraftingCommand
 import com.nikoneko.eternalReverie.command.ItemCommand
 import com.nikoneko.eternalReverie.crafting.CraftingGuiListener
 import com.nikoneko.eternalReverie.durability.DurabilityListener
+import com.nikoneko.eternalReverie.economy.CurrencyCommand
 import com.nikoneko.eternalReverie.economy.CurrencyListener
 import com.nikoneko.eternalReverie.instances.InstanceManager
 import com.nikoneko.eternalReverie.instances.InstanceTemplateCommand
@@ -29,14 +31,19 @@ import net.citizensnpcs.api.trait.TraitInfo
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.LivingEntity
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 class EternalReverie : JavaPlugin() {
     val npcNameList = listOf("NikoNeko17")
-    private val enemigosTemporales = mutableListOf<CustomEnemy>()
+    val enemigosTemporales = mutableMapOf<UUID, CustomEnemy>()
     lateinit var instanceManager : InstanceManager
     override fun onEnable() {
+
         Keys.init(this)
         RealArrowKeys.init(this)
         BlueprintRegistry.generateDefaults(this)
@@ -49,12 +56,15 @@ class EternalReverie : JavaPlugin() {
         ChestLootListener.init(this)
         instanceManager = InstanceManager(this)
         InstanceTemplateRegistry.load(this)
+        MovementSpeedModifier.init(this)
+        SprintStaminaListener(this).startTick()
         
 
         getCommand("material-item")?.setExecutor(ItemCommand(this))
         getCommand("blueprint-item")?.setExecutor(BlueprintCommand(this))
         getCommand("craft")?.setExecutor(CraftingCommand())
         getCommand("capture-template")?.setExecutor(InstanceTemplateCommand(this, instanceManager))
+        getCommand("scrap")?.setExecutor(CurrencyCommand(this))
         server.pluginManager.registerEvents(PlayerListeners(this), this)
         server.pluginManager.registerEvents(CitizensHookListener(), this)
         server.pluginManager.registerEvents(CraftingGuiListener(), this)
@@ -63,16 +73,15 @@ class EternalReverie : JavaPlugin() {
         server.pluginManager.registerEvents(BowListeners(this), this)
         server.pluginManager.registerEvents(SprintStaminaListener(this), this)
         server.pluginManager.registerEvents(CurrencyListener(), this)
+        server.pluginManager.registerEvents(ChestLootListener(this), this)
         loadPlayerTicks()
 
         // Registramos el Trait (Es obligatorio hacerlo en el onEnable antes de crear NPC)
         if (server.pluginManager.isPluginEnabled("Citizens")) {
             CitizensAPI.getTraitFactory().registerTrait(
-                TraitInfo.create(RpgStatsTrait::class.java as Class<out net.citizensnpcs.api.trait.Trait>)
+                TraitInfo.create(EnemyStatsTrait::class.java)
             )
 
-            // Ejemplo: Aparecer el enemigo 5 segundos después de encender el servidor
-            // Esto evita que intente aparecer antes de que el mundo cargue por completo
             Bukkit.getScheduler().runTaskLater(this, Runnable {
                 npcTest()
             }, 100L) // 100 ticks = 5 segundos
@@ -80,14 +89,17 @@ class EternalReverie : JavaPlugin() {
     }
 
     override fun onDisable() {
+        npcClearList()
+    }
+
+    private fun npcClearList() {
         logger.info("Iniciando limpieza masiva de NPCs temporales y NameDisplays...")
 
         // 1. Eliminamos de forma ordenada cada enemigo de nuestra lista activa
         // Usamos un iterador o una copia (.toTypedArray) para evitar errores de modificación concurrente
-        enemigosTemporales.toTypedArray().forEach { enemigo ->
-            enemigo.eliminar() // Esto borra el TextDisplay, des-spawnea el NPC y lo quita de Citizens
+        EnemyObject.all.forEach { (uuid, _) ->
+            EnemyObject.remove(uuid) // Esto borra el TextDisplay, des-spawnea el NPC y lo quita de Citizens
         }
-        enemigosTemporales.clear()
 
         // 2. ¡BARRIDO DE SEGURIDAD ABSOLUTO! (Opcional, pero altamente recomendado)
         // Si el servidor crashea o se apaga de golpe, algunos TextDisplays podrían quedar flotando en el mapa.
@@ -127,12 +139,27 @@ class EternalReverie : JavaPlugin() {
         // 4. Instanciamos tu clase custom con el molde y la coordenada
         val enemigoPrueba = CustomEnemy(npc, coordenadaSpawn, this)
 
-        // 5. ¡Activamos el NPC! Aquí adentro se ejecuta el npc.spawn(), se rellenan los PDCs y arranca la IA
-        enemigoPrueba.iniciar()
 
-        enemigosTemporales.add(enemigoPrueba)
 
-        logger.info("¡NPC de prueba inicializado exitosamente en ${coordenadaSpawn.toVector()} con PDCs de vida!")
+        Bukkit.getScheduler().runTaskLater(this, Runnable {
+
+            // 5. ¡Activamos el NPC! Aquí adentro se ejecuta el npc.spawn(), se rellenan los PDCs y arranca la IA
+            enemigoPrueba.iniciar()
+
+            val entityReal = npc.entity as? LivingEntity ?: return@Runnable
+            val pdc = entityReal.persistentDataContainer
+
+            // INYECCIÓN DE TUS PDCs COMPATIBLES (La única fuente de verdad de tu plugin)
+            pdc.set(Keys.CURRENT_HP, PersistentDataType.DOUBLE, 100.0)
+            pdc.set(Keys.MAX_HP, PersistentDataType.DOUBLE, 100.0)
+            // Podés meter tus PDCs de Blueprints o Materiales acá mismo...
+
+            // Lo agregamos a tu lista global de limpieza del onDisable
+            EnemyObject.register(enemigoPrueba)
+            logger.info("¡NPC de prueba inicializado exitosamente en ${coordenadaSpawn.toVector()} con PDCs de vida!")
+        }, 5L)
+
+
     }
 
 
@@ -147,4 +174,12 @@ class EternalReverie : JavaPlugin() {
             }
         }.runTaskTimer(this, 0L, 1L)
     }
+}
+
+object EnemyObject {
+    private val map = ConcurrentHashMap<Int, CustomEnemy>()
+    fun register(enemy: CustomEnemy) { map[enemy.npc.id] = enemy }
+    fun get(id: Int) = map[id]
+    fun remove(id: Int) { map[id]?.eliminar(); map.remove(id) }
+    val all: Map<Int, CustomEnemy> = map.toMap()
 }

@@ -1,5 +1,6 @@
 package com.nikoneko.eternalReverie.weapons.firearms.projectiles
 
+import com.nikoneko.eternalReverie.EternalReverie
 import com.nikoneko.eternalReverie.player.CombatResolver
 import org.bukkit.Location
 import org.bukkit.Particle
@@ -11,6 +12,7 @@ import com.nikoneko.eternalReverie.player.PlayerStats
 import com.nikoneko.eternalReverie.weapons.Affinity
 
 class BulletProjectile(
+    val plugin: EternalReverie,
     shooter: LivingEntity,
     origin: Location,
     direction: Vector,
@@ -95,7 +97,8 @@ class BulletProjectile(
             victim = target,
             rawDamage = damage,
             attackerEquipment = shooterEquipment,
-            weaponAffinities = weaponAffinities
+            weaponAffinities = weaponAffinities,
+            plugin = plugin
         )
 
         // damage(0.0, shooter) solo dispara la animación/sonido/knockback vanilla

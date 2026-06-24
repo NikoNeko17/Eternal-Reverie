@@ -3,6 +3,7 @@ package com.nikoneko.eternalReverie.player
 import com.nikoneko.eternalReverie.affinities.MovementSpeedModifier
 import com.nikoneko.eternalReverie.items.Keys
 import com.nikoneko.eternalReverie.weapons.Affinity
+import com.nikoneko.eternalReverie.weapons.WeaponClass
 import com.nikoneko.eternalReverie.weapons.WeaponFamily
 import org.bukkit.entity.LivingEntity
 import org.bukkit.persistence.PersistentDataType
@@ -36,8 +37,9 @@ object StaminaManager {
 
     /** @return true si el gasto se pudo realizar (había stamina suficiente). */
     fun tryConsumeForAttack(entity: LivingEntity, weaponFamily: WeaponFamily?): Boolean {
-        val speedMultiplier = weaponFamily?.mobility?.takeIf { it > 0.0 } ?: 1.0
-        val costPct = ATTACK_BASE_COST_PCT * (1.0 / speedMultiplier)
+        val speedMultiplier = weaponFamily?.damageMultiplier?.takeIf { it > 0.0 } ?: 1.0
+        val costPct = if (listOf(WeaponClass.PISTOLA, WeaponClass.ESCOPETA, WeaponClass.RIFLE).contains(weaponFamily?.weaponClass)) { 0.0
+        } else {ATTACK_BASE_COST_PCT * (1.0 / speedMultiplier)}
         return tryConsume(entity, costPct)
     }
 

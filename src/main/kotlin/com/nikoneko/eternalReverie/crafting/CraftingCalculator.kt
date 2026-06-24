@@ -117,7 +117,7 @@ object CraftingCalculator {
         val lore = mutableListOf(
             noItalic(
                 Component.text(
-                    "Arma — ${TextFormat.capitalizeEnumName(family.name)}",
+                    "Arma — ${TextFormat.capitalizeEnumName(family.displayName)}",
                     NamedTextColor.GRAY
                 )
             ),

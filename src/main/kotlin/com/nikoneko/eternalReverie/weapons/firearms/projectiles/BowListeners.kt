@@ -47,6 +47,7 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
     fun onShortBowFire(event: PlayerInteractEvent) {
         if (!event.action.isRightClick) return
 
+
         val player = event.player
 
         // Atadura: el jugador anclado no puede disparar mientras la Marca esté activa.
@@ -87,6 +88,7 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
         arrow.shooter = player
         configureCustomArrow(arrow, computedStats.damage, computedStats.affinities, maxDistance)
 
+        event.isCancelled = true
         WeaponStateManager.trigger(player, weaponUuid)
     }
 
@@ -225,7 +227,8 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
             victim = target,
             rawDamage = finalRawDamage,
             attackerEquipment = shooterEquipment,
-            weaponAffinities = affinities
+            weaponAffinities = affinities,
+            plugin
         )
 
         // No usamos target.health = 0.0 directo para evitar bugs visuales;

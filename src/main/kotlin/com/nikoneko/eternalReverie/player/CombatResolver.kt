@@ -1,9 +1,12 @@
 package com.nikoneko.eternalReverie.player
 
+import com.nikoneko.eternalReverie.EternalReverie
 import com.nikoneko.eternalReverie.affinities.AffinityMark
 import com.nikoneko.eternalReverie.affinities.AffinityMarkManager
 import com.nikoneko.eternalReverie.affinities.MarkRegistry
 import com.nikoneko.eternalReverie.weapons.Affinity
+import net.citizensnpcs.api.npc.NPC
+import org.bukkit.Sound
 import org.bukkit.entity.LivingEntity
 import kotlin.random.Random
 
@@ -27,7 +30,8 @@ object CombatResolver {
         victim: LivingEntity,
         rawDamage: Double,
         attackerEquipment: PlayerStats.EquipmentStats,
-        weaponAffinities: List<Pair<Affinity, Double>>
+        weaponAffinities: List<Pair<Affinity, Double>>,
+        plugin: EternalReverie
     ): Double {
         val victimDefense = PlayerStats.computeEquipmentStats(victim).defense
         val victimHealth = PlayerStats.getCurrentHp(victim)
@@ -69,6 +73,17 @@ object CombatResolver {
             weaponAffinities = weaponAffinities,
             hitDamage = finalDamage
         )
+
+        // Knockback vanilla
+        val kb = victim.location.toVector().subtract(attacker.location.toVector())
+            .normalize().multiply(0.4).setY(0.18)
+        victim.velocity = kb
+
+        // Sonido de golpe
+        victim.world.playSound(victim.location, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f)
+
+        // Damage indicator
+        DamageIndicator.spawn(plugin, victim, finalDamage, isCrit == 1)
 
         return finalDamage
     }

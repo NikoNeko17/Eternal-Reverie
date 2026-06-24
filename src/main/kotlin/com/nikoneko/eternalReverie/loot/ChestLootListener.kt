@@ -1,6 +1,7 @@
 package com.nikoneko.eternalReverie.loot
 
 import com.nikoneko.eternalReverie.EternalReverie
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Material
 import org.bukkit.block.Chest
 import org.bukkit.entity.Player
@@ -19,7 +20,7 @@ import org.bukkit.persistence.PersistentDataType
  * areas.json, se marca para loot. Cuando ASP esté listo, lo correcto sería
  * resolver el área desde la instancia/mundo en vez de depender del nombre.
  */
-class ChestLootListener : Listener {
+class ChestLootListener(val plugin: EternalReverie) : Listener {
 
     companion object {
         lateinit var LOOT_PENDING_KEY: org.bukkit.NamespacedKey
@@ -40,15 +41,16 @@ class ChestLootListener : Listener {
     @EventHandler
     fun onChestPlace(event: BlockPlaceEvent) {
         if (event.block.type != Material.CHEST) return
-
-        val rawName = event.itemInHand.itemMeta?.let {
-            if (it.hasDisplayName()) it.displayName() else null
+        event.itemInHand.let{
+            if (it.itemMeta.hasDisplayName()) it.displayName() else null
         } ?: return
 
         // displayName() (Adventure) devuelve Component; para comparar contra la key
         // raw del JSON usamos el texto plano, sin colores/formato.
-        val plainName = event.itemInHand.itemMeta.displayName().toString()
+        val plainName = PlainTextComponentSerializer
+            .plainText().serialize(event.itemInHand.itemMeta.displayName() ?: return)
 
+        plugin.logger.info(plainName)
 
         if (AreaLootRegistry.get(plainName) == null) return
 
@@ -66,6 +68,7 @@ class ChestLootListener : Listener {
             val areaId = chest.persistentDataContainer.get(LOOT_PENDING_KEY, PersistentDataType.STRING) ?: continue
 
             fillChest(chest, areaId)
+            plugin.logger.info("Chest filled!")
             chest.persistentDataContainer.remove(LOOT_PENDING_KEY)
             chest.update()
         }

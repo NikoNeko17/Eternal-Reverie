@@ -9,7 +9,9 @@ import com.nikoneko.eternalReverie.items.ItemType
 import com.nikoneko.eternalReverie.items.Rarity
 import com.nikoneko.eternalReverie.crafting.MaterialType
 import com.nikoneko.eternalReverie.crafting.MaterialRarity
+import com.nikoneko.eternalReverie.items.Keys
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import java.util.UUID
 import kotlin.random.Random
 
@@ -119,6 +121,9 @@ object LootGenerator {
                 instanceUuid = UUID.randomUUID()
             )
         }
+        var durability = item.itemMeta.persistentDataContainer.get(Keys.DURABILITY, PersistentDataType.INTEGER)
+        val maxDurability = item.itemMeta.persistentDataContainer.get(Keys.MAX_DURABILITY, PersistentDataType.INTEGER)!!
+        durability = Random.nextInt((maxDurability*0.1).toInt(), maxDurability)
 
         return LootResult.CraftedItem(item)
     }

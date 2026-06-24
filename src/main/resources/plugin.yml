@@ -5,9 +5,11 @@ api-version: '1.21'
 depend: [Citizens]
 commands:
   material-item:
-    usage: "/material-item <id> [amount]"
+    usage: /material-item <id> [amount]
   blueprint-item:
-    usage: "/blueprint-item <id> [amount]"
+    usage: /blueprint-item <id> [amount]
   craft:
     description: Abre la mesa de fabricación de equipamiento.
     usage: /craft
+  scrap:
+    usage: /scrap <add|set|remove> <player> <value>

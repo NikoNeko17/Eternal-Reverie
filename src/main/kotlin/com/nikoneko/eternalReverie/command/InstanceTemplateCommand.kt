@@ -41,7 +41,7 @@ class InstanceTemplateCommand(
         }
 
         if (args.size < 2) {
-            player.sendMessage("§cUso: /capturarplantilla <zoneId> <templateId>")
+            player.sendMessage("§cUso: /create-template <zoneId> <templateId>")
             return true
         }
 

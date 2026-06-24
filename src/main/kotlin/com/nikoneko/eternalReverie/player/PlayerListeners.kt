@@ -1,6 +1,9 @@
 package com.nikoneko.eternalReverie.player
 
+import com.nikoneko.eternalReverie.CustomEnemy
+import com.nikoneko.eternalReverie.EnemyObject
 import com.nikoneko.eternalReverie.EternalReverie
+import com.nikoneko.eternalReverie.affinities.AffinityMarkManager
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
 import com.nikoneko.eternalReverie.crafting.MaterialType
 import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.decrementDurability
@@ -9,17 +12,21 @@ import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.refre
 import com.nikoneko.eternalReverie.items.BlueprintData
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
+import com.nikoneko.eternalReverie.weapons.Affinity
 import com.nikoneko.eternalReverie.weapons.WeaponClass
 import com.nikoneko.eternalReverie.weapons.WeaponFamily
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.BulletProjectile
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ProjectileManager
 import com.nikoneko.eternalReverie.weapons.firearms.WeaponStateManager
+import net.citizensnpcs.api.npc.NPC
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
+import org.bukkit.entity.Arrow
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -29,7 +36,9 @@ import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.persistence.PersistentDataType
+import org.joml.Vector3f
 import java.util.UUID
+import java.util.Vector
 
 class PlayerListeners(val plugin: EternalReverie) : Listener {
     @EventHandler
@@ -39,67 +48,105 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
 
     @EventHandler
     fun onEntityDamage(event: EntityDamageByEntityEvent) {
-        val attacker = event.damager as Player
-        val victim = event.entity as Player
+        val damager = event.damager
+        val victim = event.entity
 
-        // Atadura: el jugador anclado no puede atacar mientras la Marca esté activa.
-        if (com.nikoneko.eternalReverie.affinities.AffinityMarkManager.hasMark(
-                attacker, com.nikoneko.eternalReverie.weapons.Affinity.ATADURA
+        // ── Caso: NPC ataca a jugador ─────────────────────────────────────────────
+        if (victim is Player && damager is LivingEntity && damager.hasMetadata("NPC")) {
+            // El daño ya fue calculado por CustomEnemy.triggerHit; solo dejamos que
+            // PlayerStats lo procese para actualizar CURRENT_HP del jugador.
+            // No necesitamos hacer nada más aquí: CombatResolver ya fue llamado en
+            // triggerHit, y el daño vanilla es solo el trigger visual.
+            return
+        }
+
+        // ── Caso: jugador ataca NPC ───────────────────────────────────────────────
+        if (damager is Player && victim.hasMetadata("NPC")) {
+            event.isCancelled = true   // Cancelamos el daño vanilla; lo aplicamos manualmente
+
+            val npc = net.citizensnpcs.api.CitizensAPI.getNPCRegistry()
+                .getNPC(victim) ?: return
+            val enemy = EnemyObject.get(npc.id) ?: return  // Map<Int, CustomEnemy> en tu plugin
+
+            // Checks de estado del atacante
+            if (AffinityMarkManager.hasMark(damager, Affinity.ATADURA)) return
+            if (StaminaManager.isExhausted(damager)) return
+            if (damager.attackCooldown < 1f) {
+                damager.playSound(damager, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.4f, 1.0f)
+                return
+            }
+            if (event.cause == DamageCause.ENTITY_SWEEP_ATTACK) return
+
+            val weaponBlueprint = damager.inventory.itemInMainHand.itemMeta
+                ?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
+            val weaponMaterials = damager.inventory.itemInMainHand.itemMeta
+                ?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
+
+            val (weaponStats, equipmentStats) = buildAttackerStats(damager, weaponBlueprint, weaponMaterials)
+            val weaponFamily = weaponBlueprint?.let {
+                runCatching { BlueprintRegistry.get(it) }.getOrNull()?.family
+            }
+
+            StaminaManager.tryConsumeForAttack(damager, weaponFamily)
+
+            val finalDamage = CombatResolver.resolveHit(
+                attacker = damager,
+                victim = victim as LivingEntity,
+                rawDamage = weaponStats.damage,
+                attackerEquipment = equipmentStats,
+                weaponAffinities = weaponStats.affinities,
+                plugin
             )
-        ) {
-            event.isCancelled = true
+            enemy.attack(finalDamage)
             return
         }
 
-        // Exhausto: sin stamina suficiente, no puede atacar.
-        if (StaminaManager.isExhausted(attacker)) {
-            event.isCancelled = true
+        // ── Caso: jugador ataca jugador ───────────────────────────────────────────
+        if (damager is Player && victim is Player) {
+            if (AffinityMarkManager.hasMark(damager, Affinity.ATADURA)) {
+                event.isCancelled = true; return
+            }
+            if (StaminaManager.isExhausted(damager)) {
+                event.isCancelled = true; return
+            }
+            if (damager.attackCooldown < 1f) {
+                damager.playSound(damager, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.4f, 1.0f)
+                event.isCancelled = true; return
+            }
+            if (event.cause == DamageCause.ENTITY_SWEEP_ATTACK) {
+                event.isCancelled = true; return
+            }
+
+            victim.maximumNoDamageTicks = 0
+
+            val weaponBlueprint = damager.inventory.itemInMainHand.itemMeta
+                ?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
+            val weaponMaterials = damager.inventory.itemInMainHand.itemMeta
+                ?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
+
+            val (weaponStats, equipmentStats) = buildAttackerStats(damager, weaponBlueprint, weaponMaterials)
+            val weaponFamily = weaponBlueprint?.let {
+                runCatching { BlueprintRegistry.get(it) }.getOrNull()?.family
+            }
+
+            StaminaManager.tryConsumeForAttack(damager, weaponFamily)
+
+            val finalDamage = CombatResolver.resolveHit(
+                attacker = damager,
+                victim = victim,
+                rawDamage = weaponStats.damage,
+                attackerEquipment = equipmentStats,
+                weaponAffinities = weaponStats.affinities,
+                plugin
+            )
+
+            event.damage = if (PlayerStats.getCurrentHp(victim) <= 0.0)
+                (victim.getAttribute(Attribute.MAX_HEALTH)?.value ?: 20.0) else 0.0
             return
         }
 
-        if (attacker.attackCooldown < 1f) {
-            attacker.playSound(attacker, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.4f, 1.0f)
-            event.isCancelled = true
-        }
-        if (event.cause == DamageCause.ENTITY_SWEEP_ATTACK) event.isCancelled = true
-        victim.maximumNoDamageTicks = 0
-
-        val attackerWeaponBlueprint : String? = attacker.inventory.itemInMainHand.itemMeta?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
-        val attackerWeaponMaterials = attacker.inventory.itemInMainHand.itemMeta?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
-        lateinit var attackerStats : Pair<CraftingCalculator.ComputedWeaponStats, PlayerStats.EquipmentStats>
-        var attackerWeaponFamily: WeaponFamily? = null
-        if (attackerWeaponBlueprint != null && attackerWeaponMaterials != null) {
-            val parsedWeaponBlueprint : BlueprintData? = runCatching {
-                BlueprintRegistry.get(attackerWeaponBlueprint)
-            }.getOrNull()
-            val parsedWeaponMaterials: List<MaterialType> = attackerWeaponMaterials.mapNotNull { materialStr ->
-                runCatching { MaterialType.valueOf(materialStr) }.getOrNull()
-            }
-            attackerWeaponFamily = parsedWeaponBlueprint?.family
-            attackerStats = if (parsedWeaponBlueprint != null) {
-                Pair(CraftingCalculator.computeWeaponStatsPublic(parsedWeaponBlueprint, parsedWeaponMaterials),
-                    PlayerStats.computeEquipmentStats(attacker))
-            } else {
-                Pair(CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList()),
-                    PlayerStats.computeEquipmentStats(attacker))
-            }
-        } else {
-            attackerStats = Pair(CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList()),
-                PlayerStats.computeEquipmentStats(attacker))
-        }
-
-        StaminaManager.tryConsumeForAttack(attacker, attackerWeaponFamily)
-
-        val finalDamage = CombatResolver.resolveHit(
-            attacker = attacker,
-            victim = victim,
-            rawDamage = attackerStats.first.damage,
-            attackerEquipment = attackerStats.second,
-            weaponAffinities = attackerStats.first.affinities
-        )
-
-        event.damage = if (PlayerStats.getCurrentHp(victim) <= 0.0
-        ) (victim.getAttribute(Attribute.MAX_HEALTH)?.value ?: 20.0) else 0.0
+        // ── Caso: flecha ataca jugador (ya manejado por BowListeners) ────────────
+        // No hacer nada; BowListeners cancela el evento y aplica daño directamente.
     }
 
     @EventHandler
@@ -119,12 +166,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             return
         }
 
-        if (listOf(
-                Material.DIRT,
-                Material.GRASS_BLOCK,
-                Material.COARSE_DIRT
-            ).contains(event.clickedBlock?.type)
-        ) event.isCancelled = true
+
         val itemMeta = event.item?.itemMeta ?: return
         val familyToClass =
             WeaponFamily.entries
@@ -155,6 +197,12 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
         ) return
 
         if (event.action.isRightClick && listOf(WeaponClass.PISTOLA, WeaponClass.ESCOPETA, WeaponClass.RIFLE).contains(weaponType)){
+            if (listOf(
+                    Material.DIRT,
+                    Material.GRASS_BLOCK,
+                    Material.COARSE_DIRT
+                ).contains(event.clickedBlock?.type)
+            ) event.isCancelled = true
             val firedItem = player.inventory.itemInMainHand
             val firedMeta = firedItem.itemMeta
             val firedBlueprintId = firedMeta?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
@@ -180,6 +228,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             StaminaManager.tryConsumeForAttack(player, firedWeaponFamily)
 
             val projectile = BulletProjectile(
+                plugin,
                 shooter = player,
                 origin = player.eyeLocation,
                 direction = player.eyeLocation.direction,
@@ -240,5 +289,21 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             }
             player.updateInventory()
         }
+    }
+
+    private fun buildAttackerStats(
+        attacker: Player,
+        blueprintId: String?,
+        materialIds: List<String>?
+    ): Pair<CraftingCalculator.ComputedWeaponStats, PlayerStats.EquipmentStats> {
+        val fallback = CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList())
+        if (blueprintId == null || materialIds == null)
+            return fallback to PlayerStats.computeEquipmentStats(attacker)
+
+        val blueprint = runCatching { BlueprintRegistry.get(blueprintId) }.getOrNull()
+            ?: return fallback to PlayerStats.computeEquipmentStats(attacker)
+        val materials = materialIds.mapNotNull { runCatching { MaterialType.valueOf(it) }.getOrNull() }
+        return CraftingCalculator.computeWeaponStatsPublic(blueprint, materials) to
+                PlayerStats.computeEquipmentStats(attacker)
     }
 }

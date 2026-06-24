@@ -19,9 +19,8 @@ import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Transformation
 import org.joml.AxisAngle4f
 import org.joml.Vector3f
-import java.util.UUID
 import kotlin.jvm.java
-import kotlin.random.Random
+import kotlin.math.absoluteValue
 
 class CustomEnemy(
     val npc: NPC,
@@ -35,6 +34,7 @@ class CustomEnemy(
     private var nameDisplay: TextDisplay? = null
     private var lastAttackTime: Long = 0
     private var navCheckCooldown = 0
+    lateinit var stats: EnemyStatsTrait
 
     // Stats sin arma equipada (combate a puño limpio): attackSpeed vanilla = 4.0
     companion object {
@@ -66,9 +66,6 @@ class CustomEnemy(
         initializeIfAbsent(entity)
 
         npc.isProtected = false
-
-        updateLabel(entity)
-        entity.addPassenger(nameDisplay!!)
 
         // 4. Iniciamos el bucle de IA de Combate
         iniciarBucleCombate()
@@ -108,6 +105,8 @@ class CustomEnemy(
                 }
 
                 val entity = npc.entity as LivingEntity
+                entity.addPassenger(nameDisplay!!)
+                stats = npc.getOrAddTrait(EnemyStatsTrait::class.java)
                 updateLabel(entity)
 
                 val (attackSpeed, attackDamage) = computeEnemyCombatStats(entity)
@@ -150,7 +149,7 @@ class CustomEnemy(
                     val ticksEnMilis = 1000.0 / attackSpeed
 
                     if (tiempoActual - lastAttackTime >= ticksEnMilis) {
-                        triggerHit(entity, target, attackDamage)
+                        triggerHit(entity, target)
                         lastAttackTime = tiempoActual
                     }
                 }
@@ -160,7 +159,7 @@ class CustomEnemy(
     }
 
 
-    private fun triggerHit(attacker: LivingEntity, victim: Player, damage: Double) {
+    private fun triggerHit(attacker: LivingEntity, victim: Player) {
         // Ejecuta el movimiento de brazo visual del NPC
         attacker.swingMainHand()
         // Infligimos el daño a través del evento nativo para que tu DamageSystemListener lo procese.
@@ -168,14 +167,13 @@ class CustomEnemy(
         // arma del NPC si tiene una equipada (vía computeEnemyCombatStats), o usar el fallback
         // sin arma; el valor pasado acá a damage() es solo el trigger del evento, el daño REAL
         // final lo recalcula CombatResolver leyendo el arma del attacker en PlayerListeners.
-        victim.damage(damage, attacker)
+        victim.damage(0.0, attacker)
     }
 
     private fun updateLabel(entity: LivingEntity) {
         val display = nameDisplay ?: return
 
-        val currentHealth = entity.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: return
-        val maxHealth = entity.persistentDataContainer.get(Keys.MAX_HP, PersistentDataType.DOUBLE) ?: return
+        entity.addPassenger(display)
 
         // Ajustamos la altura sutilmente hacia arriba de la cabeza
         display.transformation = Transformation(
@@ -185,15 +183,12 @@ class CustomEnemy(
             AxisAngle4f(0f, 0f, 0f, 1f)
         )
         // Formateamos el texto de forma dinámica con colores limpios
-        display.text(Component.text("§c${customName} §7[§a${currentHealth.toInt()}§7/§a${maxHealth.toInt()} ❦§7]"))
+        display.text(Component.text("§c${customName} §7[§a${stats.currentHp.toInt()}§7/§a${stats.maxHp.toInt()} ❦§7]"))
     }
 
-    fun attack(cantidad: Double, entity: LivingEntity) {
-        val currentHealth = entity.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE)!!
-
-        entity.persistentDataContainer.set(Keys.CURRENT_HP, PersistentDataType.DOUBLE, (currentHealth - cantidad).coerceAtLeast(0.0))
-        updateLabel(entity)
-        if (currentHealth <= 0.0) {
+    fun attack(cantidad: Double) {
+        stats.currentHp = (stats.currentHp - cantidad.absoluteValue).coerceAtLeast(0.0)
+        if (stats.currentHp <= 0.0) {
             eliminar()
         }
     }
