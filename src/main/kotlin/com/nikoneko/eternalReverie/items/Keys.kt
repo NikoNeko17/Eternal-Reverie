@@ -41,6 +41,10 @@ object Keys {
     lateinit var CURRENCY_BALANCE: NamespacedKey
     lateinit var IS_CURRENCY: NamespacedKey
 
+    // Vestigios: espacios desbloqueados y lista de equipados ("TIPO:nivel" por entrada)
+    lateinit var VESTIGIO_UNLOCKED_SLOTS: NamespacedKey
+    lateinit var VESTIGIO_EQUIPPED: NamespacedKey
+
     fun init(plugin: EternalReverie) {
 
         INSTANCE_UUID = NamespacedKey(plugin, "instance_uuid")
@@ -56,10 +60,6 @@ object Keys {
         CURRENT_HP = NamespacedKey(plugin, "current_hp")
         MAX_STAMINA = NamespacedKey(plugin, "max_stamina")
         CURRENT_STAMINA = NamespacedKey(plugin, "current_stamina")
-        ATTACK_SPEED = NamespacedKey(plugin, "attack_speed")
-        REACH = NamespacedKey(plugin, "reach")
-        MOBILITY = NamespacedKey(plugin, "mobility")
-        ARMOR_MOBILITY = NamespacedKey(plugin, "armor_mobility")
 
         ATTACK_SPEED_DEBUFF_MULTIPLIER = NamespacedKey(plugin, "attack_speed_debuff_multiplier")
         ATTACK_SPEED_DEBUFF_EXPIRES_AT = NamespacedKey(plugin, "attack_speed_debuff_expires_at")
@@ -71,5 +71,8 @@ object Keys {
 
         CURRENCY_BALANCE = NamespacedKey(plugin, "currency_balance")
         IS_CURRENCY = NamespacedKey(plugin, "is_currency")
+
+        VESTIGIO_UNLOCKED_SLOTS = NamespacedKey(plugin, "vestigio_unlocked_slots")
+        VESTIGIO_EQUIPPED = NamespacedKey(plugin, "vestigio_equipped")
     }
 }

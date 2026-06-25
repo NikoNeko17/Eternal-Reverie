@@ -1,8 +1,6 @@
 package com.nikoneko.eternalReverie.economy
 
 import com.nikoneko.eternalReverie.EternalReverie
-import com.nikoneko.eternalReverie.items.BlueprintRegistry
-import com.nikoneko.eternalReverie.items.ItemFactory
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit

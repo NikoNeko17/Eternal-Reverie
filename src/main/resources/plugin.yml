@@ -13,3 +13,5 @@ commands:
     usage: /craft
   scrap:
     usage: /scrap <add|set|remove> <player> <value>
+  remnants:
+    usage: /remnants

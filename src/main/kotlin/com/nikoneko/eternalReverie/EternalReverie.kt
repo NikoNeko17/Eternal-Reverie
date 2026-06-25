@@ -21,6 +21,9 @@ import com.nikoneko.eternalReverie.loot.ChestLootListener
 import com.nikoneko.eternalReverie.player.PlayerListeners
 import com.nikoneko.eternalReverie.player.SprintStaminaListener
 import com.nikoneko.eternalReverie.player.StaminaRegenScheduler
+import com.nikoneko.eternalReverie.remnants.RemnantCommand
+import com.nikoneko.eternalReverie.remnants.RemnantGuiListener
+import com.nikoneko.eternalReverie.remnants.RemnantKeys
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ActionBarManager
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.BowListeners
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ProjectileScheduler
@@ -35,17 +38,16 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
-import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 class EternalReverie : JavaPlugin() {
     val npcNameList = listOf("NikoNeko17")
-    val enemigosTemporales = mutableMapOf<UUID, CustomEnemy>()
     lateinit var instanceManager : InstanceManager
     override fun onEnable() {
 
         Keys.init(this)
         RealArrowKeys.init(this)
+        RemnantKeys.init(this)
         BlueprintRegistry.generateDefaults(this)
         BlueprintRegistry.load(this)
         ProjectileScheduler(this).start()
@@ -65,6 +67,7 @@ class EternalReverie : JavaPlugin() {
         getCommand("craft")?.setExecutor(CraftingCommand())
         getCommand("capture-template")?.setExecutor(InstanceTemplateCommand(this, instanceManager))
         getCommand("scrap")?.setExecutor(CurrencyCommand(this))
+        getCommand("remnants")?.setExecutor(RemnantCommand())
         server.pluginManager.registerEvents(PlayerListeners(this), this)
         server.pluginManager.registerEvents(CitizensHookListener(), this)
         server.pluginManager.registerEvents(CraftingGuiListener(), this)
@@ -74,6 +77,8 @@ class EternalReverie : JavaPlugin() {
         server.pluginManager.registerEvents(SprintStaminaListener(this), this)
         server.pluginManager.registerEvents(CurrencyListener(), this)
         server.pluginManager.registerEvents(ChestLootListener(this), this)
+        server.pluginManager.registerEvents(RemnantGuiListener(), this)
+
         loadPlayerTicks()
 
         // Registramos el Trait (Es obligatorio hacerlo en el onEnable antes de crear NPC)
@@ -143,7 +148,7 @@ class EternalReverie : JavaPlugin() {
 
         Bukkit.getScheduler().runTaskLater(this, Runnable {
 
-            // 5. ¡Activamos el NPC! Aquí adentro se ejecuta el npc.spawn(), se rellenan los PDCs y arranca la IA
+            // 5. ¡Activamos el NPC! Aquí adentro se ejecuta el npc.spawn(), se rellenan los PDC y arranca la IA
             enemigoPrueba.iniciar()
 
             val entityReal = npc.entity as? LivingEntity ?: return@Runnable

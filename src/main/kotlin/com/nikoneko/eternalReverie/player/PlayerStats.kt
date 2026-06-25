@@ -1,16 +1,11 @@
 package com.nikoneko.eternalReverie.player
 
-import com.nikoneko.eternalReverie.EnemyObject
-import com.nikoneko.eternalReverie.EnemyStatsTrait
-import com.nikoneko.eternalReverie.EternalReverie
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
 import com.nikoneko.eternalReverie.crafting.MaterialType
-import net.citizensnpcs.api.npc.NPC
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
@@ -22,7 +17,7 @@ import org.bukkit.persistence.PersistentDataType
  * (currentHp/maxHp, currentStamina/maxStamina) porque representan un "pool" que se
  * gasta y regenera con el tiempo, no algo que se recalcula puro desde el equipo en
  * cada instante. El resto (defense, precision, dexterity, strength, luck) se
- * recalcula 100% desde el equipamiento cada vez que se piden, sin cache.
+ * recalcula 100% desde el equipamiento cada vez que se piden, sin caché.
  */
 object PlayerStats {
 
@@ -219,10 +214,14 @@ object PlayerStats {
      * (confirmado: la salud actual no se escala al cambiar de equipo).
      * Si el nuevo máximo es menor al HP actual, lo recorta para no dejar HP "fantasma".
      */
-    fun recalculateMaxHp(entity: LivingEntity) {
+    /**
+     * Recalcula MAX_HP = 100 + Vitalidad del equipo + extraBonus (ej. Vestigios).
+     * extraBonus se pasa desde afuera para evitar que este paquete (player)
+     * dependa del paquete vestigios; quien llame con un bonus debe sumarlo él mismo.
+     */
+    fun recalculateMaxHp(entity: LivingEntity, extraVitalityBonus: Double = 0.0) {
         val gearStats = computeEquipmentStats(entity)
-        val newMax = BASE_MAX_HP + gearStats.maxHpFromGear
-
+        val newMax = BASE_MAX_HP + gearStats.maxHpFromGear + extraVitalityBonus
 
         val pdc = entity.persistentDataContainer
         pdc.set(Keys.MAX_HP, PersistentDataType.DOUBLE, newMax)
@@ -274,5 +273,6 @@ object PlayerStats {
 
         val pct = (current / max).coerceIn(0.0, 1.0)
         if (current > 0) entity.health = (pct * vanillaMax).coerceIn(0.0, vanillaMax)
+
     }
 }
