@@ -55,7 +55,7 @@ class RemnantGuiHolder(val player: Player) : InventoryHolder {
                 }
                 index < equipped.size -> {
                     val eq = equipped[index]
-                    inventory.setItem(slot, VestigioItemFactory.create(eq.type, eq.level))
+                    inventory.setItem(slot, RemnantItemFactory.create(eq.type, eq.level))
                 }
                 else -> {
                     inventory.setItem(slot, emptySlotItem())

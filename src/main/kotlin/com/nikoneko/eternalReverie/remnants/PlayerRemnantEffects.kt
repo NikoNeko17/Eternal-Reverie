@@ -12,8 +12,8 @@ object PlayerRemnantEffects {
 
     /** Suma de bonus de Vitalidad de TODOS los Vestigios equipados (categoría ESTADISTICA). */
     fun computeVitalityBonus(player: Player): Double {
-        return VestigioSlotManager.getEquipped(player)
-            .filter { it.type == VestigioType.VITALIDAD_MENOR }
+        return RemnantSlotManager.getEquipped(player)
+            .filter { it.type == RemnantType.VITALIDAD_MENOR }
             .sumOf { it.type.data.valueAt(it.level) }
     }
 

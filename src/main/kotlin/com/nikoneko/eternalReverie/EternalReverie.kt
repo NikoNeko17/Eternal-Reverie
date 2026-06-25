@@ -21,9 +21,12 @@ import com.nikoneko.eternalReverie.loot.ChestLootListener
 import com.nikoneko.eternalReverie.player.PlayerListeners
 import com.nikoneko.eternalReverie.player.SprintStaminaListener
 import com.nikoneko.eternalReverie.player.StaminaRegenScheduler
+import com.nikoneko.eternalReverie.remnants.MAX_VESTIGIO_LEVEL
 import com.nikoneko.eternalReverie.remnants.RemnantCommand
 import com.nikoneko.eternalReverie.remnants.RemnantGuiListener
+import com.nikoneko.eternalReverie.remnants.RemnantItemFactory
 import com.nikoneko.eternalReverie.remnants.RemnantKeys
+import com.nikoneko.eternalReverie.remnants.RemnantType
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ActionBarManager
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.BowListeners
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ProjectileScheduler
@@ -35,6 +38,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
@@ -68,6 +72,13 @@ class EternalReverie : JavaPlugin() {
         getCommand("capture-template")?.setExecutor(InstanceTemplateCommand(this, instanceManager))
         getCommand("scrap")?.setExecutor(CurrencyCommand(this))
         getCommand("remnants")?.setExecutor(RemnantCommand())
+        getCommand("give-remnant")?.setExecutor { sender, _, _, args ->
+            if (sender !is Player) return@setExecutor true
+            val tipo = runCatching { RemnantType.valueOf(args[0].uppercase()) }.getOrNull() ?: return@setExecutor true
+            val nivel = args.getOrNull(1)?.toIntOrNull()?.coerceIn(1, MAX_VESTIGIO_LEVEL) ?: 1
+            sender.inventory.addItem(RemnantItemFactory.create(tipo, nivel))
+            true
+        }
         server.pluginManager.registerEvents(PlayerListeners(this), this)
         server.pluginManager.registerEvents(CitizensHookListener(), this)
         server.pluginManager.registerEvents(CraftingGuiListener(), this)
