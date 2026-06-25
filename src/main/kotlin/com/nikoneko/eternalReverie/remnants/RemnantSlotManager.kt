@@ -21,19 +21,19 @@ object RemnantSlotManager {
     data class EquippedRemnants(val type: RemnantType, val level: Int)
 
     fun getUnlockedSlots(player: Player): Int =
-        player.persistentDataContainer.get(Keys.VESTIGIO_UNLOCKED_SLOTS, PersistentDataType.INTEGER)
+        player.persistentDataContainer.get(Keys.REMNANT_UNLOCKED_SLOTS, PersistentDataType.INTEGER)
             ?: INITIAL_SLOTS
 
     fun unlockSlot(player: Player) {
         val current = getUnlockedSlots(player)
         if (current >= MAX_SLOTS) return
         player.persistentDataContainer.set(
-            Keys.VESTIGIO_UNLOCKED_SLOTS, PersistentDataType.INTEGER, current + 1
+            Keys.REMNANT_UNLOCKED_SLOTS, PersistentDataType.INTEGER, current + 1
         )
     }
 
     fun getEquipped(player: Player): List<EquippedRemnants> {
-        val raw = player.persistentDataContainer.get(Keys.VESTIGIO_EQUIPPED, PersistentDataType.LIST.strings())
+        val raw = player.persistentDataContainer.get(Keys.REMNANT_EQUIPPED, PersistentDataType.LIST.strings())
             ?: emptyList()
 
         return raw.mapNotNull { entry ->
@@ -47,7 +47,7 @@ object RemnantSlotManager {
 
     private fun saveEquipped(player: Player, equipped: List<EquippedRemnants>) {
         val raw = equipped.map { "${it.type.name}:${it.level}" }
-        player.persistentDataContainer.set(Keys.VESTIGIO_EQUIPPED, PersistentDataType.LIST.strings(), raw)
+        player.persistentDataContainer.set(Keys.REMNANT_EQUIPPED, PersistentDataType.LIST.strings(), raw)
     }
 
     /** @return true si se pudo equipar (había espacio libre). */

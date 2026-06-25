@@ -1,6 +1,7 @@
 package com.nikoneko.eternalReverie.affinities
 
 import com.nikoneko.eternalReverie.EternalReverie
+import net.citizensnpcs.api.CitizensAPI
 import org.bukkit.Bukkit
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -23,15 +24,13 @@ class AffinityTickScheduler(private val plugin: EternalReverie) {
         }.runTaskTimer(plugin, 20L, 20L) // empieza tras 1s, se repite cada 1s
     }
 
-    // Junta jugadores online + cualquier LivingEntity de los mundos cargados
+    // Junta jugadores en línea + cualquier LivingEntity de los mundos cargados
     // que actualmente tenga Marcas (evita recorrer TODAS las entidades del mundo
     // cada tick; el manager ya filtra por uuid existente en su mapa interno).
     private fun collectTrackedEntities(): List<LivingEntity> {
         val players: List<LivingEntity> = Bukkit.getOnlinePlayers().toList()
 
-        val npcs: List<LivingEntity> = Bukkit.getWorlds().flatMap { world ->
-            world.livingEntities.filter { it !is Player }
-        }
+        val npcs: List<LivingEntity> = CitizensAPI.getNPCRegistry().map { it.entity as LivingEntity }
 
         return players + npcs
     }

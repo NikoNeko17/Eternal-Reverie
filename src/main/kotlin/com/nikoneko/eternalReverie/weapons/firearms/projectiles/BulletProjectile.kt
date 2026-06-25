@@ -105,7 +105,6 @@ class BulletProjectile(
         // de "fui golpeado", sin aplicar daño vanilla real (ya lo aplicamos arriba
         // directo al HP custom). No pasa por PlayerListeners.onEntityDamage porque
         // ese listener es específicamente para combate cuerpo a cuerpo.
-        target.damage(0.0, shooter)
         destroy()
     }
 

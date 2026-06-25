@@ -1,13 +1,17 @@
 package com.nikoneko.eternalReverie.player
 
+import com.nikoneko.eternalReverie.EnemyObject
 import com.nikoneko.eternalReverie.crafting.CraftingCalculator
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
 import com.nikoneko.eternalReverie.crafting.MaterialType
+import net.citizensnpcs.api.CitizensAPI
+import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import kotlin.text.get
 
 /**
  * Stats totales calculadas en tiempo real para un LivingEntity (jugador o NPC
@@ -197,11 +201,27 @@ object PlayerStats {
         }
     }
 
-    fun getCurrentHp(entity: LivingEntity): Double =
-        entity.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: BASE_MAX_HP
+    fun getCurrentHp(entity: LivingEntity): Double {
+        if (Bukkit.getOnlinePlayers().contains(entity)) {
+                return entity.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: BASE_MAX_HP
+            } else {
+            val npc = CitizensAPI.getNPCRegistry().getNPC(entity)
+            val enemy = EnemyObject.get(npc.id)!!
+            return enemy.stats.currentHp
+            }
+        }
 
-    fun getMaxHp(entity: LivingEntity): Double =
-        entity.persistentDataContainer.get(Keys.MAX_HP, PersistentDataType.DOUBLE) ?: BASE_MAX_HP
+
+    fun getMaxHp(entity: LivingEntity): Double {
+        if (Bukkit.getOnlinePlayers().contains(entity)) {
+            return entity.persistentDataContainer.get(Keys.MAX_HP, PersistentDataType.DOUBLE) ?: BASE_MAX_HP
+        } else {
+            val npc = CitizensAPI.getNPCRegistry().getNPC(entity)
+            val enemy = EnemyObject.get(npc.id)!!
+            return enemy.stats.maxHp
+        }
+    }
+
 
     fun getCurrentStamina(entity: LivingEntity): Double =
         entity.persistentDataContainer.get(Keys.CURRENT_STAMINA, PersistentDataType.DOUBLE) ?: BASE_MAX_STAMINA
@@ -229,6 +249,12 @@ object PlayerStats {
         val current = getCurrentHp(entity)
         if (current > newMax) {
             pdc.set(Keys.CURRENT_HP, PersistentDataType.DOUBLE, newMax)
+        }
+
+        val npc = CitizensAPI.getNPCRegistry().getNPC(entity)
+        if (npc != null) {
+            val enemy = EnemyObject.get(npc.id)!!
+            enemy.stats.maxHp = newMax
         }
 
         syncVanillaHealthBar(entity)

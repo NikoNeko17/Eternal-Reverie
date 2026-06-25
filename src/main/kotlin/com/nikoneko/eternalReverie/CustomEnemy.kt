@@ -153,6 +153,7 @@ class CustomEnemy(
                         lastAttackTime = tiempoActual
                     }
                 }
+                if (stats.currentHp <= 0.0) eliminar()
             }
         }
         combatTask!!.runTaskTimer(plugin, 0L, 1L) // Corre cada 1 tick
@@ -184,13 +185,6 @@ class CustomEnemy(
         )
         // Formateamos el texto de forma dinámica con colores limpios
         display.text(Component.text("§c${customName} §7[§a${stats.currentHp.toInt()}§7/§a${stats.maxHp.toInt()} ❦§7]"))
-    }
-
-    fun attack(cantidad: Double) {
-        stats.currentHp = (stats.currentHp - cantidad.absoluteValue).coerceAtLeast(0.0)
-        if (stats.currentHp <= 0.0) {
-            eliminar()
-        }
     }
 
     fun eliminar() {

@@ -18,6 +18,7 @@ import com.nikoneko.eternalReverie.weapons.WeaponFamily
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.BulletProjectile
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ProjectileManager
 import com.nikoneko.eternalReverie.weapons.firearms.WeaponStateManager
+import net.citizensnpcs.api.CitizensAPI
 import net.citizensnpcs.api.npc.NPC
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -25,6 +26,8 @@ import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
+import org.bukkit.damage.DamageSource
+import org.bukkit.damage.DamageType
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -51,6 +54,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
         val damager = event.damager
         val victim = event.entity
 
+
         // ── Caso: NPC ataca a jugador ─────────────────────────────────────────────
         if (victim is Player && damager is LivingEntity && damager.hasMetadata("NPC")) {
             // El daño ya fue calculado por CustomEnemy.triggerHit; solo dejamos que
@@ -64,7 +68,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
         if (damager is Player && victim.hasMetadata("NPC")) {
             event.isCancelled = true   // Cancelamos el daño vanilla; lo aplicamos manualmente
 
-            val npc = net.citizensnpcs.api.CitizensAPI.getNPCRegistry()
+            val npc = CitizensAPI.getNPCRegistry()
                 .getNPC(victim) ?: return
             val enemy = EnemyObject.get(npc.id) ?: return  // Map<Int, CustomEnemy> en tu plugin
 
@@ -97,7 +101,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
                 weaponAffinities = weaponStats.affinities,
                 plugin
             )
-            enemy.attack(finalDamage)
+
             return
         }
 
@@ -145,7 +149,7 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             return
         }
 
-        // ── Caso: flecha ataca jugador (ya manejado por BowListeners) ────────────
+        // —─ Caso: flecha ataca jugador (ya manejado por BowListeners) ———————─────
         // No hacer nada; BowListeners cancela el evento y aplica daño directamente.
     }
 

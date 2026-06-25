@@ -25,8 +25,8 @@ object DamageIndicator {
 
         val text = if (isCrit)
             Component.text("⚔ ${damage.toInt()}!")
-                .color(NamedTextColor.YELLOW)
-                .decorate(TextDecoration.BOLD)
+                .color(NamedTextColor.GOLD)
+                .decoration(TextDecoration.UNDERLINED, true)
         else
             Component.text(damage.toInt().toString())
                 .color(NamedTextColor.RED)

@@ -1,11 +1,16 @@
 package com.nikoneko.eternalReverie.player
 
+import com.nikoneko.eternalReverie.EnemyObject
 import com.nikoneko.eternalReverie.EternalReverie
 import com.nikoneko.eternalReverie.affinities.AffinityMark
 import com.nikoneko.eternalReverie.affinities.AffinityMarkManager
 import com.nikoneko.eternalReverie.affinities.MarkRegistry
 import com.nikoneko.eternalReverie.weapons.Affinity
+import net.citizensnpcs.api.CitizensAPI
 import net.citizensnpcs.api.npc.NPC
+import net.citizensnpcs.api.npc.NPCRegistry
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Sound
 import org.bukkit.entity.LivingEntity
 import kotlin.random.Random
@@ -84,6 +89,16 @@ object CombatResolver {
 
         // Damage indicator
         DamageIndicator.spawn(plugin, victim, finalDamage, isCrit == 1)
+
+        val npc = CitizensAPI.getNPCRegistry().getNPC(victim)
+
+        if (npc != null) {
+            val enemy = EnemyObject.get(npc.id)!!
+            enemy.stats.currentHp -= finalDamage
+            if (PlayerStats.getCurrentHp(victim) <= 0.0) {
+                EnemyObject.remove(enemy.npc.id)
+            }
+        }
 
         return finalDamage
     }

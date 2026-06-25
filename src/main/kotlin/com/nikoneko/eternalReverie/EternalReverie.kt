@@ -23,6 +23,7 @@ import com.nikoneko.eternalReverie.player.SprintStaminaListener
 import com.nikoneko.eternalReverie.player.StaminaRegenScheduler
 import com.nikoneko.eternalReverie.remnants.MAX_VESTIGIO_LEVEL
 import com.nikoneko.eternalReverie.remnants.RemnantCommand
+import com.nikoneko.eternalReverie.remnants.RemnantGuiHolder
 import com.nikoneko.eternalReverie.remnants.RemnantGuiListener
 import com.nikoneko.eternalReverie.remnants.RemnantItemFactory
 import com.nikoneko.eternalReverie.remnants.RemnantKeys
@@ -64,6 +65,7 @@ class EternalReverie : JavaPlugin() {
         InstanceTemplateRegistry.load(this)
         MovementSpeedModifier.init(this)
         SprintStaminaListener(this).startTick()
+
         
 
         getCommand("material-item")?.setExecutor(ItemCommand(this))

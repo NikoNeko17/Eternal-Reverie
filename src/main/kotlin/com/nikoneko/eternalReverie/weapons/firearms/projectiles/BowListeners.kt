@@ -234,11 +234,6 @@ class BowListeners(private val plugin: EternalReverie) : Listener {
         // No usamos target.health = 0.0 directo para evitar bugs visuales;
         // si el HP custom llegó a 0, forzamos un daño vanilla enorme para que
         // Minecraft dispare correctamente animación/sonido/drops de muerte.
-        if (PlayerStats.getCurrentHp(target) <= 0.0) {
-            target.damage(9999.0, shooter)
-        } else {
-            target.damage(0.0, shooter)
-        }
 
         arrow.remove()
     }

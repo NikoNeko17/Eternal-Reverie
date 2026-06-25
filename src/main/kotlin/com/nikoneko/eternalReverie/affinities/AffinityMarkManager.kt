@@ -20,7 +20,7 @@ object AffinityMarkManager {
     // que benefician al ATACANTE mientras la Marca esté activa en la víctima).
     private val markSources: MutableMap<UUID, MutableMap<Affinity, UUID>> = mutableMapOf()
 
-    private const val BASE_PROC_CHANCE = 0.20 // 20% base de proc por hit, fijo (no escala con %afinidad)
+    private const val BASE_PROC_CHANCE = 1.0 // 20% base de proc por hit, fijo (no escala con %afinidad)
 
     /**
      * Llamar en cada hit exitoso de un atacante con afinidades en su arma.

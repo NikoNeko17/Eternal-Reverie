@@ -25,7 +25,7 @@ class RemnantGuiHolder(val player: Player) : InventoryHolder {
         val TITLE: Component = Component.text("Espacios de Vestigio", NamedTextColor.DARK_GRAY)
 
         // Los 9 slots de Vestigio ocupan la fila central (9-17).
-        val VESTIGIO_SLOTS = (0..9).toList()
+        val VESTIGIO_SLOTS = (0..8).toList()
     }
 
     private lateinit var inventory: Inventory

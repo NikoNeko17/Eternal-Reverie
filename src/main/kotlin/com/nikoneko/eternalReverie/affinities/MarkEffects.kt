@@ -1,8 +1,14 @@
 package com.nikoneko.eternalReverie.affinities
 
+import com.destroystokyo.paper.ParticleBuilder
+import com.nikoneko.eternalReverie.EnemyObject
 import com.nikoneko.eternalReverie.player.PlayerStats
 import com.nikoneko.eternalReverie.weapons.Affinity
 import com.nikoneko.eternalReverie.weapons.firearms.AttackSpeedDebuff
+import net.citizensnpcs.api.CitizensAPI
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.entity.LivingEntity
 
 /**
@@ -46,6 +52,14 @@ object MarkEffects {
     private fun applyBleed(target: LivingEntity, source: LivingEntity?, config: MarkConfig, mult: Double) {
         // El robo real se resuelve en CombatResolver (lee hasMark(target, SANGRE) y
         // cura al atacante un % del daño de ESE golpe). Acá no hay tick periódico real.
+        ParticleBuilder(Particle.BLOCK_CRUMBLE)
+            .data(Material.REDSTONE_BLOCK.createBlockData())
+            .location(target.location.add(0.0, 1.0, 0.0))
+            .count(50)
+            .extra(0.0)
+            .offset(0.25, 0.5, 0.25)
+            .allPlayers()
+            .spawn()
     }
 
     // --- Fuego: DoT proporcional al daño del golpe que generó/refrescó la Marca ---
@@ -60,6 +74,20 @@ object MarkEffects {
 
         val currentHp = PlayerStats.getCurrentHp(target)
         PlayerStats.setCurrentHp(target, (currentHp - mitigatedDamage).coerceAtLeast(0.0))
+
+        val npc = CitizensAPI.getNPCRegistry().getNPC(target)
+        if (npc != null) {
+            val enemy = EnemyObject.get(npc.id)!!
+            enemy.stats.currentHp -= mitigatedDamage
+        }
+
+        ParticleBuilder(Particle.FLAME)
+            .location(target.location.add(0.0, 1.0, 0.0))
+            .count(50)
+            .extra(0.0)
+            .offset(0.25, 0.5, 0.25)
+            .allPlayers()
+            .spawn()
     }
 
     // --- Hielo: frenazo fuerte y corto, movimiento + velocidad de ataque ---
@@ -85,6 +113,14 @@ object MarkEffects {
 
         val sourceCurrent = PlayerStats.getCurrentStamina(source)
         PlayerStats.setCurrentStamina(source, sourceCurrent + stolenAmount)
+
+        ParticleBuilder(Particle.ELECTRIC_SPARK)
+            .location(target.location.add(0.0, 1.0, 0.0))
+            .count(50)
+            .extra(0.0)
+            .offset(0.25, 0.5, 0.25)
+            .allPlayers()
+            .spawn()
     }
 
     // --- Veneno: progresivo y prolongado, movimiento leve + regen. HP/Stamina golpeada ---
