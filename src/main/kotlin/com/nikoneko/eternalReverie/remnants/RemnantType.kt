@@ -37,8 +37,8 @@ data class RemnantEffect(
     val stat: FoodStat,
     val valuesByLevel: List<Double>
 ) {
-    fun valueAt(level: Int, maxLevel: Int): Double {
-        val clamped = level.coerceIn(1, maxLevel)
+    fun valueAt(data: RemnantData, level: Int): Double {
+        val clamped = level.coerceIn(1, data.maxLevel)
         return valuesByLevel.getOrElse(clamped - 1) { valuesByLevel.last() }
     }
 }
@@ -121,7 +121,10 @@ data class RemnantData(
         }
     }
 
-    fun valueAt(effect: RemnantEffect, level: Int) = effect.valueAt(level, maxLevel)
+    fun valueAt(id: String, effect: RemnantEffect, level: Int): Double {
+        val remnant: RemnantType = runCatching { RemnantType.valueOf(id) }.getOrNull() ?: return 0.0
+        return effect.valueAt(remnant.data, level)
+    }
 }
 
 // ── RemnantType ────────────────────────────────────────────────────────────────

@@ -135,7 +135,7 @@ class DurabilityListener(private val plugin: EternalReverie) : Listener {
             val newDurability : Int = if (percentage == null) {
                 (current - amount).coerceAtLeast(0)
             } else {
-                (current - (max * percentage.coerceIn(0.0,1.0).toInt())).coerceAtLeast(0)
+                (current - (max * percentage.coerceIn(0.0,1.0)).toInt()).coerceAtLeast(0)
             }
             pdc.set(Keys.DURABILITY, PersistentDataType.INTEGER, newDurability)
 

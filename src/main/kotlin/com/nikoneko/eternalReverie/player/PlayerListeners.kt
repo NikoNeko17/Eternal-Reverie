@@ -57,10 +57,36 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
 
         // ── Caso: NPC ataca a jugador ─────────────────────────────────────────────
         if (victim is Player && damager is LivingEntity && damager.hasMetadata("NPC")) {
-            // El daño ya fue calculado por CustomEnemy.triggerHit; solo dejamos que
-            // PlayerStats lo procese para actualizar CURRENT_HP del jugador.
-            // No necesitamos hacer nada más aquí: CombatResolver ya fue llamado en
-            // triggerHit, y el daño vanilla es solo el trigger visual.
+            event.isCancelled = true
+            val npc = CitizensAPI.getNPCRegistry()
+                .getNPC(damager) ?: return
+            EnemyObject.get(npc.id) ?: return
+
+            val attacker = damager as Player
+
+            // Checks de estado del atacante
+            if (AffinityMarkManager.hasMark(damager, Affinity.ATADURA)) return
+
+            val weaponBlueprint = damager.inventory.itemInMainHand.itemMeta
+                ?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
+            val weaponMaterials = damager.inventory.itemInMainHand.itemMeta
+                ?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
+
+            val (weaponStats, equipmentStats) = buildAttackerStats(damager, weaponBlueprint, weaponMaterials)
+
+
+            val finalDamage = CombatResolver.resolveHit(
+                attacker = attacker,
+                victim = victim as LivingEntity,
+                rawDamage = weaponStats.damage,
+                attackerEquipment = equipmentStats,
+                weaponAffinities = weaponStats.affinities,
+                plugin
+            )
+
+            event.damage = if (PlayerStats.getCurrentHp(victim) <= 0.0)
+                (victim.getAttribute(Attribute.MAX_HEALTH)?.value ?: 20.0) else 0.0
+
             return
         }
 
@@ -156,8 +182,8 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
     @EventHandler
     fun onFireWeaponEvent(event: PlayerInteractEvent) {
         // Atadura: el jugador anclado no puede usar ítems/disparar mientras la Marca esté activa.
-        if (com.nikoneko.eternalReverie.affinities.AffinityMarkManager.hasMark(
-                event.player, com.nikoneko.eternalReverie.weapons.Affinity.ATADURA
+        if (AffinityMarkManager.hasMark(
+                event.player, Affinity.ATADURA
             )
         ) {
             event.isCancelled = true

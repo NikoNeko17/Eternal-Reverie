@@ -1,11 +1,17 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.nikoneko.eternalReverie.food
 
 import com.nikoneko.eternalReverie.items.Keys
+import io.papermc.paper.datacomponent.DataComponentType
+import io.papermc.paper.datacomponent.DataComponentTypes
+import io.papermc.paper.datacomponent.item.Consumable
+import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.components.FoodComponent
 import org.bukkit.persistence.PersistentDataType
 
 object FoodItemFactory {
@@ -23,14 +29,12 @@ object FoodItemFactory {
         )
 
         // Bypass de hambre: el jugador puede comer aunque tenga el hambre llena
-        @Suppress("UnstableApiUsage")
-        meta.setFood(
-            ItemMeta.Food.builder()
-                .nutrition(0)
-                .saturation(0f)
-                .canAlwaysEat(true)
-                .build()
-        )
+        val foodComponent : FoodComponent = meta.food
+        foodComponent.setCanAlwaysEat(true)
+        foodComponent.saturation = 0f
+        foodComponent.nutrition = 0
+
+        meta.setFood(foodComponent)
 
         // Lore
         meta.lore(buildLore(data))
@@ -43,6 +47,15 @@ object FoodItemFactory {
         )
 
         item.itemMeta = meta
+
+        // Forzar consumible
+        item.setData(DataComponentTypes.CONSUMABLE, Consumable.consumable()
+            .consumeSeconds(1.5f)
+            .animation(ItemUseAnimation.EAT)
+            .hasConsumeParticles(true)
+            .build())
+
+
         return item
     }
 

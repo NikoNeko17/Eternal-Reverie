@@ -10,6 +10,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 
 /**
  * Aplica el efecto periódico (1 vez por segundo, vía AffinityMarkManager.tickAll)

@@ -97,7 +97,7 @@ object RemnantItemFactory {
             lore += Component.text("${statDisplayName(effect.stat)}: ", NamedTextColor.GRAY)
                 .append(
                     Component.text(
-                        formatValue(effect.stat, effect.valueAt(level)),
+                        formatValue(effect.stat, effect.valueAt(data, level)),
                         NamedTextColor.GREEN,
                         TextDecoration.BOLD
                     )

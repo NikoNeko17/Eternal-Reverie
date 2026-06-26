@@ -5,13 +5,12 @@ import com.nikoneko.eternalReverie.crafting.CraftingCalculator
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
 import com.nikoneko.eternalReverie.crafting.MaterialType
+import com.nikoneko.eternalReverie.food.FoodStat
 import net.citizensnpcs.api.CitizensAPI
-import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
-import kotlin.text.get
 
 /**
  * Stats totales calculadas en tiempo real para un LivingEntity (jugador o NPC
@@ -110,20 +109,18 @@ object PlayerStats {
         // Vestigios: misma convención (VITALIDAD/RESISTENCIA son absolutos,
         //            resto son multipliers), pero se inyectan aquí solo los
         //            multipliers — los absolutos (Vitalidad) van por recalculateMaxHp.
-        fun foodMult(stat: com.nikoneko.eternalReverie.food.FoodStat)    = foodBonuses[stat]    ?: 0.0
-        fun remnantMult(stat: com.nikoneko.eternalReverie.food.FoodStat) = remnantBonuses[stat] ?: 0.0
-        fun totalMult(stat: com.nikoneko.eternalReverie.food.FoodStat)   = foodMult(stat) + remnantMult(stat)
-
-        val S = com.nikoneko.eternalReverie.food.FoodStat  // alias local para legibilidad
+        fun foodMult(stat: FoodStat)    = foodBonuses[stat]    ?: 0.0
+        fun remnantMult(stat: FoodStat) = remnantBonuses[stat] ?: 0.0
+        fun totalMult(stat: FoodStat)   = foodMult(stat) + remnantMult(stat)
 
         return EquipmentStats(
-            defense              = totalDefense          * (1.0 + totalMult(S.DEFENSA)),
-            critChance           = critChance            * (1.0 + totalMult(S.PRECISION)),
-            critDamageMultiplier = critDamageMultiplier  * (1.0 + totalMult(S.DESTREZA)),
-            strengthMultiplier   = strengthMultiplier    + totalMult(S.FUERZA),
-            luckAttributeValue   = luckValue             * (1.0 + totalMult(S.SUERTE)),
+            defense              = totalDefense          * (1.0 + totalMult(FoodStat.DEFENSA)),
+            critChance           = critChance            * (1.0 + totalMult(FoodStat.PRECISION)),
+            critDamageMultiplier = critDamageMultiplier  * (1.0 + totalMult(FoodStat.DESTREZA)),
+            strengthMultiplier   = strengthMultiplier    + totalMult(FoodStat.FUERZA),
+            luckAttributeValue   = luckValue             * (1.0 + totalMult(FoodStat.SUERTE)),
             maxHpFromGear        = totalVitality,   // Vitalidad absoluta va por recalculateMaxHp, no aquí
-            maxStaminaFromGear   = totalResistance  * (1.0 + totalMult(S.RESISTENCIA))
+            maxStaminaFromGear   = totalResistance  * (1.0 + totalMult(FoodStat.RESISTENCIA))
         )
     }
 
@@ -226,23 +223,23 @@ object PlayerStats {
     }
 
     fun getCurrentHp(entity: LivingEntity): Double {
-        if (Bukkit.getOnlinePlayers().contains(entity)) {
+        val npc = CitizensAPI.getNPCRegistry().getNPC(entity)
+        if (npc == null) {
                 return entity.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: BASE_MAX_HP
-            } else {
-            val npc = CitizensAPI.getNPCRegistry().getNPC(entity)
-            val enemy = EnemyObject.get(npc.id)!!
-            return enemy.stats.currentHp
+        } else {
+            val enemy = EnemyObject.get(npc.id)
+            return enemy?.stats?.currentHp ?: BASE_MAX_HP
             }
         }
 
 
     fun getMaxHp(entity: LivingEntity): Double {
-        if (Bukkit.getOnlinePlayers().contains(entity)) {
+        val npc = CitizensAPI.getNPCRegistry().getNPC(entity)
+        if (npc == null) {
             return entity.persistentDataContainer.get(Keys.MAX_HP, PersistentDataType.DOUBLE) ?: BASE_MAX_HP
         } else {
-            val npc = CitizensAPI.getNPCRegistry().getNPC(entity)
-            val enemy = EnemyObject.get(npc.id)!!
-            return enemy.stats.maxHp
+            val enemy = EnemyObject.get(npc.id)
+            return enemy?.stats?.maxHp ?: BASE_MAX_HP
         }
     }
 

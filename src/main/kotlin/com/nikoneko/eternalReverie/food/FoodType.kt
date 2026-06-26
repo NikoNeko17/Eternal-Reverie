@@ -19,7 +19,7 @@ enum class FoodType(val data: FoodData) {
         category    = FoodCategory.CARNE,
         rarity      = Rarity.COMMON,
         healAmount  = 10,
-        material    = Material.RAW_BEEF,
+        material    = Material.BEEF,
         effects     = listOf(
             FoodEffect(FoodEffectType.StatModifier(FoodStat.FUERZA, 0.10), durationTicks = 300),  // 15s
             FoodEffect(FoodEffectType.AffinityMark(Affinity.VENENO),       durationTicks = 600)   // 30s

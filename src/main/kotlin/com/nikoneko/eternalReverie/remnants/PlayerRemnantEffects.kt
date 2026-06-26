@@ -25,7 +25,7 @@ object PlayerRemnantEffects {
 
         for (equipped in RemnantSlotManager.getEquipped(player)) {
             for (effect in equipped.type.data.effects) {
-                val value = effect.valueAt(equipped.level)
+                val value = effect.valueAt(equipped.type.data, equipped.level)
                 result[effect.stat] = (result[effect.stat] ?: 0.0) + value
             }
         }

@@ -148,7 +148,7 @@ class CustomEnemy(
                     val tiempoActual = System.currentTimeMillis()
                     val ticksEnMilis = 1000.0 / attackSpeed
 
-                    if (tiempoActual - lastAttackTime >= ticksEnMilis) {
+                    if ((tiempoActual - lastAttackTime) >= ticksEnMilis) {
                         triggerHit(entity, target)
                         lastAttackTime = tiempoActual
                     }

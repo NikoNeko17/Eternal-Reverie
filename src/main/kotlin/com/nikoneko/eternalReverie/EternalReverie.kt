@@ -9,6 +9,8 @@ import com.nikoneko.eternalReverie.crafting.CraftingGuiListener
 import com.nikoneko.eternalReverie.durability.DurabilityListener
 import com.nikoneko.eternalReverie.economy.CurrencyCommand
 import com.nikoneko.eternalReverie.economy.CurrencyListener
+import com.nikoneko.eternalReverie.food.FoodEffectScheduler
+import com.nikoneko.eternalReverie.food.FoodListener
 import com.nikoneko.eternalReverie.instances.InstanceManager
 import com.nikoneko.eternalReverie.instances.InstanceTemplateCommand
 import com.nikoneko.eternalReverie.instances.InstanceTemplateRegistry
@@ -84,7 +86,7 @@ class EternalReverie : JavaPlugin() {
             // Tercer argumento opcional: "eternal" para dar la versión Eterna
             val eternal = args.getOrNull(2)?.lowercase() == "eternal"
             sender.inventory.addItem(
-                com.nikoneko.eternalReverie.remnants.RemnantItemFactory.create(tipo, nivel, eternal)
+                RemnantItemFactory.create(tipo, nivel, eternal)
             )
             true
         }

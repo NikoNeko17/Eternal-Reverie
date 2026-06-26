@@ -27,8 +27,7 @@ class FoodListener : Listener {
         // Aplicar marcas de afinidad al jugador consumidor
         // Usamos el jugador como attacker y victim a la vez (se envenena a sí mismo)
         for (affinity in pendingAffinities) {
-            AffinityMarkManager.forceApplyMark(player, affinity, foodData.effects
-                .filterIsInstance<FoodEffect>()
+            AffinityMarkManager.forceApplyMark(player, player, affinity, foodData.effects
                 .firstOrNull { (it.type as? FoodEffectType.AffinityMark)?.affinity == affinity }
                 ?.durationTicks ?: 600
             )

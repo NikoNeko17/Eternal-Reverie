@@ -17,3 +17,5 @@ commands:
     usage: /remnants
   give-remnant:
     usage: /give-remnant <internal-id>
+  give-food:
+    usage: /give-food <internal-id>
