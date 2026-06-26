@@ -66,4 +66,42 @@ object DamageIndicator {
             }
         }.runTaskTimer(plugin, 0L, 1L)
     }
+    
+    fun spawnEvade(plugin: Plugin, victim: LivingEntity) {
+        val spawnLoc = victim.location.clone().add(
+            (Math.random() - 0.5) * 0.6,
+            victim.height + 0.3,
+            (Math.random() - 0.5) * 0.6
+        )
+        
+        val text = Component.text("MISS")
+        .color(NamedTextColor.GRAY)
+        
+        val display = spawnLoc.world.spawn(spawnLoc, TextDisplay::class.java) { td ->
+            td.text(text)
+            td.billboard = Display.Billboard.CENTER
+            td.isShadowed = true
+            td.backgroundColor = org.bukkit.Color.fromARGB(0, 0, 0, 0)
+        }
+        
+        object : BukkitRunnable() {
+            var tick = 0
+            
+            override fun run() {
+                if (!display.isValid) { cancel(); return }
+                tick++
+                display.teleport(display.location.add(0.0, 0.045, 0.0))
+                if (tick >= 20) {
+                    val scale = 1.0f - (tick - 20) / 10.0f
+                    display.transformation = Transformation(
+                        Vector3f(0f, 0f, 0f),
+                        AxisAngle4f(0f, 0f, 0f, 1f),
+                        Vector3f(scale, scale, scale),
+                        AxisAngle4f(0f, 0f, 0f, 1f)
+                    )
+                }
+                if (tick >= 30) { display.remove(); cancel() }
+            }
+        }.runTaskTimer(plugin, 0L, 1L)
+    }
 }

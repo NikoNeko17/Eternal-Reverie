@@ -87,19 +87,43 @@ object PlayerStats {
             totalLuck += pieceStats.luck
         }
 
-        val critChance = (totalPrecision * PRECISION_RATIO) + PRECISION_INTERNAL_BONUS
-        val critDamageMultiplier = totalDexterity * DEXTERITY_RATIO + DEXTERITY_INTERNAL_BONUS
-        val strengthMultiplier = totalStrength * STRENGTH_RATIO
-        val luckValue = totalLuck * LUCK_RATIO
+        val critChance           = (totalPrecision * PRECISION_RATIO)  + PRECISION_INTERNAL_BONUS
+        val critDamageMultiplier = totalDexterity  * DEXTERITY_RATIO   + DEXTERITY_INTERNAL_BONUS
+        val strengthMultiplier   = totalStrength   * STRENGTH_RATIO
+        val luckValue            = totalLuck       * LUCK_RATIO
+
+        // ── Bonus de fuentes externas (Comida + Vestigios) ───────────────────
+        // Solo para Players; NPCs no comen ni equipan Vestigios.
+        val foodBonuses: Map<com.nikoneko.eternalReverie.food.FoodStat, Double>
+        val remnantBonuses: Map<com.nikoneko.eternalReverie.food.FoodStat, Double>
+
+        if (entity is org.bukkit.entity.Player) {
+            foodBonuses    = com.nikoneko.eternalReverie.food.FoodEffectManager.getStatMultipliers(entity.uniqueId)
+            remnantBonuses = com.nikoneko.eternalReverie.remnants.PlayerRemnantEffects.getStatBonuses(entity)
+        } else {
+            foodBonuses    = emptyMap()
+            remnantBonuses = emptyMap()
+        }
+
+        // Suma ambas fuentes por stat.
+        // Comida: multiplier porcentual sobre la stat calculada del equipo.
+        // Vestigios: misma convención (VITALIDAD/RESISTENCIA son absolutos,
+        //            resto son multipliers), pero se inyectan aquí solo los
+        //            multipliers — los absolutos (Vitalidad) van por recalculateMaxHp.
+        fun foodMult(stat: com.nikoneko.eternalReverie.food.FoodStat)    = foodBonuses[stat]    ?: 0.0
+        fun remnantMult(stat: com.nikoneko.eternalReverie.food.FoodStat) = remnantBonuses[stat] ?: 0.0
+        fun totalMult(stat: com.nikoneko.eternalReverie.food.FoodStat)   = foodMult(stat) + remnantMult(stat)
+
+        val S = com.nikoneko.eternalReverie.food.FoodStat  // alias local para legibilidad
 
         return EquipmentStats(
-            defense = totalDefense,
-            critChance = critChance,
-            critDamageMultiplier = critDamageMultiplier,
-            strengthMultiplier = strengthMultiplier,
-            luckAttributeValue = luckValue,
-            maxHpFromGear = totalVitality,
-            maxStaminaFromGear = totalResistance
+            defense              = totalDefense          * (1.0 + totalMult(S.DEFENSA)),
+            critChance           = critChance            * (1.0 + totalMult(S.PRECISION)),
+            critDamageMultiplier = critDamageMultiplier  * (1.0 + totalMult(S.DESTREZA)),
+            strengthMultiplier   = strengthMultiplier    + totalMult(S.FUERZA),
+            luckAttributeValue   = luckValue             * (1.0 + totalMult(S.SUERTE)),
+            maxHpFromGear        = totalVitality,   // Vitalidad absoluta va por recalculateMaxHp, no aquí
+            maxStaminaFromGear   = totalResistance  * (1.0 + totalMult(S.RESISTENCIA))
         )
     }
 

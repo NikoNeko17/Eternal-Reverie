@@ -44,6 +44,8 @@ object Keys {
     // Vestigios: espacios desbloqueados y lista de equipados ("TIPO:nivel" por entrada)
     lateinit var REMNANT_UNLOCKED_SLOTS: NamespacedKey
     lateinit var REMNANT_EQUIPPED: NamespacedKey
+    
+    lateinit var FOOD_ID: NamespacedKey
 
     fun init(plugin: EternalReverie) {
 
@@ -78,5 +80,7 @@ object Keys {
 
         REMNANT_UNLOCKED_SLOTS = NamespacedKey(plugin, "vestigio_unlocked_slots")
         REMNANT_EQUIPPED = NamespacedKey(plugin, "vestigio_equipped")
+        
+        FOOD_ID = NamespacedKey(plugin, "food_id")
     }
 }

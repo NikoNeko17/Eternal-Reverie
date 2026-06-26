@@ -65,7 +65,8 @@ class EternalReverie : JavaPlugin() {
         InstanceTemplateRegistry.load(this)
         MovementSpeedModifier.init(this)
         SprintStaminaListener(this).startTick()
-
+        FoodEffectScheduler(this).start()
+        server.pluginManager.registerEvents(FoodListener(), this)
         
 
         getCommand("material-item")?.setExecutor(ItemCommand(this))
@@ -76,11 +77,28 @@ class EternalReverie : JavaPlugin() {
         getCommand("remnants")?.setExecutor(RemnantCommand())
         getCommand("give-remnant")?.setExecutor { sender, _, _, args ->
             if (sender !is Player) return@setExecutor true
-            val tipo = runCatching { RemnantType.valueOf(args[0].uppercase()) }.getOrNull() ?: return@setExecutor true
-            val nivel = args.getOrNull(1)?.toIntOrNull()?.coerceIn(1, MAX_VESTIGIO_LEVEL) ?: 1
-            sender.inventory.addItem(RemnantItemFactory.create(tipo, nivel))
+            val tipo = runCatching {
+                com.nikoneko.eternalReverie.remnants.RemnantType.valueOf(args[0].uppercase())
+            }.getOrNull() ?: return@setExecutor true
+            val nivel   = args.getOrNull(1)?.toIntOrNull()?.coerceIn(1, MAX_VESTIGIO_LEVEL) ?: 1
+            // Tercer argumento opcional: "eternal" para dar la versión Eterna
+            val eternal = args.getOrNull(2)?.lowercase() == "eternal"
+            sender.inventory.addItem(
+                com.nikoneko.eternalReverie.remnants.RemnantItemFactory.create(tipo, nivel, eternal)
+            )
             true
         }
+        getCommand("give-food")?.setExecutor { sender, _, _, args ->
+            if (sender !is Player) return@setExecutor true
+            val type = runCatching {
+                com.nikoneko.eternalReverie.food.FoodType.valueOf(args[0].uppercase())
+            }.getOrNull() ?: return@setExecutor true
+            sender.inventory.addItem(
+                com.nikoneko.eternalReverie.food.FoodItemFactory.create(type)
+            )
+            true
+        }
+        
         server.pluginManager.registerEvents(PlayerListeners(this), this)
         server.pluginManager.registerEvents(CitizensHookListener(), this)
         server.pluginManager.registerEvents(CraftingGuiListener(), this)

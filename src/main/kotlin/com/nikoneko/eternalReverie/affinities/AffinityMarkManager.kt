@@ -1,33 +1,22 @@
 package com.nikoneko.eternalReverie.affinities
 
 import com.nikoneko.eternalReverie.player.PlayerStats
+import com.nikoneko.eternalReverie.remnants.RemnantSpecialEffectHandler
 import com.nikoneko.eternalReverie.weapons.Affinity
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import java.util.UUID
 import kotlin.random.Random
 
-/**
- * Mantiene en memoria las Marcas activas por entidad (jugador o NPC).
- * No persiste entre reinicios (coherente con que los NPCs tampoco persisten).
- * Sin stacks: cada Marca está activa sí/no, su efecto es fijo mientras dure.
- */
 object AffinityMarkManager {
 
-    // entityUuid -> (Affinity -> Marca activa)
-    private val activeMarks: MutableMap<UUID, MutableMap<Affinity, AffinityMark>> = mutableMapOf()
+    private val activeMarks  = mutableMapOf<UUID, MutableMap<Affinity, AffinityMark>>()
+    private val markSources  = mutableMapOf<UUID, MutableMap<Affinity, UUID>>()
 
-    // entityUuid -> quién le aplicó cada Marca (necesario para Sangre/Electricidad,
-    // que benefician al ATACANTE mientras la Marca esté activa en la víctima).
-    private val markSources: MutableMap<UUID, MutableMap<Affinity, UUID>> = mutableMapOf()
+    private const val BASE_PROC_CHANCE = 1.0
 
-    private const val BASE_PROC_CHANCE = 1.0 // 20% base de proc por hit, fijo (no escala con %afinidad)
+    // ── onHit (proc probabilístico desde CombatResolver) ─────────────────────
 
-    /**
-     * Llamar en cada hit exitoso de un atacante con afinidades en su arma.
-     * `weaponAffinities` son los pares (Affinity, %normalizado) ya calculados al craftear,
-     * usados SOLO para decidir cuál Affinity se elige si hay proc (no afectan el % de proc en sí).
-     * `hitDamage` es el daño de ESTE golpe puntual, usado por Fuego para su DoT proporcional.
-     */
     fun onHit(
         attacker: LivingEntity,
         target: LivingEntity,
@@ -41,7 +30,71 @@ object AffinityMarkManager {
         if (Random.nextDouble() > procChance) return
 
         val chosenAffinity = pickWeighted(weaponAffinities) ?: return
+
+        // Inmunidad: si el objetivo es Player con el Vestigio correspondiente, no aplica
+        if (target is Player && RemnantSpecialEffectHandler.isImmuneToAffinity(target, chosenAffinity)) return
+
         applyMark(attacker, target, chosenAffinity, hitDamage)
+    }
+
+    // ── forceApplyMark (desde FoodListener — sin tirada de proc) ─────────────
+
+    /**
+     * Aplica una marca directamente, sin tirada de proc.
+     * Usado por el sistema de alimentos (ej. Carne Cruda envenena al jugador).
+     * Respeta inmunidades de Vestigios igualmente.
+     *
+     * @param source  Entidad origen de la marca (puede ser el mismo jugador).
+     * @param durationTicks Duración explícita en ticks (ignora config.baseDurationTicks).
+     */
+    fun forceApplyMark(
+        source: LivingEntity,
+        target: LivingEntity,
+        affinity: Affinity,
+        durationTicks: Int
+    ) {
+        if (target is Player && RemnantSpecialEffectHandler.isImmuneToAffinity(target, affinity)) return
+
+        val config = MarkRegistry.configs[affinity] ?: return
+        val entityMarks   = activeMarks.getOrPut(target.uniqueId) { mutableMapOf() }
+        val entitySources = markSources.getOrPut(target.uniqueId) { mutableMapOf() }
+
+        val existing = entityMarks[affinity]
+        if (existing == null) {
+            entityMarks[affinity] = AffinityMark(
+                affinity        = affinity,
+                durationTicks   = durationTicks,
+                sourceHitDamage = 0.0  // alimentos no tienen hitDamage de referencia
+            )
+        } else {
+            // Reiniciar duración (misma regla que reaplicar desde combate)
+            existing.durationTicks = durationTicks.coerceAtMost(AffinityMark.MAX_DURATION_TICKS)
+        }
+
+        entitySources[affinity] = source.uniqueId
+    }
+
+    // ── Aplicación interna ────────────────────────────────────────────────────
+
+    private fun applyMark(attacker: LivingEntity, target: LivingEntity, affinity: Affinity, hitDamage: Double) {
+        val config        = MarkRegistry.configs[affinity] ?: return
+        val entityMarks   = activeMarks.getOrPut(target.uniqueId) { mutableMapOf() }
+        val entitySources = markSources.getOrPut(target.uniqueId) { mutableMapOf() }
+
+        val existing = entityMarks[affinity]
+        if (existing == null) {
+            entityMarks[affinity] = AffinityMark(
+                affinity        = affinity,
+                durationTicks   = config.baseDurationTicks,
+                sourceHitDamage = hitDamage
+            )
+        } else {
+            existing.durationTicks = (existing.durationTicks + AffinityMark.REAPPLY_BONUS_TICKS)
+                .coerceAtMost(AffinityMark.MAX_DURATION_TICKS)
+            existing.sourceHitDamage = hitDamage
+        }
+
+        entitySources[affinity] = attacker.uniqueId
     }
 
     private fun pickWeighted(weighted: List<Pair<Affinity, Double>>): Affinity? {
@@ -56,26 +109,7 @@ object AffinityMarkManager {
         return weighted.last().first
     }
 
-    private fun applyMark(attacker: LivingEntity, target: LivingEntity, affinity: Affinity, hitDamage: Double) {
-        val config = MarkRegistry.configs[affinity] ?: return
-        val entityMarks = activeMarks.getOrPut(target.uniqueId) { mutableMapOf() }
-        val entitySources = markSources.getOrPut(target.uniqueId) { mutableMapOf() }
-
-        val existing = entityMarks[affinity]
-        if (existing == null) {
-            entityMarks[affinity] = AffinityMark(
-                affinity = affinity,
-                durationTicks = config.baseDurationTicks,
-                sourceHitDamage = hitDamage
-            )
-        } else {
-            existing.durationTicks = (existing.durationTicks + AffinityMark.REAPPLY_BONUS_TICKS)
-                .coerceAtMost(AffinityMark.MAX_DURATION_TICKS)
-            existing.sourceHitDamage = hitDamage // Fuego: el DoT se actualiza al daño del último golpe
-        }
-
-        entitySources[affinity] = attacker.uniqueId
-    }
+    // ── Consultas ─────────────────────────────────────────────────────────────
 
     fun getActiveMarks(entity: LivingEntity): Map<Affinity, AffinityMark> =
         activeMarks[entity.uniqueId] ?: emptyMap()
@@ -91,11 +125,8 @@ object AffinityMarkManager {
         markSources.remove(entity.uniqueId)
     }
 
-    /**
-     * Tick global (llamar 1 vez por segundo desde AffinityTickScheduler). Decrementa
-     * duración, aplica el efecto periódico de cada Marca activa (mitigado por la
-     * afinidad de armadura del objetivo), y elimina las que expiraron.
-     */
+    // ── Tick global ───────────────────────────────────────────────────────────
+
     fun tickAll(entitiesProvider: () -> List<LivingEntity>) {
         val entities = entitiesProvider().associateBy { it.uniqueId }
 
@@ -115,15 +146,13 @@ object AffinityMarkManager {
             val markIterator = marks.entries.iterator()
             while (markIterator.hasNext()) {
                 val (affinity, mark) = markIterator.next()
-                val config = MarkRegistry.configs[affinity]
+                val config     = MarkRegistry.configs[affinity]
                 val sourceUuid = sources?.get(affinity)
-                val source = sourceUuid?.let { entities[it] }
+                val source     = sourceUuid?.let { entities[it] }
 
-                if (config != null) {
-                    MarkEffects.applyTick(entity, source, mark, config)
-                }
+                if (config != null) MarkEffects.applyTick(entity, source, mark, config)
 
-                mark.durationTicks -= 20 // 1 segundo
+                mark.durationTicks -= 20
                 if (mark.durationTicks <= 0) {
                     markIterator.remove()
                     sources?.remove(affinity)
@@ -138,11 +167,6 @@ object AffinityMarkManager {
         }
     }
 
-    /**
-     * % de mitigación de una Marca específica según la afinidad del SET de armadura
-     * del objetivo (suma de %afinidad de cada pieza que la tenga, dividido entre 4).
-     * Devuelve un valor 0.0-1.0 para multiplicar como (1 - mitigacion).
-     */
     fun computeArmorAffinityMitigation(target: LivingEntity, affinity: Affinity): Double {
         val equipment = target.equipment ?: return 0.0
         val pieces = listOf(equipment.helmet, equipment.chestplate, equipment.leggings, equipment.boots)
@@ -151,9 +175,7 @@ object AffinityMarkManager {
         for (piece in pieces) {
             val pieceAffinities = PlayerStats.readArmorPieceAffinities(piece) ?: continue
             val match = pieceAffinities.firstOrNull { it.first == affinity }
-            if (match != null) {
-                sumPct += match.second / 100.0 // viene normalizado 0-100
-            }
+            if (match != null) sumPct += match.second / 100.0
         }
 
         return (sumPct / 4.0).coerceIn(0.0, 1.0)
