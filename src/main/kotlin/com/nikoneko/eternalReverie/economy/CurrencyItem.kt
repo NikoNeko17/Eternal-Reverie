@@ -36,6 +36,7 @@ object CurrencyItem {
             )
         )
         meta.persistentDataContainer.set(Keys.IS_CURRENCY, PersistentDataType.BYTE, 1)
+        meta.setMaxStackSize(99)
 
         item.itemMeta = meta
         return item

@@ -63,9 +63,11 @@ object ActionBarManager {
                 WeaponStateManager.clearWeapon(player, weaponUuid)
                 return
             }
-            player.sendActionBar(
-                Component.text(message)
-            )
+            if (!WeaponStateManager.isReloading(player, weaponUuid) || WeaponStateManager.getAmmo(player, weaponUuid) <= 0) {
+                player.sendActionBar(
+                    Component.text(message)
+                )
+            }
         } else {
             val health: Pair<Double, Double> =
                 Pair(player.persistentDataContainer.get(Keys.CURRENT_HP, PersistentDataType.DOUBLE) ?: 0.0,
@@ -75,10 +77,15 @@ object ActionBarManager {
                 Pair(player.persistentDataContainer.get(Keys.CURRENT_STAMINA, PersistentDataType.DOUBLE) ?: 0.0,
                     player.persistentDataContainer.get(Keys.MAX_STAMINA, PersistentDataType.DOUBLE) ?: 0.0)
 
-            player.sendActionBar(
-                Component.text("%.0f/%.0f ❦    ".format(health.first, health.second), NamedTextColor.RED)
-                    .append(Component.text("%.0f/%.0f ⚡".format(stamina.first, stamina.second), NamedTextColor.YELLOW))
-            )
+            val ammo: Pair<Int, Int?>? = if (WeaponStateManager.getWeaponFamily(item)?.weaponClass in WeaponStateManager.firearmClasses) {
+                WeaponStateManager.getAmmoData(player, item)
+            } else null
+
+            val finalComponent = Component.text("%.0f/%.0f ❦    ".format(health.first, health.second), NamedTextColor.RED)
+                .append(Component.text("%.0f/%.0f ⚡".format(stamina.first, stamina.second), NamedTextColor.YELLOW))
+                .append(if (ammo != null) Component.text("    %d/%d".format(ammo.first, ammo.second), NamedTextColor.WHITE) else Component.empty())
+
+            player.sendActionBar(finalComponent)
         }
 
     }

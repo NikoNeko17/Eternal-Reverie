@@ -1,20 +1,23 @@
 package com.nikoneko.eternalReverie.crafting
 
+import com.nikoneko.eternalReverie.remnants.RemnantEffect
 import com.nikoneko.eternalReverie.weapons.Affinity
+import net.kyori.adventure.text.format.NamedTextColor
 
 // NOTA: agregar a Keys.kt:
 // lateinit var MATERIAL_ID: NamespacedKey
 // MATERIAL_ID = NamespacedKey(plugin, "material_id")
 
 enum class MaterialRarity(
-    val stars: Int
+    val stars: Int,
+    val color: NamedTextColor = NamedTextColor.GRAY
 ) {
-    COMMON(1),
-    RARE(2),
-    EPIC(3),
-    LEGENDARY(4),
-    MYTHIC(5),
-    ONIRIC(6)
+    COMMON(1, NamedTextColor.WHITE),
+    RARE(2, NamedTextColor.BLUE),
+    EPIC(3, NamedTextColor.DARK_PURPLE),
+    LEGENDARY(4, NamedTextColor.GOLD),
+    MYTHIC(5, NamedTextColor.LIGHT_PURPLE),
+    ONIRIC(6, NamedTextColor.AQUA)
 }
 
 data class MaterialData(
@@ -45,7 +48,12 @@ data class MaterialData(
 
     // Afinidad (null si es material físico puro)
     val affinity: Affinity? = null,
-    val affinityWeight: Int = 0
+    val affinityWeight: Int = 0,
+
+    // Transmutación: hacia qué RemnantEffect(s) concretos vota este material,
+    // y con qué peso (entero). Vacío = el material no participa de síntesis
+    // de Vestigios (solo crafting normal de armas/armaduras).
+    val remnantEffects: Map<RemnantEffect, Int> = emptyMap()
 )
 
 enum class MaterialType(
@@ -619,7 +627,10 @@ enum class MaterialType(
             durabilityModifier = 0,
             fabricationCost = 10,
             affinity = Affinity.SANGRE,
-            affinityWeight = 15
+            affinityWeight = 15,
+            remnantEffects = mapOf(
+                RemnantEffect.BLOOD_AFFINITY_WEAPON_DAMAGE to 5,
+                RemnantEffect.HEALING_IN_COMBAT_BOOST to 5)
         )
     ),
 

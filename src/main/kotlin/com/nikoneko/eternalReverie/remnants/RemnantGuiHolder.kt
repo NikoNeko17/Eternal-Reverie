@@ -1,5 +1,6 @@
 package com.nikoneko.eternalReverie.remnants
 
+import com.nikoneko.eternalReverie.remnants.athanor.RemnantSynthesizer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 
 /**
  * GUI de Espacios de Vestigio. Mismo patrón que CraftingGuiHolder: los slots
@@ -54,8 +56,8 @@ class RemnantGuiHolder(val player: Player) : InventoryHolder {
                     inventory.setItem(slot, lockedSlotItem())
                 }
                 index < equipped.size -> {
-                    val eq = equipped[index]
-                    inventory.setItem(slot, RemnantItemFactory.create(eq.type, eq.level))
+                    val eq = RemnantItemFactory.recompute(equipped[index])
+                    inventory.setItem(slot, RemnantItemFactory.create(eq, eq.cellRarity))
                 }
                 else -> {
                     inventory.setItem(slot, emptySlotItem())
@@ -71,7 +73,7 @@ class RemnantGuiHolder(val player: Player) : InventoryHolder {
     }
 
     private fun lockedSlotItem(): ItemStack {
-        val item = ItemStack(Material.BARRIER)
+        val item = ItemStack(Material.RED_STAINED_GLASS_PANE)
         val meta = item.itemMeta
         meta.displayName(
             Component.text("Espacio Bloqueado", NamedTextColor.RED)

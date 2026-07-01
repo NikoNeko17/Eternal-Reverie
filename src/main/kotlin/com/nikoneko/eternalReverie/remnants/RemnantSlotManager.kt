@@ -1,7 +1,11 @@
 package com.nikoneko.eternalReverie.remnants
 
+import com.nikoneko.eternalReverie.crafting.MaterialRarity
 import com.nikoneko.eternalReverie.items.Keys
+import com.nikoneko.eternalReverie.remnants.athanor.SynthesizedRemnant
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 /**
@@ -18,7 +22,7 @@ object RemnantSlotManager {
     const val INITIAL_SLOTS = 2
     const val MAX_SLOTS = 9
 
-    data class EquippedRemnants(val type: RemnantType, val level: Int)
+    data class EquippedRemnants(val type: SynthesizedRemnant)
 
     fun getUnlockedSlots(player: Player): Int =
         player.persistentDataContainer.get(Keys.REMNANT_UNLOCKED_SLOTS, PersistentDataType.INTEGER)
@@ -32,45 +36,39 @@ object RemnantSlotManager {
         )
     }
 
-    fun getEquipped(player: Player): List<EquippedRemnants> {
-        val raw = player.persistentDataContainer.get(Keys.REMNANT_EQUIPPED, PersistentDataType.LIST.strings())
-            ?: emptyList()
+    fun getEquipped(player: Player): List<ItemStack> {
+        val pdc = player.persistentDataContainer
 
-        return raw.mapNotNull { entry ->
-            val parts = entry.split(":")
-            if (parts.size != 2) return@mapNotNull null
-            val type = runCatching { RemnantType.valueOf(parts[0]) }.getOrNull() ?: return@mapNotNull null
-            val level = parts[1].toIntOrNull() ?: return@mapNotNull null
-            EquippedRemnants(type, level)
+        val equippedRemnants = pdc.get(Keys.REMNANT_EQUIPPED, PersistentDataType.LIST.strings()) ?: return emptyList()
+
+        return equippedRemnants.map {
+            ItemStackSerializer.deserialize(it) ?: ItemStack(Material.AIR)
         }
     }
 
-    private fun saveEquipped(player: Player, equipped: List<EquippedRemnants>) {
-        val raw = equipped.map { "${it.type.name}:${it.level}" }
-        player.persistentDataContainer.set(Keys.REMNANT_EQUIPPED, PersistentDataType.LIST.strings(), raw)
+    private fun saveEquipped(player: Player, remnants: List<ItemStack>) {
+        player.persistentDataContainer.set(Keys.REMNANT_EQUIPPED, PersistentDataType.LIST.strings(), remnants.map { ItemStackSerializer.serialize(it) })
     }
 
     /** @return true si se pudo equipar (había espacio libre). */
-    fun equip(player: Player, type: RemnantType, level: Int): Boolean {
+    fun equip(player: Player, type: SynthesizedRemnant): Boolean {
         val current = getEquipped(player)
         val unlockedSlots = getUnlockedSlots(player)
 
         if (current.size >= unlockedSlots) return false
-        if (current.any { it.type == type }) return false // no duplicados del mismo tipo equipado a la vez
+        if (current.any { RemnantItemFactory.recompute(it).primaryEffect?.displayName == type.primaryEffect?.displayName }) return false
 
-        val updated = current + EquippedRemnants(type, level)
+        val updated = getEquipped(player) + RemnantItemFactory.create(type, type.cellRarity)
         saveEquipped(player, updated)
-        PlayerRemnantEffects.recalculate(player)
         return true
     }
 
-    fun unequip(player: Player, type: RemnantType) {
+    fun unequip(player: Player, type: SynthesizedRemnant) {
         val current = getEquipped(player)
-        val updated = current.filterNot { it.type == type }
+        val updated = current.filterNot { RemnantItemFactory.recompute(it) == type }
         saveEquipped(player, updated)
-        PlayerRemnantEffects.recalculate(player)
     }
 
-    fun isEquipped(player: Player, type: RemnantType): Boolean =
-        getEquipped(player).any { it.type == type }
+    fun isEquipped(player: Player, type: SynthesizedRemnant): Boolean =
+        getEquipped(player).any { RemnantItemFactory.recompute(it) == type }
 }

@@ -23,13 +23,14 @@ import com.nikoneko.eternalReverie.loot.ChestLootListener
 import com.nikoneko.eternalReverie.player.PlayerListeners
 import com.nikoneko.eternalReverie.player.SprintStaminaListener
 import com.nikoneko.eternalReverie.player.StaminaRegenScheduler
-import com.nikoneko.eternalReverie.remnants.MAX_VESTIGIO_LEVEL
 import com.nikoneko.eternalReverie.remnants.RemnantCommand
-import com.nikoneko.eternalReverie.remnants.RemnantGuiHolder
 import com.nikoneko.eternalReverie.remnants.RemnantGuiListener
 import com.nikoneko.eternalReverie.remnants.RemnantItemFactory
 import com.nikoneko.eternalReverie.remnants.RemnantKeys
-import com.nikoneko.eternalReverie.remnants.RemnantType
+import com.nikoneko.eternalReverie.remnants.athanor.AthanorCommand
+import com.nikoneko.eternalReverie.remnants.athanor.AthanorGuiListener
+import com.nikoneko.eternalReverie.remnants.athanor.EssenceKeys
+import com.nikoneko.eternalReverie.weapons.firearms.FirearmReloadListener
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ActionBarManager
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.BowListeners
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ProjectileScheduler
@@ -55,6 +56,7 @@ class EternalReverie : JavaPlugin() {
         Keys.init(this)
         RealArrowKeys.init(this)
         RemnantKeys.init(this)
+        EssenceKeys.init(this)
         BlueprintRegistry.generateDefaults(this)
         BlueprintRegistry.load(this)
         ProjectileScheduler(this).start()
@@ -77,19 +79,7 @@ class EternalReverie : JavaPlugin() {
         getCommand("capture-template")?.setExecutor(InstanceTemplateCommand(this, instanceManager))
         getCommand("scrap")?.setExecutor(CurrencyCommand(this))
         getCommand("remnants")?.setExecutor(RemnantCommand())
-        getCommand("give-remnant")?.setExecutor { sender, _, _, args ->
-            if (sender !is Player) return@setExecutor true
-            val tipo = runCatching {
-                com.nikoneko.eternalReverie.remnants.RemnantType.valueOf(args[0].uppercase())
-            }.getOrNull() ?: return@setExecutor true
-            val nivel   = args.getOrNull(1)?.toIntOrNull()?.coerceIn(1, MAX_VESTIGIO_LEVEL) ?: 1
-            // Tercer argumento opcional: "eternal" para dar la versión Eterna
-            val eternal = args.getOrNull(2)?.lowercase() == "eternal"
-            sender.inventory.addItem(
-                RemnantItemFactory.create(tipo, nivel, eternal)
-            )
-            true
-        }
+        getCommand("athanor")?.setExecutor(AthanorCommand())
         getCommand("give-food")?.setExecutor { sender, _, _, args ->
             if (sender !is Player) return@setExecutor true
             val type = runCatching {
@@ -111,6 +101,8 @@ class EternalReverie : JavaPlugin() {
         server.pluginManager.registerEvents(CurrencyListener(), this)
         server.pluginManager.registerEvents(ChestLootListener(this), this)
         server.pluginManager.registerEvents(RemnantGuiListener(), this)
+        server.pluginManager.registerEvents(FirearmReloadListener(this), this)
+        server.pluginManager.registerEvents(AthanorGuiListener(), this)
 
         loadPlayerTicks()
 

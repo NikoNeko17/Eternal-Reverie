@@ -93,15 +93,12 @@ object PlayerStats {
 
         // ── Bonus de fuentes externas (Comida + Vestigios) ───────────────────
         // Solo para Players; NPCs no comen ni equipan Vestigios.
-        val foodBonuses: Map<com.nikoneko.eternalReverie.food.FoodStat, Double>
-        val remnantBonuses: Map<com.nikoneko.eternalReverie.food.FoodStat, Double>
+        val foodBonuses: Map<FoodStat, Double>
 
         if (entity is org.bukkit.entity.Player) {
             foodBonuses    = com.nikoneko.eternalReverie.food.FoodEffectManager.getStatMultipliers(entity.uniqueId)
-            remnantBonuses = com.nikoneko.eternalReverie.remnants.PlayerRemnantEffects.getStatBonuses(entity)
         } else {
             foodBonuses    = emptyMap()
-            remnantBonuses = emptyMap()
         }
 
         // Suma ambas fuentes por stat.
@@ -110,8 +107,7 @@ object PlayerStats {
         //            resto son multipliers), pero se inyectan aquí solo los
         //            multipliers — los absolutos (Vitalidad) van por recalculateMaxHp.
         fun foodMult(stat: FoodStat)    = foodBonuses[stat]    ?: 0.0
-        fun remnantMult(stat: FoodStat) = remnantBonuses[stat] ?: 0.0
-        fun totalMult(stat: FoodStat)   = foodMult(stat) + remnantMult(stat)
+        fun totalMult(stat: FoodStat)   = foodMult(stat)
 
         return EquipmentStats(
             defense              = totalDefense          * (1.0 + totalMult(FoodStat.DEFENSA)),

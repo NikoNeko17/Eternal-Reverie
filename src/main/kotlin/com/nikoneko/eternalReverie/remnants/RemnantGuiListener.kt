@@ -1,5 +1,6 @@
 package com.nikoneko.eternalReverie.remnants
 
+import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -52,13 +53,11 @@ class RemnantGuiListener : Listener {
     ) {
         val clicked = event.currentItem ?: return
         if (!RemnantItemFactory.isVestigio(clicked)) return
-
-        val type = RemnantItemFactory.readType(clicked) ?: return
-        val level = RemnantItemFactory.readLevel(clicked) ?: 1
+        val type = RemnantItemFactory.recompute(clicked)
 
         event.isCancelled = true
 
-        val success = RemnantSlotManager.equip(player, type, level)
+        val success = RemnantSlotManager.equip(player, type)
         if (!success) {
             player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
             player.sendMessage("§cNo hay espacios libres, o ese Vestigio ya está equipado.")
@@ -85,12 +84,12 @@ class RemnantGuiListener : Listener {
         if (event.slot !in RemnantGuiHolder.VESTIGIO_SLOTS) return
 
         val current = holder.inventory.getItem(event.slot) ?: return
-        val type = RemnantItemFactory.readType(current) ?: return
+        if (current.type != Material.PRISMARINE_SHARD) return
+        val type = RemnantItemFactory.recompute(current)
 
         RemnantSlotManager.unequip(player, type)
 
-        val level = RemnantItemFactory.readLevel(current) ?: 1
-        val returnedItem: ItemStack = RemnantItemFactory.create(type, level)
+        val returnedItem: ItemStack = RemnantItemFactory.create(type, type.cellRarity)
         val leftover = player.inventory.addItem(returnedItem)
         for (extra in leftover.values) {
             player.world.dropItem(player.location, extra)

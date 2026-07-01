@@ -11,7 +11,7 @@ import org.bukkit.persistence.PersistentDataType
 object ItemFactory {
 
     fun createMaterialItem(type: MaterialType, amount: Int = 1): ItemStack {
-        val item = ItemStack(Material.IRON_NUGGET, amount.coerceIn(1, 64)) // placeholder visual, ajustar con resource pack/CMD
+        val item = ItemStack(Material.IRON_NUGGET, amount.coerceIn(1, 99)) // placeholder visual, ajustar con resource pack/CMD
         val meta = item.itemMeta
 
         meta.displayName(
@@ -26,16 +26,18 @@ object ItemFactory {
             type.name
         )
 
+        meta.setMaxStackSize(99)
+
         item.itemMeta = meta
         return item
     }
 
     // Ahora recibe el id (String) del blueprint cargado vía BlueprintRegistry,
     // ya que dejó de ser un enum para poder editarse desde blueprints.yml sin recompilar.
-    fun createBlueprintItem(blueprintId: String, amount: Int = 1): ItemStack? {
+    fun createBlueprintItem(blueprintId: String): ItemStack? {
         val data = BlueprintRegistry.get(blueprintId) ?: return null
 
-        val item = ItemStack(data.material, amount.coerceIn(1, 64))
+        val item = ItemStack(data.material)
         val meta = item.itemMeta
 
         val subtitle = when (data.itemType) {
@@ -53,6 +55,8 @@ object ItemFactory {
             PersistentDataType.STRING,
             data.id
         )
+
+        meta.setMaxStackSize(1)
 
         item.itemMeta = meta
         return item
@@ -72,6 +76,8 @@ object ItemFactory {
             type.name
         )
 
+        meta.setMaxStackSize(1)
+
         item.itemMeta = meta
         return item
     }
@@ -84,13 +90,13 @@ object ItemFactory {
             ?: return null
         return try {
             MaterialType.valueOf(idStr)
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             null
         }
     }
 
     // Devuelve el BlueprintData leído desde el registro cargado por YAML,
-    // usando el id (String) guardado en el PDC del ítem.
+    // usando el ID (String) guardado en el PDC del ítem.
     fun readBlueprintData(item: ItemStack?): BlueprintData? {
         val meta = item?.itemMeta ?: return null
         val idStr = meta.persistentDataContainer.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)

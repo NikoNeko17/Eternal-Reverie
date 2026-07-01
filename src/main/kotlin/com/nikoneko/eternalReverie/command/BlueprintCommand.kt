@@ -17,8 +17,7 @@ class BlueprintCommand(val plugin: EternalReverie) : CommandExecutor, TabComplet
             ) return false
 
         val id = args[0].uppercase()
-        val amount = args.getOrNull(1)?.toInt() ?: 1
-        val item = ItemFactory.createBlueprintItem(id, amount) ?: return false
+        val item = ItemFactory.createBlueprintItem(id) ?: return false
         sender.inventory.addItem(item)
         return true
     }

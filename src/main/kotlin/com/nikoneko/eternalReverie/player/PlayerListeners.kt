@@ -1,6 +1,5 @@
 package com.nikoneko.eternalReverie.player
 
-import com.nikoneko.eternalReverie.CustomEnemy
 import com.nikoneko.eternalReverie.EnemyObject
 import com.nikoneko.eternalReverie.EternalReverie
 import com.nikoneko.eternalReverie.affinities.AffinityMarkManager
@@ -9,7 +8,6 @@ import com.nikoneko.eternalReverie.crafting.MaterialType
 import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.decrementDurability
 import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.isCustomItem
 import com.nikoneko.eternalReverie.durability.DurabilityListener.Companion.refreshLore
-import com.nikoneko.eternalReverie.items.BlueprintData
 import com.nikoneko.eternalReverie.items.BlueprintRegistry
 import com.nikoneko.eternalReverie.items.Keys
 import com.nikoneko.eternalReverie.weapons.Affinity
@@ -19,16 +17,12 @@ import com.nikoneko.eternalReverie.weapons.firearms.projectiles.BulletProjectile
 import com.nikoneko.eternalReverie.weapons.firearms.projectiles.ProjectileManager
 import com.nikoneko.eternalReverie.weapons.firearms.WeaponStateManager
 import net.citizensnpcs.api.CitizensAPI
-import net.citizensnpcs.api.npc.NPC
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
-import org.bukkit.damage.DamageSource
-import org.bukkit.damage.DamageType
-import org.bukkit.entity.Arrow
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -39,11 +33,10 @@ import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.persistence.PersistentDataType
-import org.joml.Vector3f
 import java.util.UUID
-import java.util.Vector
 
 class PlayerListeners(val plugin: EternalReverie) : Listener {
+
     @EventHandler
     fun onOpenInventory(event: InventoryOpenEvent) {
         return
@@ -54,17 +47,14 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
         val damager = event.damager
         val victim = event.entity
 
-
         // ── Caso: NPC ataca a jugador ─────────────────────────────────────────────
         if (victim is Player && damager is LivingEntity && damager.hasMetadata("NPC")) {
             event.isCancelled = true
-            val npc = CitizensAPI.getNPCRegistry()
-                .getNPC(damager) ?: return
+            val npc = CitizensAPI.getNPCRegistry().getNPC(damager) ?: return
             EnemyObject.get(npc.id) ?: return
 
             val attacker = damager as Player
 
-            // Checks de estado del atacante
             if (AffinityMarkManager.hasMark(damager, Affinity.ATADURA)) return
 
             val weaponBlueprint = damager.inventory.itemInMainHand.itemMeta
@@ -73,7 +63,6 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
                 ?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
 
             val (weaponStats, equipmentStats) = buildAttackerStats(damager, weaponBlueprint, weaponMaterials)
-
 
             val finalDamage = CombatResolver.resolveHit(
                 attacker = attacker,
@@ -92,13 +81,11 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
 
         // ── Caso: jugador ataca NPC ───────────────────────────────────────────────
         if (damager is Player && victim.hasMetadata("NPC")) {
-            event.isCancelled = true   // Cancelamos el daño vanilla; lo aplicamos manualmente
+            event.isCancelled = true
 
-            val npc = CitizensAPI.getNPCRegistry()
-                .getNPC(victim) ?: return
-            val enemy = EnemyObject.get(npc.id) ?: return  // Map<Int, CustomEnemy> en tu plugin
+            val npc = CitizensAPI.getNPCRegistry().getNPC(victim) ?: return
+            val enemy = EnemyObject.get(npc.id) ?: return
 
-            // Checks de estado del atacante
             if (AffinityMarkManager.hasMark(damager, Affinity.ATADURA)) return
             if (StaminaManager.isExhausted(damager)) return
             if (damager.attackCooldown < 1f) {
@@ -175,17 +162,14 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             return
         }
 
-        // —─ Caso: flecha ataca jugador (ya manejado por BowListeners) ———————─────
+        // ── Caso: flecha ataca jugador (ya manejado por BowListeners) ─────────────
         // No hacer nada; BowListeners cancela el evento y aplica daño directamente.
     }
 
     @EventHandler
     fun onFireWeaponEvent(event: PlayerInteractEvent) {
         // Atadura: el jugador anclado no puede usar ítems/disparar mientras la Marca esté activa.
-        if (AffinityMarkManager.hasMark(
-                event.player, Affinity.ATADURA
-            )
-        ) {
+        if (AffinityMarkManager.hasMark(event.player, Affinity.ATADURA)) {
             event.isCancelled = true
             return
         }
@@ -196,88 +180,106 @@ class PlayerListeners(val plugin: EternalReverie) : Listener {
             return
         }
 
-
         val itemMeta = event.item?.itemMeta ?: return
-        val familyToClass =
-            WeaponFamily.entries
-                .associate {
-                    it.name to it.weaponClass
-                }
-        val weaponType =
-            familyToClass[itemMeta.persistentDataContainer.get(Keys.WEAPON_FAMILY, PersistentDataType.STRING) ?: return]
+        val pdc = itemMeta.persistentDataContainer
+
+        val familyName = pdc.get(Keys.WEAPON_FAMILY, PersistentDataType.STRING) ?: return
+        val family = runCatching { WeaponFamily.valueOf(familyName) }.getOrNull() ?: return
+        val weaponType = family.weaponClass
 
         val player = event.player
-        val attackSpeed = itemMeta.persistentDataContainer.get(Keys.ATTACK_SPEED, PersistentDataType.DOUBLE) ?: return
+        val attackSpeed = pdc.get(Keys.ATTACK_SPEED, PersistentDataType.DOUBLE) ?: return
+        val weaponUuid = runCatching {
+            UUID.fromString(pdc.get(Keys.INSTANCE_UUID, PersistentDataType.STRING) ?: return)
+        }.getOrNull() ?: return
 
-        val weaponUuid = UUID.fromString(
-            itemMeta
-                .persistentDataContainer
-                .get(
-                    Keys.INSTANCE_UUID,
-                    PersistentDataType.STRING
-                )
+        if (!event.action.isRightClick) return
+        if (weaponType !in listOf(WeaponClass.PISTOLA, WeaponClass.ESCOPETA, WeaponClass.RIFLE)) return
 
-        )
+        // ── Chequeo semi-auto ─────────────────────────────────────────────────────
+        // Para semi-auto: cada "click nuevo" (gap detectado) dispara una vez.
+        // Eventos repetidos por mantener sostenido el botón se ignoran.
+        // Armas automáticas (isSemiAuto = false) disparan en cada evento, limitadas
+        // solo por el cooldown de attackSpeed.
+        if (family.isSemiAuto) {
+            if (!WeaponStateManager.isNewClick(player, weaponUuid)) return
+        }
 
-        if (
-            !WeaponStateManager.canShoot(
-                player,
-                weaponUuid,
-                attackSpeed)
-        ) return
 
-        if (event.action.isRightClick && listOf(WeaponClass.PISTOLA, WeaponClass.ESCOPETA, WeaponClass.RIFLE).contains(weaponType)){
-            if (listOf(
-                    Material.DIRT,
-                    Material.GRASS_BLOCK,
-                    Material.COARSE_DIRT
-                ).contains(event.clickedBlock?.type)
-            ) event.isCancelled = true
-            val firedItem = player.inventory.itemInMainHand
-            val firedMeta = firedItem.itemMeta
-            val firedBlueprintId = firedMeta?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
-            val firedMaterialIds = firedMeta?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
+        // ── Chequeo munición ──────────────────────────────────────────────────────
+        if (family.magazineSize > 0) {
+            if (WeaponStateManager.isReloading(player, weaponUuid)) {
+                player.sendActionBar(Component.text("§eRecargando..."))
+                return
+            }
+            val ammo = WeaponStateManager.getAmmo(player, weaponUuid)
+            if (ammo <= 0) {
+                player.sendActionBar(Component.text("§c[ Sin munición — Q para recargar ]"))
+                return
+            }
+        }
 
-            var firedWeaponFamily: WeaponFamily? = null
-            val firedStats: CraftingCalculator.ComputedWeaponStats =
-                if (firedBlueprintId != null && firedMaterialIds != null) {
-                    val parsedBlueprint = runCatching { BlueprintRegistry.get(firedBlueprintId) }.getOrNull()
-                    val parsedMaterials = firedMaterialIds.mapNotNull {
-                        runCatching { MaterialType.valueOf(it) }.getOrNull()
-                    }
-                    firedWeaponFamily = parsedBlueprint?.family
-                    if (parsedBlueprint != null) {
-                        CraftingCalculator.computeWeaponStatsPublic(parsedBlueprint, parsedMaterials)
-                    } else {
-                        CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList())
-                    }
+        // ── Chequeo cooldown ──────────────────────────────────────────────────────
+        if (!WeaponStateManager.canShoot(player, weaponUuid, attackSpeed)) return
+
+        // ── Cancelar interacción con bloques de tierra si aplica ──────────────────
+        if (listOf(Material.DIRT, Material.GRASS_BLOCK, Material.COARSE_DIRT)
+                .contains(event.clickedBlock?.type)) {
+            event.isCancelled = true
+        }
+
+        // ── Calcular stats del arma disparada ─────────────────────────────────────
+        val firedMeta = player.inventory.itemInMainHand.itemMeta
+        val firedBlueprintId = firedMeta?.persistentDataContainer?.get(Keys.BLUEPRINT_ID, PersistentDataType.STRING)
+        val firedMaterialIds = firedMeta?.persistentDataContainer?.get(Keys.MATERIALS, PersistentDataType.LIST.strings())
+
+        var firedWeaponFamily: WeaponFamily? = null
+        val firedStats: CraftingCalculator.ComputedWeaponStats =
+            if (firedBlueprintId != null && firedMaterialIds != null) {
+                val parsedBlueprint = runCatching { BlueprintRegistry.get(firedBlueprintId) }.getOrNull()
+                val parsedMaterials = firedMaterialIds.mapNotNull {
+                    runCatching { MaterialType.valueOf(it) }.getOrNull()
+                }
+                firedWeaponFamily = parsedBlueprint?.family
+                if (parsedBlueprint != null) {
+                    CraftingCalculator.computeWeaponStatsPublic(parsedBlueprint, parsedMaterials)
                 } else {
                     CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList())
                 }
-
-            StaminaManager.tryConsumeForAttack(player, firedWeaponFamily)
-
-            val projectile = BulletProjectile(
-                plugin,
-                shooter = player,
-                origin = player.eyeLocation,
-                direction = player.eyeLocation.direction,
-                damage = firedStats.damage,
-                speed = 1.0,
-                maxDistance = event.item?.persistentDataContainer?.get(Keys.REACH, PersistentDataType.DOUBLE) ?: return,
-                weaponAffinities = firedStats.affinities,
-                shooterEquipment = PlayerStats.computeEquipmentStats(player)
-            )
-
-            WeaponStateManager.trigger(player, UUID.fromString(player.inventory.itemInMainHand.itemMeta?.persistentDataContainer?.get(Keys.INSTANCE_UUID, PersistentDataType.STRING)) ?: return)
-            ProjectileManager.register(projectile)
-            when (weaponType){
-                else -> {
-                    player.playSound(player, Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR, 1f, 1.1f)
-                    player.playSound(player, Sound.BLOCK_IRON_TRAPDOOR_CLOSE, 0.8f, 2f)
-                }
+            } else {
+                CraftingCalculator.ComputedWeaponStats(8.0, 4.0, 0.0, emptyList())
             }
-        } else return
+
+        StaminaManager.tryConsumeForAttack(player, firedWeaponFamily)
+
+        // ── Disparar proyectil ────────────────────────────────────────────────────
+        val projectile = BulletProjectile(
+            plugin,
+            shooter = player,
+            origin = player.eyeLocation,
+            direction = player.eyeLocation.direction,
+            damage = firedStats.damage,
+            speed = 1.0,
+            maxDistance = pdc.get(Keys.REACH, PersistentDataType.DOUBLE) ?: return,
+            weaponAffinities = firedStats.affinities,
+            shooterEquipment = PlayerStats.computeEquipmentStats(player)
+        )
+
+        // ── Post-disparo: munición y cooldown ─────────────────────────────────────
+        if (family.magazineSize > 0) {
+            WeaponStateManager.setAmmo(player, weaponUuid,
+                WeaponStateManager.getAmmo(player, weaponUuid) - 1)
+        }
+        WeaponStateManager.trigger(player, weaponUuid)
+        ProjectileManager.register(projectile)
+
+        // ── Sonido ────────────────────────────────────────────────────────────────
+        when (weaponType) {
+            else -> {
+                player.playSound(player, Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR, 1f, 1.1f)
+                player.playSound(player, Sound.BLOCK_IRON_TRAPDOOR_CLOSE, 0.8f, 2f)
+            }
+        }
     }
 
     @EventHandler

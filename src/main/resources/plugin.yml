@@ -15,7 +15,7 @@ commands:
     usage: /scrap <add|set|remove> <player> <value>
   remnants:
     usage: /remnants
-  give-remnant:
-    usage: /give-remnant <internal-id>
+  athanor:
+    usage: /athanor
   give-food:
     usage: /give-food <internal-id>

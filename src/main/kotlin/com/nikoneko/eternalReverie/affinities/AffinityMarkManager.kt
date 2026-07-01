@@ -1,7 +1,6 @@
 package com.nikoneko.eternalReverie.affinities
 
 import com.nikoneko.eternalReverie.player.PlayerStats
-import com.nikoneko.eternalReverie.remnants.RemnantSpecialEffectHandler
 import com.nikoneko.eternalReverie.weapons.Affinity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -32,7 +31,7 @@ object AffinityMarkManager {
         val chosenAffinity = pickWeighted(weaponAffinities) ?: return
 
         // Inmunidad: si el objetivo es Player con el Vestigio correspondiente, no aplica
-        if (target is Player && RemnantSpecialEffectHandler.isImmuneToAffinity(target, chosenAffinity)) return
+        // TODO if (target is Player && RemnantSpecialEffectHandler.isImmuneToAffinity(target, chosenAffinity)) return
 
         applyMark(attacker, target, chosenAffinity, hitDamage)
     }
@@ -53,8 +52,6 @@ object AffinityMarkManager {
         affinity: Affinity,
         durationTicks: Int
     ) {
-        if (target is Player && RemnantSpecialEffectHandler.isImmuneToAffinity(target, affinity)) return
-
         val config = MarkRegistry.configs[affinity] ?: return
         val entityMarks   = activeMarks.getOrPut(target.uniqueId) { mutableMapOf() }
         val entitySources = markSources.getOrPut(target.uniqueId) { mutableMapOf() }
